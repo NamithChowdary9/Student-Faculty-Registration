@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>FacultySync — Login</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=DM+Serif+Display&display=swap" rel="stylesheet">
+<style>
+:root{--navy:#0a0f1e;--card:rgba(255,255,255,0.04);--border:rgba(255,255,255,0.08);--accent:#4f8ef7;--accent2:#7c5cfc;--text:#e8eaf6;--muted:#8892b0;--error:#ff6b9d;}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:'Space Grotesk',sans-serif;min-height:100vh;background:var(--navy);display:flex;align-items:center;justify-content:center;overflow:hidden;position:relative;}
+body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(rgba(79,142,247,0.04) 1px,transparent 1px),linear-gradient(90deg,rgba(79,142,247,0.04) 1px,transparent 1px);background-size:50px 50px;pointer-events:none;}
+.orb{position:fixed;border-radius:50%;filter:blur(120px);opacity:0.15;pointer-events:none;}
+.orb1{width:500px;height:500px;background:var(--accent2);top:-100px;left:-100px;animation:drift1 12s ease-in-out infinite;}
+.orb2{width:400px;height:400px;background:var(--accent);bottom:-100px;right:-50px;animation:drift2 15s ease-in-out infinite;}
+@keyframes drift1{0%,100%{transform:translate(0,0)}50%{transform:translate(60px,40px)}}
+@keyframes drift2{0%,100%{transform:translate(0,0)}50%{transform:translate(-40px,-60px)}}
+.login-wrap{width:100%;max-width:440px;padding:20px;position:relative;z-index:10;animation:fadeUp 0.7s ease both;}
+@keyframes fadeUp{from{opacity:0;transform:translateY(30px)}to{opacity:1;transform:translateY(0)}}
+.logo-area{text-align:center;margin-bottom:32px;}
+.logo-badge{display:inline-flex;align-items:center;gap:10px;background:linear-gradient(135deg,rgba(79,142,247,0.15),rgba(124,92,252,0.15));border:1px solid rgba(79,142,247,0.3);border-radius:50px;padding:10px 20px;margin-bottom:16px;}
+.logo-icon{width:32px;height:32px;background:linear-gradient(135deg,var(--accent),var(--accent2));border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:16px;}
+.logo-text{font-family:'DM Serif Display',serif;font-size:20px;color:white;}
+.logo-text span{color:var(--accent);}
+.tagline{color:var(--muted);font-size:13px;}
+.card{background:var(--card);border:1px solid var(--border);border-radius:24px;padding:36px;backdrop-filter:blur(30px);box-shadow:0 40px 80px rgba(0,0,0,0.4);}
+.card-title{font-size:22px;font-weight:700;color:var(--text);margin-bottom:6px;}
+.card-sub{color:var(--muted);font-size:13px;margin-bottom:28px;}
+.role-label{font-size:11px;font-weight:600;letter-spacing:1.5px;color:var(--muted);text-transform:uppercase;margin-bottom:10px;}
+.role-tabs{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:24px;}
+.role-tab{padding:14px;border-radius:14px;border:1.5px solid var(--border);background:transparent;color:var(--muted);cursor:pointer;font-family:'Space Grotesk',sans-serif;font-size:14px;font-weight:500;transition:all 0.25s;display:flex;align-items:center;justify-content:center;gap:8px;}
+.role-tab:hover{border-color:rgba(79,142,247,0.4);color:var(--text);}
+.role-tab.active{border-color:var(--accent);background:rgba(79,142,247,0.1);color:white;}
+.field{margin-bottom:18px;}
+.field label{display:block;font-size:12px;font-weight:600;letter-spacing:0.8px;text-transform:uppercase;color:var(--muted);margin-bottom:8px;}
+.input-wrap{position:relative;}
+.input-wrap .icon{position:absolute;left:14px;top:50%;transform:translateY(-50%);font-size:16px;opacity:0.5;pointer-events:none;}
+.field input{width:100%;padding:13px 14px 13px 42px;background:rgba(255,255,255,0.05);border:1.5px solid var(--border);border-radius:12px;color:var(--text);font-family:'Space Grotesk',sans-serif;font-size:14px;transition:all 0.25s;outline:none;}
+.field input::placeholder{color:rgba(136,146,176,0.5);}
+.field input:focus{border-color:var(--accent);background:rgba(79,142,247,0.05);box-shadow:0 0 0 3px rgba(79,142,247,0.1);}
+.btn-login{width:100%;padding:15px;border:none;border-radius:14px;background:linear-gradient(135deg,var(--accent),var(--accent2));color:white;font-family:'Space Grotesk',sans-serif;font-size:15px;font-weight:600;cursor:pointer;transition:all 0.3s;margin-top:6px;}
+.btn-login:hover{transform:translateY(-2px);box-shadow:0 12px 30px rgba(79,142,247,0.4);}
+.btn-login:disabled{opacity:0.6;cursor:not-allowed;transform:none;}
+.error-msg{display:flex;align-items:center;gap:8px;background:rgba(255,107,157,0.1);border:1px solid rgba(255,107,157,0.3);border-radius:10px;padding:12px 14px;color:var(--error);font-size:13px;margin-top:16px;opacity:0;transform:translateY(-5px);transition:all 0.3s;}
+.error-msg.show{opacity:1;transform:translateY(0);}
+.info-bar{display:flex;align-items:center;gap:6px;background:rgba(79,142,247,0.06);border:1px solid rgba(79,142,247,0.15);border-radius:10px;padding:10px 14px;color:var(--muted);font-size:12px;margin-top:20px;}
+.footer{text-align:center;margin-top:24px;color:var(--muted);font-size:12px;}
+.footer span{color:var(--accent);font-weight:500;}
+</style>
+</head>
+<body>
+<div class="orb orb1"></div>
+<div class="orb orb2"></div>
+<div class="login-wrap">
+  <div class="logo-area">
+    <div class="logo-badge">
+      <div class="logo-icon">🎓</div>
+      <div class="logo-text">Faculty<span>Sync</span></div>
+    </div>
+    <p class="tagline">Faculty Registration & Timetable System</p>
+  </div>
+  <div class="card">
+    <div class="card-title">Welcome back</div>
+    <div class="card-sub">Sign in to continue to your portal</div>
+    <div class="role-label">Select Role</div>
+    <div class="role-tabs">
+      <button class="role-tab" id="adminTab" onclick="selectRole('admin')">🛡️ Admin</button>
+      <button class="role-tab" id="studentTab" onclick="selectRole('student')">🎒 Student</button>
+    </div>
+    <div class="field">
+      <label>User ID</label>
+      <div class="input-wrap">
+        <span class="icon">🪪</span>
+        <input type="text" id="userId" placeholder="Enter your ID" autocomplete="off">
+      </div>
+    </div>
+    <div class="field">
+      <label>Password</label>
+      <div class="input-wrap">
+        <span class="icon">🔑</span>
+        <input type="password" id="pass" placeholder="Enter password">
+      </div>
+    </div>
+    <button class="btn-login" id="loginBtn" onclick="login()">Sign In →</button>
+    <div class="error-msg" id="error">
+      <span>⚠️</span><span id="errorText">Invalid credentials.</span>
+    </div>
+    <div class="info-bar">ℹ️ &nbsp;Use your institution-issued ID and password.</div>
+  </div>
+  <div class="footer">Academic Year 2025–26 &nbsp;|&nbsp; <span>FacultySync v2.0</span></div>
+</div>
+<script>
+// ── IMPORTANT ──
+// This API_URL points to your backend server
+// Since your HTML files are served FROM the backend, we use relative path
+const API_URL = "";
+
+let role = "";
+
+function selectRole(r) {
+  role = r;
+  document.getElementById("adminTab").classList.remove("active");
+  document.getElementById("studentTab").classList.remove("active");
+  document.getElementById(r + "Tab").classList.add("active");
+  hideError();
+}
+
+function showError(msg) {
+  document.getElementById("errorText").innerText = msg;
+  document.getElementById("error").classList.add("show");
+}
+
+function hideError() {
+  document.getElementById("error").classList.remove("show");
+}
+
+async function login() {
+  const userId   = document.getElementById("userId").value.trim();
+  const password = document.getElementById("pass").value.trim();
+  const btn      = document.getElementById("loginBtn");
+
+  if (!role)     { showError("Please select a role first.");  return; }
+  if (!userId)   { showError("Please enter your User ID.");   return; }
+  if (!password) { showError("Please enter your password.");  return; }
+
+  // Show loading
+  btn.disabled    = true;
+  btn.textContent = "Signing in...";
+
+  try {
+    const res  = await fetch(`${API_URL}/api/auth/login`, {
+      method:  "POST",
+      headers: { "Content-Type": "application/json" },
+      body:    JSON.stringify({ userId, password, role })
+    });
+
+    const data = await res.json();
+
+    if (!res.ok) {
+      showError(data.message || "Invalid credentials.");
+      btn.disabled    = false;
+      btn.textContent = "Sign In →";
+      return;
+    }
+
+    // Save token and user info for session
+    localStorage.setItem("token",  data.token);
+    localStorage.setItem("role",   data.role);
+    localStorage.setItem("userId", data.userId);
+
+    // Redirect based on role
+    if (data.role === "admin") {
+      window.location = "admin.html";
+    } else {
+      window.location = "student.html";
+    }
+
+  } catch (err) {
+    showError("Cannot reach server. Make sure backend is running.");
+    btn.disabled    = false;
+    btn.textContent = "Sign In →";
+  }
+}
+
+document.addEventListener("keydown", e => { if (e.key === "Enter") login(); });
+</script>
+</body>
+</html>

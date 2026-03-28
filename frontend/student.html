@@ -1,0 +1,423 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>FacultySync — Faculty Selection</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=DM+Serif+Display&display=swap" rel="stylesheet">
+<style>
+:root{--navy:#0a0f1e;--card:rgba(255,255,255,0.04);--card2:rgba(255,255,255,0.07);--border:rgba(255,255,255,0.08);--accent:#4f8ef7;--accent2:#7c5cfc;--text:#e8eaf6;--muted:#8892b0;--success:#43e97b;--error:#ff6b9d;--warn:#ffb347;}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:'Space Grotesk',sans-serif;min-height:100vh;background:var(--navy);color:var(--text);}
+body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(rgba(79,142,247,0.03) 1px,transparent 1px),linear-gradient(90deg,rgba(79,142,247,0.03) 1px,transparent 1px);background-size:50px 50px;pointer-events:none;z-index:0;}
+.orb{position:fixed;border-radius:50%;filter:blur(130px);opacity:0.1;pointer-events:none;z-index:0;}
+.orb1{width:500px;height:500px;background:#7c5cfc;top:-100px;right:-100px;}
+.orb2{width:400px;height:400px;background:#00d4ff;bottom:-50px;left:-100px;}
+.topnav{position:sticky;top:0;z-index:100;background:rgba(10,15,30,0.85);backdrop-filter:blur(20px);border-bottom:1px solid var(--border);padding:0 36px;height:64px;display:flex;align-items:center;justify-content:space-between;}
+.nav-brand{display:flex;align-items:center;gap:12px;font-family:'DM Serif Display',serif;font-size:20px;color:white;}
+.nav-logo{width:36px;height:36px;background:linear-gradient(135deg,var(--accent),var(--accent2));border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:18px;}
+.dot{color:var(--accent);}
+.nav-right{display:flex;align-items:center;gap:14px;}
+.badge-student{background:rgba(67,233,123,0.12);border:1px solid rgba(67,233,123,0.25);color:var(--success);border-radius:20px;padding:5px 14px;font-size:12px;font-weight:600;}
+.btn-logout{background:rgba(255,107,157,0.1);border:1px solid rgba(255,107,157,0.25);color:#ff6b9d;border-radius:10px;padding:8px 18px;font-family:'Space Grotesk',sans-serif;font-size:13px;font-weight:600;cursor:pointer;transition:all 0.2s;}
+.btn-logout:hover{background:rgba(255,107,157,0.2);}
+.page{max-width:1200px;margin:0 auto;padding:32px 24px;position:relative;z-index:1;}
+.page-header{margin-bottom:28px;}
+.page-header h1{font-size:28px;font-weight:700;color:white;margin-bottom:4px;}
+.page-header p{color:var(--muted);font-size:14px;}
+.layout{display:grid;grid-template-columns:320px 1fr;gap:24px;align-items:start;}
+@media(max-width:900px){.layout{grid-template-columns:1fr;}}
+.sidebar{display:flex;flex-direction:column;gap:20px;}
+.card{background:var(--card);border:1px solid var(--border);border-radius:20px;padding:24px;backdrop-filter:blur(20px);}
+.card-head{display:flex;align-items:center;gap:10px;margin-bottom:20px;padding-bottom:14px;border-bottom:1px solid var(--border);}
+.card-icon{width:38px;height:38px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:18px;}
+.ci-filter{background:rgba(79,142,247,0.15);}
+.ci-subject{background:rgba(67,233,123,0.15);}
+.ci-faculty{background:rgba(255,179,71,0.15);}
+.ci-cart{background:rgba(124,92,252,0.15);}
+.card-title{font-size:16px;font-weight:700;color:white;}
+.card-sub{font-size:12px;color:var(--muted);margin-top:1px;}
+.field{margin-bottom:12px;}
+.field label{display:block;font-size:11px;font-weight:600;letter-spacing:1px;text-transform:uppercase;color:var(--muted);margin-bottom:6px;}
+.field select{width:100%;padding:11px 14px;background:rgba(255,255,255,0.05);border:1.5px solid var(--border);border-radius:10px;color:var(--text);font-family:'Space Grotesk',sans-serif;font-size:13px;outline:none;transition:all 0.2s;appearance:none;-moz-appearance:none;-webkit-appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%238892b0' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 14px center;background-color:rgba(255,255,255,0.05);padding-right:38px;cursor:pointer;}
+.field select option{background:#1a2040;color:var(--text);}
+.field select:focus{border-color:var(--accent);background-color:rgba(79,142,247,0.07);box-shadow:0 0 0 3px rgba(79,142,247,0.1);}
+.btn-load{width:100%;padding:12px;border:none;border-radius:12px;background:linear-gradient(135deg,var(--accent),var(--accent2));color:white;font-family:'Space Grotesk',sans-serif;font-size:14px;font-weight:600;cursor:pointer;transition:all 0.25s;margin-top:4px;}
+.btn-load:hover{transform:translateY(-2px);box-shadow:0 10px 24px rgba(79,142,247,0.35);}
+.subject-grid{display:flex;flex-direction:column;gap:8px;}
+.subject-pill{padding:12px 16px;background:rgba(255,255,255,0.05);border:1.5px solid var(--border);border-radius:12px;cursor:pointer;transition:all 0.2s;font-size:14px;font-weight:500;display:flex;align-items:center;gap:10px;}
+.subject-pill:hover{border-color:rgba(79,142,247,0.4);background:rgba(79,142,247,0.07);}
+.subject-pill.active-sub{border-color:var(--success);background:rgba(67,233,123,0.07);color:var(--success);}
+.subject-pill.done{border-color:rgba(67,233,123,0.4);}
+.subject-num{width:24px;height:24px;background:rgba(79,142,247,0.15);border-radius:6px;font-size:11px;font-weight:700;display:flex;align-items:center;justify-content:center;color:var(--accent);flex-shrink:0;}
+.faculty-grid{display:flex;flex-direction:column;gap:14px;}
+.faculty-card{background:var(--card2);border:1.5px solid var(--border);border-radius:16px;padding:20px;transition:all 0.25s;position:relative;overflow:hidden;animation:fadeIn 0.3s ease both;}
+.faculty-card:hover{border-color:rgba(79,142,247,0.4);transform:translateY(-2px);box-shadow:0 12px 30px rgba(0,0,0,0.3);}
+.faculty-card.selected{border-color:var(--success);background:rgba(67,233,123,0.06);}
+.faculty-card.selected::after{content:'✓ Selected';position:absolute;top:14px;right:14px;background:linear-gradient(135deg,var(--success),#00e676);color:#0a1a10;font-size:11px;font-weight:700;padding:3px 10px;border-radius:20px;}
+@keyframes fadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+.fc-top{display:flex;align-items:flex-start;gap:14px;}
+.fc-avatar{width:46px;height:46px;border-radius:12px;background:linear-gradient(135deg,var(--accent),var(--accent2));display:flex;align-items:center;justify-content:center;font-size:18px;font-weight:700;color:white;flex-shrink:0;font-family:'DM Serif Display',serif;}
+.fc-name{font-size:15px;font-weight:700;color:white;margin-bottom:4px;}
+.fc-subject-badge{display:inline-block;background:rgba(79,142,247,0.12);border:1px solid rgba(79,142,247,0.2);color:var(--accent);border-radius:6px;padding:2px 10px;font-size:11px;font-weight:600;}
+.fc-meta{display:flex;flex-wrap:wrap;gap:12px;margin-top:12px;}
+.meta-chip{display:flex;align-items:center;gap:5px;color:var(--muted);font-size:12px;}
+.rating-bar{display:flex;align-items:center;gap:8px;margin-top:12px;}
+.rating-fill{flex:1;height:4px;background:rgba(255,255,255,0.08);border-radius:99px;overflow:hidden;}
+.rating-fill-inner{height:100%;border-radius:99px;background:linear-gradient(to right,#ffd700,#ffb347);transition:width 0.5s ease;}
+.rating-val{font-size:12px;color:var(--warn);font-weight:600;}
+.btn-select{width:100%;padding:11px;margin-top:14px;border:none;border-radius:10px;background:linear-gradient(135deg,var(--accent),var(--accent2));color:white;font-family:'Space Grotesk',sans-serif;font-size:13px;font-weight:600;cursor:pointer;transition:all 0.2s;}
+.faculty-card.selected .btn-select{background:linear-gradient(135deg,var(--success),#00e676);color:#0a1a10;}
+.selection-item{display:flex;align-items:center;justify-content:space-between;padding:12px 14px;background:rgba(67,233,123,0.06);border:1px solid rgba(67,233,123,0.15);border-radius:12px;margin-bottom:10px;animation:fadeIn 0.2s ease;}
+.sel-subject{font-size:13px;font-weight:600;color:var(--text);}
+.sel-faculty{font-size:12px;color:var(--success);margin-top:2px;}
+.btn-remove{background:rgba(255,107,157,0.1);border:1px solid rgba(255,107,157,0.2);color:var(--error);border-radius:8px;padding:4px 10px;font-size:11px;font-weight:600;cursor:pointer;font-family:'Space Grotesk',sans-serif;transition:all 0.2s;}
+.btn-remove:hover{background:rgba(255,107,157,0.2);}
+.btn-continue{width:100%;padding:13px;border:none;border-radius:12px;background:linear-gradient(135deg,#43e97b,#38f9d7);color:#0a1a10;font-family:'Space Grotesk',sans-serif;font-size:14px;font-weight:700;cursor:pointer;transition:all 0.25s;}
+.btn-continue:hover{transform:translateY(-2px);box-shadow:0 10px 24px rgba(67,233,123,0.35);}
+.progress-bar{margin:16px 0;background:rgba(255,255,255,0.06);border-radius:99px;height:5px;overflow:hidden;}
+.progress-fill{height:100%;background:linear-gradient(to right,var(--accent),var(--accent2));border-radius:99px;transition:width 0.4s ease;}
+.progress-label{font-size:11px;color:var(--muted);margin-bottom:6px;display:flex;justify-content:space-between;}
+.empty{text-align:center;padding:32px 16px;color:var(--muted);}
+.empty-icon{font-size:36px;margin-bottom:10px;opacity:0.4;}
+</style>
+</head>
+<body>
+
+<div class="orb orb1"></div>
+<div class="orb orb2"></div>
+
+<nav class="topnav">
+  <div class="nav-brand">
+    <div class="nav-logo">🎓</div>
+    Faculty<span class="dot">Sync</span>
+  </div>
+  <div class="nav-right">
+    <div class="badge-student">🎒 Student Portal</div>
+    <span style="color:var(--muted);font-size:13px;" id="userIdDisplay"></span>
+    <button class="btn-logout" onclick="logout()">Sign Out</button>
+  </div>
+</nav>
+
+<div class="page">
+  <div class="page-header">
+    <h1>Faculty Selection</h1>
+    <p>Choose your preferred faculty for each subject this semester</p>
+  </div>
+  <div class="layout">
+    <div class="sidebar">
+      <!-- FILTER -->
+      <div class="card">
+        <div class="card-head">
+          <div class="card-icon ci-filter">🔍</div>
+          <div><div class="card-title">Filter</div><div class="card-sub">Select your class details</div></div>
+        </div>
+        <div class="field"><label>Department</label>
+          <select id="dept"><option value="">Select Department</option><option>CSE</option><option>ECE</option><option>MBA</option></select>
+        </div>
+        <div class="field"><label>Year</label>
+          <select id="year"><option value="">Select Year</option><option>1</option><option>2</option><option>3</option><option>4</option></select>
+        </div>
+        <div class="field"><label>Semester</label>
+          <select id="sem"><option value="">Select Semester</option><option>1</option><option>2</option></select>
+        </div>
+        <button class="btn-load" onclick="loadSubjects()">Load Subjects →</button>
+      </div>
+
+      <!-- SUBJECTS -->
+      <div class="card" id="subjectCard" style="display:none">
+        <div class="card-head">
+          <div class="card-icon ci-subject">📚</div>
+          <div><div class="card-title">Subjects</div><div class="card-sub">Click to view faculty</div></div>
+        </div>
+        <div class="subject-grid" id="subjects"></div>
+      </div>
+
+      <!-- SELECTION -->
+      <div class="card">
+        <div class="card-head">
+          <div class="card-icon ci-cart">🛒</div>
+          <div><div class="card-title">My Selection</div><div class="card-sub" id="selCount">0 subjects selected</div></div>
+        </div>
+        <div id="progressWrap" style="display:none">
+          <div class="progress-label"><span>Progress</span><span id="progressText">0/0</span></div>
+          <div class="progress-bar"><div class="progress-fill" id="progressFill" style="width:0%"></div></div>
+        </div>
+        <div id="selectionList">
+          <div class="empty"><div class="empty-icon">🗂️</div><div>No selections yet</div></div>
+        </div>
+        <button class="btn-continue" onclick="submitSelection()" style="margin-top:12px">Review & Continue →</button>
+      </div>
+    </div>
+
+    <!-- FACULTY PANEL -->
+    <div>
+      <div class="card" id="facultyCard">
+        <div class="card-head">
+          <div class="card-icon ci-faculty">👨‍🏫</div>
+          <div>
+            <div class="card-title" id="facultyCardTitle">Faculty List</div>
+            <div class="card-sub">Select a subject to view available faculty</div>
+          </div>
+        </div>
+        <div id="facultyList">
+          <div class="empty"><div class="empty-icon">👈</div><div>Load subjects first, then click a subject</div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+// ── AUTH CHECK ──
+const token   = localStorage.getItem("token");
+const role    = localStorage.getItem("role");
+const userId  = localStorage.getItem("userId");
+
+if (!token || role !== "student") {
+  window.location = "login.html";
+}
+document.getElementById("userIdDisplay").textContent = userId || "";
+
+// ── STATE ──
+let selected       = {};  // { subject: facultyName }
+let currentSubject = "";
+let totalSubjects  = 0;
+let allSubjects    = []; // list of subject names from DB
+let currentDept, currentYear, currentSem;
+
+// ── API HELPER ──
+async function api(method, path, body = null) {
+  const opts = {
+    method,
+    headers: { "Content-Type": "application/json", "Authorization": token }
+  };
+  if (body) opts.body = JSON.stringify(body);
+  const res  = await fetch(`/api${path}`, opts);
+  const data = await res.json();
+  return { ok: res.ok, data };
+}
+
+function logout() {
+  localStorage.clear();
+  window.location = "login.html";
+}
+
+// ── LOAD SUBJECTS ──
+// Gets all faculty from MongoDB for dept/year/sem
+// Extracts unique subject names from the results
+async function loadSubjects() {
+  const dept = document.getElementById("dept").value;
+  const year = document.getElementById("year").value;
+  const sem  = document.getElementById("sem").value;
+
+  if (!dept || !year || !sem) {
+    alert("Please select Department, Year and Semester.");
+    return;
+  }
+
+  currentDept = dept;
+  currentYear = year;
+  currentSem  = sem;
+
+  const { ok, data } = await api("GET", `/faculty?department=${dept}&year=${year}&semester=${sem}`);
+
+  if (!ok || data.length === 0) {
+    alert("No subjects available for this selection.");
+    return;
+  }
+
+  // Get unique subjects from faculty list
+  const subjectSet = [...new Set(data.map(f => f.subject))];
+  allSubjects  = subjectSet;
+  totalSubjects = subjectSet.length;
+
+  const container = document.getElementById("subjects");
+  container.innerHTML = "";
+
+  subjectSet.forEach((sub, i) => {
+    const done = selected[sub] ? true : false;
+    const div  = document.createElement("div");
+    div.className = "subject-pill" + (done ? " done" : "");
+    div.id        = "subpill_" + sub;
+    div.innerHTML = `
+      <div class="subject-num">${i + 1}</div>
+      <span>${sub}</span>
+      ${done ? '<span style="margin-left:auto">✅</span>' : ""}
+    `;
+    div.onclick = () => showFaculty(sub);
+    container.appendChild(div);
+  });
+
+  document.getElementById("subjectCard").style.display = "block";
+  updateProgress();
+}
+
+// ── SHOW FACULTY FOR A SUBJECT ──
+// Fetches faculty list from MongoDB
+async function showFaculty(subject) {
+  currentSubject = subject;
+
+  document.querySelectorAll(".subject-pill").forEach(p => p.classList.remove("active-sub"));
+  const pill = document.getElementById("subpill_" + subject);
+  if (pill) pill.classList.add("active-sub");
+
+  document.getElementById("facultyCardTitle").textContent = `Faculty for: ${subject}`;
+  document.getElementById("facultyList").innerHTML = `<div class="empty"><div class="empty-icon">⏳</div><div>Loading faculty...</div></div>`;
+
+  const { ok, data } = await api("GET", `/faculty?department=${currentDept}&year=${currentYear}&semester=${currentSem}`);
+
+  if (!ok) return;
+
+  // Filter only faculty for this subject
+  const list = data.filter(f => f.subject === subject);
+
+  if (list.length === 0) {
+    document.getElementById("facultyList").innerHTML = `<div class="empty"><div class="empty-icon">📭</div><div>No faculty found for this subject</div></div>`;
+    return;
+  }
+
+  let html = '<div class="faculty-grid">';
+  list.forEach(f => {
+    const isSelected  = selected[subject] === f.name;
+    const ratingPct   = f.rating ? (f.rating / 5) * 100 : 0;
+    const initials    = f.name.split(" ").map(w => w[0]).join("").substring(0, 2).toUpperCase();
+
+    html += `
+    <div class="faculty-card ${isSelected ? "selected" : ""}">
+      <div class="fc-top">
+        <div class="fc-avatar">${initials}</div>
+        <div>
+          <div class="fc-name">${f.name}</div>
+          <div class="fc-subject-badge">${f.subject}</div>
+        </div>
+      </div>
+      <div class="fc-meta">
+        ${f.experience ? `<div class="meta-chip">🏆 ${f.experience}</div>` : ""}
+        ${f.email      ? `<div class="meta-chip">📧 ${f.email}</div>`      : ""}
+      </div>
+      ${f.rating ? `
+      <div class="rating-bar">
+        <div class="rating-fill"><div class="rating-fill-inner" style="width:${ratingPct}%"></div></div>
+        <div class="rating-val">⭐ ${f.rating}</div>
+      </div>` : ""}
+      <button class="btn-select" onclick="selectFaculty('${subject}','${f.name}')">
+        ${isSelected ? "✓ Selected" : "Select Faculty"}
+      </button>
+    </div>`;
+  });
+  html += "</div>";
+
+  document.getElementById("facultyList").innerHTML = html;
+}
+
+// ── SELECT FACULTY ──
+function selectFaculty(subject, name) {
+  selected[subject] = name;
+  // Save selection to localStorage temporarily
+  localStorage.setItem("studentSelection", JSON.stringify({
+    selections: Object.entries(selected).map(([sub, fac]) => ({ subject: sub, facultyName: fac })),
+    department: currentDept,
+    year:       currentYear,
+    semester:   currentSem
+  }));
+  updateSelection();
+  updateProgress();
+  showFaculty(subject);
+  // Mark pill as done
+  const pill = document.getElementById("subpill_" + subject);
+  if (pill) {
+    pill.classList.add("done");
+    if (!pill.querySelector(".done-check")) {
+      pill.innerHTML += `<span class="done-check" style="margin-left:auto">✅</span>`;
+    }
+  }
+}
+
+// ── UPDATE SELECTION PANEL ──
+function updateSelection() {
+  const panel = document.getElementById("selectionList");
+  const count = Object.keys(selected).length;
+  document.getElementById("selCount").textContent = count + " subject" + (count !== 1 ? "s" : "") + " selected";
+
+  if (count === 0) {
+    panel.innerHTML = `<div class="empty"><div class="empty-icon">🗂️</div><div>No selections yet</div></div>`;
+    return;
+  }
+
+  let html = "";
+  for (const sub in selected) {
+    html += `
+    <div class="selection-item">
+      <div>
+        <div class="sel-subject">${sub}</div>
+        <div class="sel-faculty">👨‍🏫 ${selected[sub]}</div>
+      </div>
+      <button class="btn-remove" onclick="removeSelection('${sub}')">✕</button>
+    </div>`;
+  }
+  panel.innerHTML = html;
+}
+
+function removeSelection(sub) {
+  delete selected[sub];
+  updateSelection();
+  updateProgress();
+  if (currentSubject === sub) showFaculty(sub);
+  const pill = document.getElementById("subpill_" + sub);
+  if (pill) {
+    const check = pill.querySelector(".done-check");
+    if (check) check.remove();
+    pill.classList.remove("done");
+  }
+}
+
+function updateProgress() {
+  const count = Object.keys(selected).length;
+  if (totalSubjects > 0) {
+    document.getElementById("progressWrap").style.display = "block";
+    const pct = Math.min(100, (count / totalSubjects) * 100);
+    document.getElementById("progressFill").style.width   = pct + "%";
+    document.getElementById("progressText").textContent   = count + "/" + totalSubjects;
+  }
+}
+
+// ── SUBMIT SELECTION ──
+// Saves to MongoDB via backend API
+async function submitSelection() {
+  if (Object.keys(selected).length === 0) {
+    alert("Please select at least one faculty before continuing.");
+    return;
+  }
+
+  const selections = Object.entries(selected).map(([subject, facultyName]) => ({ subject, facultyName }));
+
+  // Save to backend MongoDB
+  const { ok, data } = await api("POST", "/selection", {
+    studentId:  userId,
+    department: currentDept,
+    year:       currentYear,
+    semester:   currentSem,
+    selections
+  });
+
+  if (!ok) {
+    alert("Error saving selection: " + data.message);
+    return;
+  }
+
+  // Also keep in localStorage for summary/timetable pages
+  localStorage.setItem("studentSelection", JSON.stringify({
+    selections,
+    department: currentDept,
+    year:       currentYear,
+    semester:   currentSem
+  }));
+
+  window.location = "summary.html";
+}
+
+updateSelection();
+</script>
+</body>
+</html>

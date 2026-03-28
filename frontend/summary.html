@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>FacultySync — Selection Summary</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=DM+Serif+Display&display=swap" rel="stylesheet">
+<style>
+:root{--navy:#0a0f1e;--card:rgba(255,255,255,0.04);--card2:rgba(255,255,255,0.07);--border:rgba(255,255,255,0.08);--accent:#4f8ef7;--accent2:#7c5cfc;--text:#e8eaf6;--muted:#8892b0;--success:#43e97b;--error:#ff6b9d;}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:'Space Grotesk',sans-serif;min-height:100vh;background:var(--navy);color:var(--text);}
+body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(rgba(79,142,247,0.03) 1px,transparent 1px),linear-gradient(90deg,rgba(79,142,247,0.03) 1px,transparent 1px);background-size:50px 50px;pointer-events:none;z-index:0;}
+.orb{position:fixed;border-radius:50%;filter:blur(130px);opacity:0.1;pointer-events:none;z-index:0;}
+.orb1{width:500px;height:500px;background:var(--success);bottom:-100px;left:-100px;}
+.orb2{width:400px;height:400px;background:var(--accent2);top:-100px;right:-100px;}
+.topnav{position:sticky;top:0;z-index:100;background:rgba(10,15,30,0.85);backdrop-filter:blur(20px);border-bottom:1px solid var(--border);padding:0 36px;height:64px;display:flex;align-items:center;justify-content:space-between;}
+.nav-brand{display:flex;align-items:center;gap:12px;font-family:'DM Serif Display',serif;font-size:20px;color:white;}
+.nav-logo{width:36px;height:36px;background:linear-gradient(135deg,var(--accent),var(--accent2));border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:18px;}
+.dot{color:var(--accent);}
+.nav-right{display:flex;align-items:center;gap:14px;}
+.badge-student{background:rgba(67,233,123,0.12);border:1px solid rgba(67,233,123,0.25);color:var(--success);border-radius:20px;padding:5px 14px;font-size:12px;font-weight:600;}
+.btn-logout{background:rgba(255,107,157,0.1);border:1px solid rgba(255,107,157,0.25);color:#ff6b9d;border-radius:10px;padding:8px 18px;font-family:'Space Grotesk',sans-serif;font-size:13px;font-weight:600;cursor:pointer;transition:all 0.2s;}
+.btn-logout:hover{background:rgba(255,107,157,0.2);}
+.page{max-width:900px;margin:0 auto;padding:32px 24px;position:relative;z-index:1;}
+.page-header{margin-bottom:28px;}
+.page-header h1{font-size:28px;font-weight:700;color:white;margin-bottom:4px;}
+.page-header p{color:var(--muted);font-size:14px;}
+.summary-banner{background:linear-gradient(135deg,rgba(67,233,123,0.1),rgba(79,142,247,0.1));border:1px solid rgba(67,233,123,0.2);border-radius:20px;padding:28px 32px;margin-bottom:28px;display:flex;align-items:center;gap:20px;}
+.banner-icon{font-size:48px;}
+.banner-text h2{font-size:20px;font-weight:700;color:white;margin-bottom:4px;}
+.banner-text p{color:var(--muted);font-size:14px;}
+.banner-count{margin-left:auto;background:linear-gradient(135deg,var(--success),#38f9d7);color:#0a1a10;border-radius:50%;width:64px;height:64px;display:flex;align-items:center;justify-content:center;font-size:24px;font-weight:700;flex-shrink:0;}
+.summary-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:16px;margin-bottom:28px;}
+.summary-card{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:20px;transition:all 0.25s;animation:fadeIn 0.3s ease both;}
+.summary-card:hover{border-color:rgba(79,142,247,0.3);transform:translateY(-3px);box-shadow:0 16px 40px rgba(0,0,0,0.3);}
+@keyframes fadeIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+.sc-num{width:32px;height:32px;border-radius:8px;background:linear-gradient(135deg,var(--accent),var(--accent2));color:white;font-size:14px;font-weight:700;display:flex;align-items:center;justify-content:center;margin-bottom:14px;}
+.sc-subject{font-size:15px;font-weight:700;color:white;margin-bottom:6px;}
+.sc-divider{height:1px;background:var(--border);margin:12px 0;}
+.sc-label{font-size:11px;font-weight:600;letter-spacing:0.8px;text-transform:uppercase;color:var(--muted);margin-bottom:4px;}
+.sc-faculty{font-size:14px;color:var(--success);font-weight:600;}
+.empty-state{text-align:center;padding:60px 20px;color:var(--muted);}
+.empty-state .icon{font-size:60px;margin-bottom:16px;opacity:0.4;}
+.empty-state h3{font-size:20px;color:white;margin-bottom:8px;}
+.action-bar{display:flex;gap:12px;flex-wrap:wrap;}
+.btn{padding:13px 22px;border:none;border-radius:12px;font-family:'Space Grotesk',sans-serif;font-size:14px;font-weight:600;cursor:pointer;transition:all 0.25s;}
+.btn-back{background:var(--card2);border:1px solid var(--border);color:var(--text);}
+.btn-back:hover{background:rgba(255,255,255,0.1);}
+.btn-generate{background:linear-gradient(135deg,var(--accent),var(--accent2));color:white;flex:1;}
+.btn-generate:hover{transform:translateY(-2px);box-shadow:0 10px 24px rgba(79,142,247,0.35);}
+.btn-clear{background:rgba(255,107,157,0.1);border:1px solid rgba(255,107,157,0.25);color:var(--error);}
+.btn-clear:hover{background:rgba(255,107,157,0.2);}
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.7);backdrop-filter:blur(6px);display:none;align-items:center;justify-content:center;z-index:200;}
+.modal-overlay.open{display:flex;}
+.modal{background:#111827;border:1px solid var(--border);border-radius:20px;padding:32px;width:100%;max-width:380px;animation:popIn 0.3s ease;}
+@keyframes popIn{from{opacity:0;transform:scale(0.93)}to{opacity:1;transform:scale(1)}}
+.modal-icon{font-size:48px;text-align:center;margin-bottom:16px;}
+.modal h3{font-size:20px;text-align:center;color:white;margin-bottom:8px;}
+.modal p{text-align:center;color:var(--muted);font-size:14px;margin-bottom:24px;}
+.modal-btns{display:flex;gap:10px;}
+.modal-btns button{flex:1;padding:13px;border-radius:12px;font-family:'Space Grotesk',sans-serif;font-size:14px;font-weight:600;cursor:pointer;border:none;}
+.btn-cancel{background:var(--card2);border:1px solid var(--border)!important;color:var(--text);}
+.btn-confirm-del{background:linear-gradient(135deg,#ff4e7a,#ff6b9d);color:white;}
+</style>
+</head>
+<body>
+<div class="orb orb1"></div>
+<div class="orb orb2"></div>
+
+<nav class="topnav">
+  <div class="nav-brand">
+    <div class="nav-logo">🎓</div>
+    Faculty<span class="dot">Sync</span>
+  </div>
+  <div class="nav-right">
+    <div class="badge-student">🎒 Student Portal</div>
+    <button class="btn-logout" onclick="logout()">Sign Out</button>
+  </div>
+</nav>
+
+<div class="page">
+  <div class="page-header">
+    <h1>Selection Summary</h1>
+    <p>Review your faculty choices before generating your timetable</p>
+  </div>
+  <div id="mainContent"></div>
+  <div class="action-bar">
+    <button class="btn btn-back" onclick="goBack()">← Back</button>
+    <button class="btn btn-generate" onclick="generate()">Generate Timetable 🗓️</button>
+    <button class="btn btn-clear" onclick="openClearModal()">🗑️ Clear</button>
+  </div>
+</div>
+
+<!-- Clear modal -->
+<div class="modal-overlay" id="clearModal">
+  <div class="modal">
+    <div class="modal-icon">⚠️</div>
+    <h3>Clear All Selections?</h3>
+    <p>This will remove all your faculty selections. You'll need to start over.</p>
+    <div class="modal-btns">
+      <button class="btn-cancel" onclick="closeClear()">Cancel</button>
+      <button class="btn-confirm-del" onclick="doClear()">Clear All</button>
+    </div>
+  </div>
+</div>
+
+<script>
+// ── AUTH CHECK ──
+const token  = localStorage.getItem("token");
+const role   = localStorage.getItem("role");
+if (!token || role !== "student") { window.location = "login.html"; }
+
+// ── LOAD SUMMARY FROM localStorage (saved by student.html) ──
+const raw        = JSON.parse(localStorage.getItem("studentSelection") || "{}");
+const selections = raw.selections || [];
+const container  = document.getElementById("mainContent");
+
+if (selections.length === 0) {
+  container.innerHTML = `
+  <div class="empty-state">
+    <div class="icon">📭</div>
+    <h3>No selections found</h3>
+    <p>Go back and choose faculty for your subjects.</p>
+  </div>`;
+} else {
+  let html = `
+  <div class="summary-banner">
+    <div class="banner-icon">✅</div>
+    <div class="banner-text">
+      <h2>Great choices!</h2>
+      <p>You have selected faculty for ${selections.length} subject${selections.length !== 1 ? "s" : ""}. Review and generate your timetable.</p>
+    </div>
+    <div class="banner-count">${selections.length}</div>
+  </div>
+  <div class="summary-grid">`;
+
+  selections.forEach((item, i) => {
+    html += `
+    <div class="summary-card" style="animation-delay:${i * 0.05}s">
+      <div class="sc-num">${i + 1}</div>
+      <div class="sc-subject">${item.subject}</div>
+      <div class="sc-divider"></div>
+      <div class="sc-label">Selected Faculty</div>
+      <div class="sc-faculty">👨‍🏫 ${item.facultyName}</div>
+    </div>`;
+  });
+
+  html += `</div>`;
+  container.innerHTML = html;
+}
+
+function goBack()  { window.location = "student.html"; }
+function generate() {
+  if (selections.length === 0) { alert("No selections to generate a timetable."); return; }
+  window.location = "timetable.html";
+}
+function logout()  { localStorage.clear(); window.location = "login.html"; }
+function openClearModal() { document.getElementById("clearModal").classList.add("open"); }
+function closeClear()     { document.getElementById("clearModal").classList.remove("open"); }
+function doClear() {
+  localStorage.removeItem("studentSelection");
+  window.location.reload();
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,500 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>FacultySync — Admin Dashboard</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=DM+Serif+Display&display=swap" rel="stylesheet">
+<style>
+:root{--navy:#0a0f1e;--card:rgba(255,255,255,0.04);--card2:rgba(255,255,255,0.07);--border:rgba(255,255,255,0.08);--accent:#4f8ef7;--accent2:#7c5cfc;--text:#e8eaf6;--muted:#8892b0;--success:#43e97b;--error:#ff6b9d;--warn:#ffb347;}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:'Space Grotesk',sans-serif;min-height:100vh;background:var(--navy);color:var(--text);overflow-x:hidden;}
+body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(rgba(79,142,247,0.03) 1px,transparent 1px),linear-gradient(90deg,rgba(79,142,247,0.03) 1px,transparent 1px);background-size:50px 50px;pointer-events:none;z-index:0;}
+.orb{position:fixed;border-radius:50%;filter:blur(130px);opacity:0.1;pointer-events:none;z-index:0;}
+.orb1{width:600px;height:600px;background:var(--accent2);top:-200px;left:-200px;}
+.orb2{width:400px;height:400px;background:var(--accent);bottom:-100px;right:100px;}
+.topnav{position:sticky;top:0;z-index:100;background:rgba(10,15,30,0.85);backdrop-filter:blur(20px);border-bottom:1px solid var(--border);padding:0 36px;height:64px;display:flex;align-items:center;justify-content:space-between;}
+.nav-brand{display:flex;align-items:center;gap:12px;font-family:'DM Serif Display',serif;font-size:20px;color:white;}
+.nav-logo{width:36px;height:36px;background:linear-gradient(135deg,var(--accent),var(--accent2));border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:18px;}
+.dot{color:var(--accent);}
+.nav-right{display:flex;align-items:center;gap:16px;}
+.badge-admin{background:rgba(79,142,247,0.15);border:1px solid rgba(79,142,247,0.3);color:var(--accent);border-radius:20px;padding:5px 14px;font-size:12px;font-weight:600;}
+.btn-logout{background:rgba(255,107,157,0.1);border:1px solid rgba(255,107,157,0.25);color:#ff6b9d;border-radius:10px;padding:8px 18px;font-family:'Space Grotesk',sans-serif;font-size:13px;font-weight:600;cursor:pointer;transition:all 0.2s;}
+.btn-logout:hover{background:rgba(255,107,157,0.2);}
+.page{max-width:1200px;margin:0 auto;padding:32px 24px;position:relative;z-index:1;}
+.page-header{margin-bottom:32px;}
+.page-header h1{font-size:28px;font-weight:700;color:white;margin-bottom:4px;}
+.page-header p{color:var(--muted);font-size:14px;}
+.stat-bar{display:flex;gap:16px;margin-bottom:28px;flex-wrap:wrap;}
+.stat{flex:1;min-width:120px;background:var(--card);border:1px solid var(--border);border-radius:14px;padding:16px 18px;text-align:center;}
+.stat-num{font-size:28px;font-weight:700;color:white;}
+.stat-label{font-size:11px;color:var(--muted);margin-top:4px;letter-spacing:0.5px;}
+.grid-2{display:grid;grid-template-columns:1fr 1.5fr;gap:24px;align-items:start;}
+@media(max-width:900px){.grid-2{grid-template-columns:1fr;}}
+.card{background:var(--card);border:1px solid var(--border);border-radius:20px;padding:28px;backdrop-filter:blur(20px);}
+.card-header{display:flex;align-items:center;gap:12px;margin-bottom:24px;padding-bottom:16px;border-bottom:1px solid var(--border);}
+.card-icon{width:42px;height:42px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:20px;}
+.icon-add{background:rgba(67,233,123,0.15);}
+.icon-list{background:rgba(79,142,247,0.15);}
+.card-title{font-size:17px;font-weight:700;color:white;}
+.card-subtitle{font-size:12px;color:var(--muted);margin-top:2px;}
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+.field{margin-bottom:14px;}
+.field label{display:block;font-size:11px;font-weight:600;letter-spacing:1px;text-transform:uppercase;color:var(--muted);margin-bottom:6px;}
+.field select,.field input{width:100%;padding:11px 14px;background:rgba(255,255,255,0.05);border:1.5px solid var(--border);border-radius:10px;color:var(--text);font-family:'Space Grotesk',sans-serif;font-size:13px;outline:none;transition:all 0.2s;}
+.field select{appearance:none;-moz-appearance:none;-webkit-appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%238892b0' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 14px center;background-color:rgba(255,255,255,0.05);padding-right:38px;cursor:pointer;}
+.field select option{background:#1a2040;color:var(--text);}
+.field select:focus,.field input:focus{border-color:var(--accent);background:rgba(79,142,247,0.07);box-shadow:0 0 0 3px rgba(79,142,247,0.1);}
+.field input::placeholder{color:rgba(136,146,176,0.4);}
+.btn{padding:12px 22px;border:none;border-radius:12px;font-family:'Space Grotesk',sans-serif;font-size:14px;font-weight:600;cursor:pointer;transition:all 0.25s;}
+.btn-primary{background:linear-gradient(135deg,var(--accent),var(--accent2));color:white;width:100%;margin-top:4px;}
+.btn-primary:hover{transform:translateY(-2px);box-shadow:0 10px 25px rgba(79,142,247,0.35);}
+.btn-primary:disabled{opacity:0.6;cursor:not-allowed;transform:none;}
+.btn-sm{padding:7px 14px;font-size:12px;border-radius:8px;}
+.btn-edit{background:rgba(255,179,71,0.12);border:1px solid rgba(255,179,71,0.25);color:var(--warn);}
+.btn-edit:hover{background:rgba(255,179,71,0.2);}
+.btn-delete{background:rgba(255,107,157,0.12);border:1px solid rgba(255,107,157,0.25);color:var(--error);}
+.btn-delete:hover{background:rgba(255,107,157,0.2);}
+.filter-row{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-bottom:20px;}
+.faculty-item{background:var(--card2);border:1px solid var(--border);border-radius:14px;padding:16px;margin-bottom:12px;transition:all 0.2s;animation:fadeIn 0.3s ease both;}
+.faculty-item:hover{border-color:rgba(79,142,247,0.3);transform:translateX(3px);}
+@keyframes fadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+.faculty-header{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:10px;}
+.faculty-name{font-size:15px;font-weight:700;color:white;}
+.faculty-subject{display:inline-block;background:rgba(79,142,247,0.12);border:1px solid rgba(79,142,247,0.2);color:var(--accent);border-radius:6px;padding:2px 10px;font-size:11px;font-weight:600;margin-top:4px;}
+.faculty-meta{display:flex;flex-wrap:wrap;gap:12px;margin-top:10px;}
+.meta-item{display:flex;align-items:center;gap:5px;color:var(--muted);font-size:12px;}
+.faculty-actions{display:flex;gap:8px;margin-top:12px;}
+.stars{color:#ffd700;font-size:13px;}
+.empty{text-align:center;padding:40px 20px;color:var(--muted);}
+.empty-icon{font-size:40px;margin-bottom:12px;opacity:0.4;}
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.7);backdrop-filter:blur(6px);display:none;align-items:center;justify-content:center;z-index:200;}
+.modal-overlay.open{display:flex;}
+.modal{background:#111827;border:1px solid var(--border);border-radius:20px;padding:32px;width:100%;max-width:420px;animation:popIn 0.3s ease;}
+@keyframes popIn{from{opacity:0;transform:scale(0.93)}to{opacity:1;transform:scale(1)}}
+.modal-icon{font-size:48px;text-align:center;margin-bottom:16px;}
+.modal h3{font-size:20px;text-align:center;color:white;margin-bottom:8px;}
+.modal p{text-align:center;color:var(--muted);font-size:14px;margin-bottom:24px;}
+.modal-btns{display:flex;gap:10px;}
+.modal-btns button{flex:1;padding:13px;border-radius:12px;font-family:'Space Grotesk',sans-serif;font-size:14px;font-weight:600;cursor:pointer;border:none;}
+.btn-cancel{background:var(--card2);border:1px solid var(--border)!important;color:var(--text);}
+.btn-confirm-del{background:linear-gradient(135deg,#ff4e7a,#ff6b9d);color:white;}
+.btn-confirm-ok{background:linear-gradient(135deg,var(--accent),var(--accent2));color:white;}
+.modal-edit .field input,.modal-edit .field select{background:rgba(255,255,255,0.05);border:1.5px solid var(--border);border-radius:10px;color:var(--text);font-family:'Space Grotesk',sans-serif;font-size:13px;outline:none;transition:all 0.2s;}
+.modal-edit .field input:focus,.modal-edit .field select:focus{border-color:var(--accent);}
+</style>
+</head>
+<body>
+
+<div class="orb orb1"></div>
+<div class="orb orb2"></div>
+
+<nav class="topnav">
+  <div class="nav-brand">
+    <div class="nav-logo">🎓</div>
+    Faculty<span class="dot">Sync</span>
+  </div>
+  <div class="nav-right">
+    <div class="badge-admin">🛡️ Admin Panel</div>
+    <span style="color:var(--muted);font-size:13px;" id="userIdDisplay"></span>
+    <button class="btn-logout" onclick="logout()">Sign Out</button>
+  </div>
+</nav>
+
+<div class="page">
+  <div class="page-header">
+    <h1>Faculty Management</h1>
+    <p>Manage faculty records across departments, years, and semesters</p>
+  </div>
+
+  <div class="stat-bar">
+    <div class="stat"><div class="stat-num" id="statTotal">0</div><div class="stat-label">TOTAL FACULTY</div></div>
+    <div class="stat"><div class="stat-num" id="statCSE">0</div><div class="stat-label">CSE DEPT</div></div>
+    <div class="stat"><div class="stat-num" id="statECE">0</div><div class="stat-label">ECE DEPT</div></div>
+    <div class="stat"><div class="stat-num" id="statMBA">0</div><div class="stat-label">MBA DEPT</div></div>
+  </div>
+
+  <div class="grid-2">
+    <!-- ADD FACULTY -->
+    <div class="card">
+      <div class="card-header">
+        <div class="card-icon icon-add">➕</div>
+        <div>
+          <div class="card-title">Add Faculty</div>
+          <div class="card-subtitle">Fill in all required fields (*)</div>
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="field">
+          <label>Department *</label>
+          <select id="dept">
+            <option value="">Select</option>
+            <option>CSE</option><option>ECE</option><option>MBA</option>
+          </select>
+        </div>
+        <div class="field">
+          <label>Year *</label>
+          <select id="year">
+            <option value="">Select</option>
+            <option>1</option><option>2</option><option>3</option><option>4</option>
+          </select>
+        </div>
+      </div>
+      <div class="field">
+        <label>Semester *</label>
+        <select id="sem">
+          <option value="">Select</option>
+          <option>1</option><option>2</option>
+        </select>
+      </div>
+      <div class="field">
+        <label>Subject *</label>
+        <input id="subject" placeholder="e.g. Data Structures">
+      </div>
+      <div class="field">
+        <label>Faculty Name *</label>
+        <input id="name" placeholder="e.g. Dr. Ramesh Kumar">
+      </div>
+      <div class="form-row">
+        <div class="field">
+          <label>Experience</label>
+          <input id="exp" placeholder="e.g. 8 years">
+        </div>
+        <div class="field">
+          <label>Rating (1–5)</label>
+          <input id="rating" type="number" min="1" max="5" step="0.1" placeholder="e.g. 4.5">
+        </div>
+      </div>
+      <div class="field">
+        <label>Email</label>
+        <input id="email" type="email" placeholder="faculty@institution.edu">
+      </div>
+      <button class="btn btn-primary" id="addBtn" onclick="addFaculty()">➕ Add Faculty</button>
+    </div>
+
+    <!-- FACULTY DATABASE -->
+    <div class="card">
+      <div class="card-header">
+        <div class="card-icon icon-list">📋</div>
+        <div>
+          <div class="card-title">Faculty Database</div>
+          <div class="card-subtitle">Filter to view and manage records</div>
+        </div>
+      </div>
+      <div class="filter-row">
+        <div class="field" style="margin:0">
+          <label>Dept</label>
+          <select id="filterDept" onchange="loadFaculty()">
+            <option value="">All</option>
+            <option>CSE</option><option>ECE</option><option>MBA</option>
+          </select>
+        </div>
+        <div class="field" style="margin:0">
+          <label>Year</label>
+          <select id="filterYear" onchange="loadFaculty()">
+            <option value="">All</option>
+            <option>1</option><option>2</option><option>3</option><option>4</option>
+          </select>
+        </div>
+        <div class="field" style="margin:0">
+          <label>Semester</label>
+          <select id="filterSem" onchange="loadFaculty()">
+            <option value="">All</option>
+            <option>1</option><option>2</option>
+          </select>
+        </div>
+      </div>
+      <div id="facultyList">
+        <div class="empty">
+          <div class="empty-icon">🔍</div>
+          <div>Select filters above to view faculty</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Alert Modal -->
+<div class="modal-overlay" id="alertModal">
+  <div class="modal">
+    <div class="modal-icon" id="alertIcon">✅</div>
+    <h3 id="alertTitle">Done!</h3>
+    <p id="alertMsg"></p>
+    <div class="modal-btns">
+      <button class="btn-confirm-ok" onclick="closeAlert()">OK</button>
+    </div>
+  </div>
+</div>
+
+<!-- Delete Confirm Modal -->
+<div class="modal-overlay" id="deleteModal">
+  <div class="modal">
+    <div class="modal-icon">🗑️</div>
+    <h3>Delete Faculty?</h3>
+    <p id="deleteMsg">This action cannot be undone.</p>
+    <div class="modal-btns">
+      <button class="btn-cancel" onclick="closeDelete()">Cancel</button>
+      <button class="btn-confirm-del" id="confirmDelBtn">Delete</button>
+    </div>
+  </div>
+</div>
+
+<!-- Edit Modal -->
+<div class="modal-overlay" id="editModal">
+  <div class="modal modal-edit" style="max-width:460px">
+    <h3 style="margin-bottom:20px;color:white">✏️ Edit Faculty</h3>
+    <input type="hidden" id="editId">
+    <div class="field"><label>Faculty Name *</label><input id="editName" placeholder="Faculty Name"></div>
+    <div class="form-row">
+      <div class="field"><label>Experience</label><input id="editExp" placeholder="e.g. 8 years"></div>
+      <div class="field"><label>Rating (1–5)</label><input id="editRating" type="number" min="1" max="5" step="0.1"></div>
+    </div>
+    <div class="field"><label>Email</label><input id="editEmail" type="email" placeholder="faculty@institution.edu"></div>
+    <div class="modal-btns" style="margin-top:8px">
+      <button class="btn-cancel" onclick="closeEdit()">Cancel</button>
+      <button class="btn-confirm-ok" onclick="saveEdit()">Save Changes</button>
+    </div>
+  </div>
+</div>
+
+<script>
+// ── AUTH CHECK ──
+const token  = localStorage.getItem("token");
+const role   = localStorage.getItem("role");
+const userId = localStorage.getItem("userId");
+
+if (!token || role !== "admin") {
+  window.location = "login.html";
+}
+
+document.getElementById("userIdDisplay").textContent = userId || "";
+
+// ── API HELPER ──
+// All fetch calls go to the backend with JWT token in header
+async function api(method, path, body = null) {
+  const opts = {
+    method,
+    headers: {
+      "Content-Type":  "application/json",
+      "Authorization": token
+    }
+  };
+  if (body) opts.body = JSON.stringify(body);
+  const res  = await fetch(`/api${path}`, opts);
+  const data = await res.json();
+  return { ok: res.ok, data };
+}
+
+// ── LOGOUT ──
+function logout() {
+  localStorage.clear();
+  window.location = "login.html";
+}
+
+// ── MODALS ──
+function showAlert(title, msg, icon = "✅") {
+  document.getElementById("alertTitle").textContent = title;
+  document.getElementById("alertMsg").textContent   = msg;
+  document.getElementById("alertIcon").textContent  = icon;
+  document.getElementById("alertModal").classList.add("open");
+}
+function closeAlert() { document.getElementById("alertModal").classList.remove("open"); }
+
+function closeDelete() { document.getElementById("deleteModal").classList.remove("open"); }
+
+function openEdit(id, name, exp, rating, email) {
+  document.getElementById("editId").value     = id;
+  document.getElementById("editName").value   = name;
+  document.getElementById("editExp").value    = exp    || "";
+  document.getElementById("editRating").value = rating || "";
+  document.getElementById("editEmail").value  = email  || "";
+  document.getElementById("editModal").classList.add("open");
+}
+function closeEdit() { document.getElementById("editModal").classList.remove("open"); }
+
+// ── GET value helper ──
+function val(id) { return document.getElementById(id).value.trim(); }
+
+// ── ADD FACULTY ──
+// Sends a POST request to backend → saved in MongoDB
+async function addFaculty() {
+  const dept    = val("dept");
+  const year    = val("year");
+  const sem     = val("sem");
+  const subject = val("subject");
+  const name    = val("name");
+  const exp     = val("exp");
+  const rating  = val("rating");
+  const email   = val("email");
+
+  if (!dept || !year || !sem || !subject || !name) {
+    showAlert("Missing Fields", "Please fill all required (*) fields.", "⚠️");
+    return;
+  }
+  if (email && !/^[^ ]+@[^ ]+\.[a-z]{2,3}$/.test(email)) {
+    showAlert("Invalid Email", "Enter a valid email address.", "⚠️");
+    return;
+  }
+  if (rating && (parseFloat(rating) < 1 || parseFloat(rating) > 5)) {
+    showAlert("Invalid Rating", "Rating must be between 1 and 5.", "⚠️");
+    return;
+  }
+
+  const btn = document.getElementById("addBtn");
+  btn.disabled    = true;
+  btn.textContent = "Adding...";
+
+  // POST to backend — data goes to MongoDB
+  const { ok, data } = await api("POST", "/faculty", {
+    name,
+    department: dept,
+    year,
+    semester:   sem,
+    subject,
+    experience: exp,
+    rating:     rating ? parseFloat(rating) : null,
+    email
+  });
+
+  btn.disabled    = false;
+  btn.textContent = "➕ Add Faculty";
+
+  if (!ok) {
+    showAlert("Error", data.message || "Could not add faculty.", "⚠️");
+    return;
+  }
+
+  showAlert("Faculty Added! 🎉", `${name} has been added to ${subject} (${dept} - Year ${year}, Sem ${sem}).`);
+  clearForm();
+  loadFaculty();
+  loadStats();
+}
+
+function clearForm() {
+  ["subject", "name", "exp", "rating", "email"].forEach(id => {
+    document.getElementById(id).value = "";
+  });
+}
+
+// ── LOAD FACULTY ──
+// GET from backend — reads from MongoDB
+async function loadFaculty() {
+  const dept = val("filterDept");
+  const year = val("filterYear");
+  const sem  = val("filterSem");
+  const list = document.getElementById("facultyList");
+
+  if (!dept || !year || !sem) {
+    list.innerHTML = `<div class="empty"><div class="empty-icon">🔍</div><div>Select department, year and semester</div></div>`;
+    return;
+  }
+
+  list.innerHTML = `<div class="empty"><div class="empty-icon">⏳</div><div>Loading...</div></div>`;
+
+  const { ok, data } = await api("GET", `/faculty?department=${dept}&year=${year}&semester=${sem}`);
+
+  if (!ok || data.length === 0) {
+    list.innerHTML = `<div class="empty"><div class="empty-icon">📭</div><div>No faculty found for selected filters</div></div>`;
+    return;
+  }
+
+  let html = "";
+  data.forEach(f => {
+    const stars = f.rating ? "⭐".repeat(Math.round(f.rating)) : "—";
+    html += `
+    <div class="faculty-item">
+      <div class="faculty-header">
+        <div>
+          <div class="faculty-name">${f.name}</div>
+          <div class="faculty-subject">${f.subject}</div>
+        </div>
+        <div class="stars">${stars}</div>
+      </div>
+      <div class="faculty-meta">
+        ${f.experience ? `<div class="meta-item">🏆 ${f.experience}</div>` : ""}
+        ${f.rating     ? `<div class="meta-item">⭐ ${f.rating}/5</div>`   : ""}
+        ${f.email      ? `<div class="meta-item">📧 ${f.email}</div>`      : ""}
+      </div>
+      <div class="faculty-actions">
+        <button class="btn btn-sm btn-edit"
+          onclick="openEdit('${f._id}','${f.name}','${f.experience}','${f.rating}','${f.email}')">
+          ✏️ Edit
+        </button>
+        <button class="btn btn-sm btn-delete"
+          onclick="confirmDelete('${f._id}','${f.name}')">
+          🗑️ Delete
+        </button>
+      </div>
+    </div>`;
+  });
+
+  list.innerHTML = html;
+}
+
+// ── DELETE FACULTY ──
+function confirmDelete(id, name) {
+  document.getElementById("deleteMsg").textContent = `Remove "${name}"? This cannot be undone.`;
+  document.getElementById("confirmDelBtn").onclick = async () => {
+    const { ok, data } = await api("DELETE", `/faculty/${id}`);
+    closeDelete();
+    if (!ok) { showAlert("Error", data.message, "⚠️"); return; }
+    showAlert("Deleted", `${name} has been removed.`, "🗑️");
+    loadFaculty();
+    loadStats();
+  };
+  document.getElementById("deleteModal").classList.add("open");
+}
+
+// ── EDIT FACULTY ──
+async function saveEdit() {
+  const id     = document.getElementById("editId").value;
+  const name   = val("editName");
+  const exp    = val("editExp");
+  const rating = val("editRating");
+  const email  = val("editEmail");
+
+  if (!name) { showAlert("Error", "Faculty name is required.", "⚠️"); return; }
+  if (email  && !/^[^ ]+@[^ ]+\.[a-z]{2,3}$/.test(email)) { showAlert("Error", "Enter a valid email.", "⚠️"); return; }
+  if (rating && (parseFloat(rating) < 1 || parseFloat(rating) > 5)) { showAlert("Error", "Rating must be between 1 and 5.", "⚠️"); return; }
+
+  const { ok, data } = await api("PUT", `/faculty/${id}`, {
+    name,
+    experience: exp,
+    rating:     rating ? parseFloat(rating) : null,
+    email
+  });
+
+  closeEdit();
+  if (!ok) { showAlert("Error", data.message, "⚠️"); return; }
+  showAlert("Updated!", "Faculty details saved successfully.");
+  loadFaculty();
+}
+
+// ── STATS ──
+// Loads total counts from MongoDB for the stat bar
+async function loadStats() {
+  const depts = ["CSE", "ECE", "MBA"];
+  let total = 0, cse = 0, ece = 0, mba = 0;
+
+  for (const dept of depts) {
+    const { ok, data } = await api("GET", `/faculty?department=${dept}`);
+    if (ok) {
+      const count = data.length;
+      total += count;
+      if (dept === "CSE") cse = count;
+      if (dept === "ECE") ece = count;
+      if (dept === "MBA") mba = count;
+    }
+  }
+
+  document.getElementById("statTotal").textContent = total;
+  document.getElementById("statCSE").textContent   = cse;
+  document.getElementById("statECE").textContent   = ece;
+  document.getElementById("statMBA").textContent   = mba;
+}
+
+// Load stats on page open
+loadStats();
+</script>
+</body>
+</html>

@@ -1,0 +1,305 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Faculty Selection Dashboard</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+
+<style>
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+    font-family:'Poppins',sans-serif;
+}
+
+body{
+    min-height:100vh;
+    padding:30px;
+    background:linear-gradient(-45deg,#0f2027,#203a43,#2c5364,#1c92d2);
+    background-size:400% 400%;
+    animation:gradientBG 10s ease infinite;
+    color:white;
+}
+
+@keyframes gradientBG{
+    0%{background-position:0% 50%}
+    50%{background-position:100% 50%}
+    100%{background-position:0% 50%}
+}
+
+.main-container{
+    max-width:900px;
+    margin:auto;
+}
+
+.header{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    margin-bottom:30px;
+}
+
+.glass-card{
+    background:rgba(255,255,255,0.1);
+    backdrop-filter:blur(20px);
+    padding:25px;
+    border-radius:20px;
+    margin-bottom:25px;
+    transition:0.3s;
+}
+
+.glass-card:hover{
+    background:rgba(255,255,255,0.18);
+}
+
+select, button{
+    padding:10px;
+    border-radius:8px;
+    border:none;
+    margin:10px 5px 10px 0;
+}
+
+button{
+    background:linear-gradient(to right,#00c6ff,#0072ff);
+    color:white;
+    cursor:pointer;
+    transition:0.3s;
+}
+
+button:hover{
+    transform:scale(1.05);
+}
+
+.subject-card{
+    padding:15px;
+    margin:10px 0;
+    border-radius:12px;
+    background:rgba(255,255,255,0.15);
+    cursor:pointer;
+    transition:0.3s;
+}
+
+.subject-card:hover{
+    background:rgba(255,255,255,0.3);
+}
+
+.faculty-card{
+    background:rgba(255,255,255,0.15);
+    padding:15px;
+    border-radius:15px;
+    margin:10px 0;
+    transition:0.3s;
+}
+
+.faculty-card:hover{
+    transform:scale(1.02);
+    background:rgba(255,255,255,0.3);
+}
+
+.hidden{
+    display:none;
+}
+
+.small{
+    font-size:14px;
+    opacity:0.9;
+}
+
+.selected-panel{
+    background:rgba(255,255,255,0.1);
+    backdrop-filter:blur(20px);
+    padding:20px;
+    border-radius:20px;
+    margin-bottom:20px;
+}
+
+.selected-item{
+    margin:8px 0;
+    padding:8px;
+    background:rgba(255,255,255,0.15);
+    border-radius:8px;
+}
+</style>
+</head>
+
+<body>
+
+<div class="main-container">
+
+<div class="header">
+    <h2>Faculty Selection Dashboard</h2>
+    <button onclick="logout()">Logout</button>
+</div>
+
+<!-- Academic Selection -->
+<div class="glass-card">
+    <h3>Select Academic Details</h3>
+
+    <select id="department">
+        <option value="">Select Department</option>
+        <option value="CSE">Computer Science</option>
+        <option value="ECE">Electronics</option>
+        <option value="MBA">Business Administration</option>
+    </select>
+
+    <select id="year">
+        <option value="">Select Year</option>
+        <option value="1">1st Year</option>
+        <option value="2">2nd Year</option>
+        <option value="3">3rd Year</option>
+    </select>
+
+    <select id="semester">
+        <option value="">Select Semester</option>
+        <option value="1">Semester 1</option>
+        <option value="2">Semester 2</option>
+    </select>
+
+    <button onclick="loadSubjects()">Proceed</button>
+</div>
+
+<!-- Subjects -->
+<div id="subjectsSection" class="glass-card hidden">
+    <h3>Available Subjects</h3>
+    <div id="subjectsList"></div>
+</div>
+
+<!-- Faculty -->
+<div id="facultySection" class="glass-card hidden">
+    <h3>Select Faculty</h3>
+    <div id="facultyList"></div>
+</div>
+
+<!-- Selected Faculty Panel -->
+<div class="selected-panel">
+    <h3>Selected Faculties</h3>
+    <div id="selectedList"></div>
+</div>
+
+<!-- Final Submit -->
+<div style="text-align:center; margin-top:20px;">
+    <button onclick="finalSubmit()">Final Submit</button>
+</div>
+
+</div>
+
+<script>
+
+// SAMPLE DATA
+let data = {
+    CSE: {
+        1: {
+            1: {
+                Mathematics: [
+                    {name:"Dr. Rao", exp:"10 yrs", rating:"4.8", research:"AI & ML", email:"rao@univ.edu", achievements:"Best Teacher 2023"},
+                    {name:"Dr. Sharma", exp:"8 yrs", rating:"4.5", research:"Data Science", email:"sharma@univ.edu", achievements:"Research Excellence Award"}
+                ],
+                Programming: [
+                    {name:"Prof. Reddy", exp:"12 yrs", rating:"4.9", research:"Full Stack", email:"reddy@univ.edu", achievements:"Google Certified"}
+                ]
+            }
+        }
+    }
+};
+
+let selectedFaculties = {};
+let currentSubject = "";
+
+function loadSubjects(){
+    let dept = document.getElementById("department").value;
+    let yearVal = document.getElementById("year").value;
+    let sem = document.getElementById("semester").value;
+
+    if(!dept || !yearVal || !sem){
+        alert("Please select all academic details.");
+        return;
+    }
+
+    if(!data[dept] || !data[dept][yearVal] || !data[dept][yearVal][sem]){
+        alert("No subjects available.");
+        return;
+    }
+
+    let subjects = data[dept][yearVal][sem];
+
+    document.getElementById("subjectsSection").classList.remove("hidden");
+    document.getElementById("facultySection").classList.add("hidden");
+
+    let subjectsList = document.getElementById("subjectsList");
+    subjectsList.innerHTML = "";
+
+    for(let subject in subjects){
+        let div = document.createElement("div");
+        div.className="subject-card";
+        div.innerText=subject;
+        div.onclick=function(){
+            showFaculty(subject, subjects[subject]);
+        };
+        subjectsList.appendChild(div);
+    }
+}
+
+function showFaculty(subject, facultyArray){
+    currentSubject = subject;
+
+    document.getElementById("facultySection").classList.remove("hidden");
+
+    let facultyList = document.getElementById("facultyList");
+    facultyList.innerHTML="";
+
+    facultyArray.forEach(function(f){
+        let div=document.createElement("div");
+        div.className="faculty-card";
+
+        div.innerHTML=`
+            <h4>${f.name}</h4>
+            <p class="small">Experience: ${f.exp}</p>
+            <p class="small">Rating: ${f.rating}</p>
+            <p class="small">Research: ${f.research}</p>
+            <p class="small">Email: ${f.email}</p>
+            <p class="small">Achievements: ${f.achievements}</p>
+            <button onclick="selectFaculty('${f.name}')">Select</button>
+        `;
+
+        facultyList.appendChild(div);
+    });
+}
+
+function selectFaculty(name){
+    selectedFaculties[currentSubject] = name;
+    updateSelectedPanel();
+    document.getElementById("facultySection").classList.add("hidden");
+}
+
+function updateSelectedPanel(){
+    let selectedList = document.getElementById("selectedList");
+    selectedList.innerHTML="";
+    for(let subject in selectedFaculties){
+        selectedList.innerHTML += `
+        <div class="selected-item">
+            ${subject} → ${selectedFaculties[subject]}
+        </div>`;
+    }
+}
+
+function finalSubmit(){
+    if(Object.keys(selectedFaculties).length===0){
+        alert("No faculty selected!");
+        return;
+    }
+    localStorage.setItem("selectedFaculties", JSON.stringify(selectedFaculties));
+    window.location.href="summary.html";
+}
+
+function logout(){
+    localStorage.clear();
+    window.location.href="login.html";
+}
+
+</script>
+
+</body>
+</html>
