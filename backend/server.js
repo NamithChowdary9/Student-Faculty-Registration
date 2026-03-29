@@ -1,36 +1,48 @@
-const express = require('express');
-const mongoose = require('mongoose');
-const cors = require('cors');
-const dotenv = require('dotenv');
-const path = require('path');
+require("dotenv").config();
+const express  = require("express");
+const cors     = require("cors");
+const mongoose = require("mongoose");
+const path     = require("path");
 
-dotenv.config();
 const app = express();
 
 app.use(cors());
-app.use(express.json());
-app.use(express.static(path.join(__dirname, '../frontend')));
+app.use(express.json({ limit: "10mb" }));
 
-// Serve login page
-app.get('/', (req, res) => {
-    res.sendFile(path.join(__dirname, '../frontend/login.html'));
+// ── Serve all HTML files from frontend folder ──
+app.use(express.static(path.join(__dirname, "../frontend")));
+
+// ── API Routes ──
+app.use("/api/auth",      require("./routes/auth"));
+app.use("/api/faculty",   require("./routes/faculty"));
+app.use("/api/selection", require("./routes/selection"));
+app.use("/api/semester",  require("./routes/semester"));
+app.use("/api/timetable", require("./routes/timetable"));
+
+// ── Health check ──
+app.get("/api/health", (_, res) =>
+  res.json({ status: "ok", version: "2.0.0", time: new Date() })
+);
+
+// ── Fallback → login page ──
+app.use((req, res) => {
+  res.sendFile(path.join(__dirname, "../frontend/login.html"));
 });
 
-// Routes
-app.use('/api/auth',      require('./routes/auth'));
-app.use('/api/faculty',   require('./routes/faculty'));
-app.use('/api/selection', require('./routes/selection'));
+// ── Connect MongoDB & Start ──
+const MONGO_URI = process.env.MONGO_URI || "mongodb://localhost:27017/facultysync";
+const PORT      = process.env.PORT || 3000;
 
-// Connect DB and start server
-mongoose.connect(process.env.MONGO_URI)
+mongoose
+  .connect(MONGO_URI)
   .then(() => {
-    console.log('✅ MongoDB Connected Successfully');
-
-    // 🔥 IMPORTANT CHANGE HERE
-    app.listen(process.env.PORT, '0.0.0.0', () => {
-    console.log(`✅ Server running at http://localhost:${process.env.PORT}`);
-});
+    console.log("✅ MongoDB connected:", MONGO_URI);
+    app.listen(PORT, () =>
+      console.log(`🚀 FacultySync v2.0 running → http://localhost:${PORT}`)
+    );
   })
-  .catch(err => {
-    console.log('❌ MongoDB Connection Error:', err.message);
+  .catch((e) => {
+    console.error("❌ MongoDB failed:", e.message);
+    console.log("💡 Start MongoDB: mongod --dbpath ~/data/db");
+    process.exit(1);
   });

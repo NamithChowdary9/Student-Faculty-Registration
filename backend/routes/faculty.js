@@ -1,60 +1,74 @@
-const express = require('express');
-const router  = express.Router();
-const Faculty = require('../models/Faculty');
-const auth    = require('../middleware/authMiddleware');
+const router  = require("express").Router();
+const Faculty = require("../models/Faculty");
+const { auth, adminOnly } = require("../middleware/authMiddleware");
 
-// GET faculty
-router.get('/', async (req, res) => {
+/* ── GET (with filters) ── */
+router.get("/", auth, async (req, res) => {
   try {
-    const { department, year, semester } = req.query;
-    let filter = {};
-    if (department) filter.department = department;
-    if (year)       filter.year       = year;
-    if (semester)   filter.semester   = semester;
-    const list = await Faculty.find(filter);
+    const filter = {};
+    if (req.query.department) filter.department = req.query.department;
+    if (req.query.year)       filter.year       = req.query.year;
+    if (req.query.semester)   filter.semester   = req.query.semester;
+    if (req.query.subject)    filter.subject    = req.query.subject;
+
+    const list = await Faculty.find(filter).sort({ subject: 1, name: 1 });
     res.json(list);
-  } catch (err) {
-    res.status(500).json({ message: err.message });
+  } catch (e) {
+    res.status(500).json({ message: e.message });
   }
 });
 
-// ADD faculty
-router.post('/', auth, async (req, res) => {
+/* ── ADD ── */
+router.post("/", auth, adminOnly, async (req, res) => {
   try {
-    const { name, department, year, semester, subject } = req.body;
-    const duplicate = await Faculty.findOne({
-      name: { $regex: new RegExp(`^${name}$`, 'i') },
-      department, year, semester, subject
+    const {
+      name, department, year, semester, subject,
+      experience, rating, email, periodsPerWeek, studentLimit,
+    } = req.body;
+
+    if (!name || !department || !year || !semester || !subject)
+      return res.status(400).json({ message: "name, department, year, semester, subject are required" });
+
+    const f = await Faculty.create({
+      name, department, year, semester, subject,
+      experience:     experience     || "",
+      rating:         rating != null  ? parseFloat(rating) : null,
+      email:          email          || "",
+      periodsPerWeek: periodsPerWeek ? parseInt(periodsPerWeek) : 4,
+      studentLimit:   studentLimit   ? parseInt(studentLimit)   : 60,
     });
-    if (duplicate) {
-      return res.status(400).json({ message: 'Faculty already exists for this subject' });
-    }
-    const faculty = await new Faculty(req.body).save();
-    res.json({ message: 'Faculty added successfully', faculty });
-  } catch (err) {
-    res.status(500).json({ message: err.message });
+
+    res.status(201).json(f);
+  } catch (e) {
+    res.status(500).json({ message: e.message });
   }
 });
 
-// EDIT faculty
-router.put('/:id', auth, async (req, res) => {
+/* ── UPDATE ── */
+router.put("/:id", auth, adminOnly, async (req, res) => {
   try {
-    const updated = await Faculty.findByIdAndUpdate(
-      req.params.id, req.body, { new: true }
-    );
-    res.json({ message: 'Faculty updated successfully', updated });
-  } catch (err) {
-    res.status(500).json({ message: err.message });
+    // Sanitise numeric fields before update
+    const update = { ...req.body };
+    if (update.rating       != null) update.rating       = parseFloat(update.rating);
+    if (update.periodsPerWeek != null) update.periodsPerWeek = parseInt(update.periodsPerWeek);
+    if (update.studentLimit != null) update.studentLimit = parseInt(update.studentLimit);
+
+    const f = await Faculty.findByIdAndUpdate(req.params.id, update, { new: true, runValidators: true });
+    if (!f) return res.status(404).json({ message: "Faculty not found" });
+    res.json(f);
+  } catch (e) {
+    res.status(500).json({ message: e.message });
   }
 });
 
-// DELETE faculty
-router.delete('/:id', auth, async (req, res) => {
+/* ── DELETE ── */
+router.delete("/:id", auth, adminOnly, async (req, res) => {
   try {
-    await Faculty.findByIdAndDelete(req.params.id);
-    res.json({ message: 'Faculty deleted successfully' });
-  } catch (err) {
-    res.status(500).json({ message: err.message });
+    const f = await Faculty.findByIdAndDelete(req.params.id);
+    if (!f) return res.status(404).json({ message: "Faculty not found" });
+    res.json({ message: "Faculty deleted" });
+  } catch (e) {
+    res.status(500).json({ message: e.message });
   }
 });
 
