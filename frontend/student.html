@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>FacultySync — Faculty Selection</title>
+<title>FacultySync — Student Portal</title>
 <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=DM+Serif+Display&display=swap" rel="stylesheet">
 <style>
 :root{--navy:#0a0f1e;--card:rgba(255,255,255,0.04);--card2:rgba(255,255,255,0.07);--border:rgba(255,255,255,0.08);--accent:#4f8ef7;--accent2:#7c5cfc;--text:#e8eaf6;--muted:#8892b0;--success:#43e97b;--error:#ff6b9d;--warn:#ffb347;}
@@ -13,155 +13,154 @@ body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(
 .orb{position:fixed;border-radius:50%;filter:blur(130px);opacity:0.1;pointer-events:none;z-index:0;}
 .orb1{width:500px;height:500px;background:#7c5cfc;top:-100px;right:-100px;}
 .orb2{width:400px;height:400px;background:#00d4ff;bottom:-50px;left:-100px;}
-.topnav{position:sticky;top:0;z-index:100;background:rgba(10,15,30,0.85);backdrop-filter:blur(20px);border-bottom:1px solid var(--border);padding:0 36px;height:64px;display:flex;align-items:center;justify-content:space-between;}
-.nav-brand{display:flex;align-items:center;gap:12px;font-family:'DM Serif Display',serif;font-size:20px;color:white;}
+.topnav{position:sticky;top:0;z-index:100;background:rgba(10,15,30,0.88);backdrop-filter:blur(20px);border-bottom:1px solid var(--border);padding:0 24px;height:64px;display:flex;align-items:center;justify-content:space-between;}
+.nav-brand{display:flex;align-items:center;gap:10px;font-family:'DM Serif Display',serif;font-size:20px;color:white;}
 .nav-logo{width:36px;height:36px;background:linear-gradient(135deg,var(--accent),var(--accent2));border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:18px;}
 .dot{color:var(--accent);}
-.nav-right{display:flex;align-items:center;gap:14px;}
-.badge-student{background:rgba(67,233,123,0.12);border:1px solid rgba(67,233,123,0.25);color:var(--success);border-radius:20px;padding:5px 14px;font-size:12px;font-weight:600;}
-.btn-logout{background:rgba(255,107,157,0.1);border:1px solid rgba(255,107,157,0.25);color:#ff6b9d;border-radius:10px;padding:8px 18px;font-family:'Space Grotesk',sans-serif;font-size:13px;font-weight:600;cursor:pointer;transition:all 0.2s;}
-.btn-logout:hover{background:rgba(255,107,157,0.2);}
-.page{max-width:1200px;margin:0 auto;padding:32px 24px;position:relative;z-index:1;}
-.page-header{margin-bottom:28px;}
-.page-header h1{font-size:28px;font-weight:700;color:white;margin-bottom:4px;}
-.page-header p{color:var(--muted);font-size:14px;}
-.layout{display:grid;grid-template-columns:320px 1fr;gap:24px;align-items:start;}
+.nav-right{display:flex;align-items:center;gap:12px;}
+.badge-stu{background:rgba(67,233,123,0.12);border:1px solid rgba(67,233,123,0.25);color:var(--success);border-radius:20px;padding:5px 14px;font-size:12px;font-weight:600;}
+.user-chip{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:6px 12px;font-size:12px;color:var(--muted);}
+.user-chip strong{color:var(--text);}
+.btn-logout{background:rgba(255,107,157,0.1);border:1px solid rgba(255,107,157,0.25);color:#ff6b9d;border-radius:10px;padding:8px 16px;font-family:'Space Grotesk',sans-serif;font-size:13px;font-weight:600;cursor:pointer;}
+.page{max-width:1200px;margin:0 auto;padding:24px 20px;position:relative;z-index:1;}
+.layout{display:grid;grid-template-columns:290px 1fr;gap:18px;align-items:start;}
 @media(max-width:900px){.layout{grid-template-columns:1fr;}}
-.sidebar{display:flex;flex-direction:column;gap:20px;}
-.card{background:var(--card);border:1px solid var(--border);border-radius:20px;padding:24px;backdrop-filter:blur(20px);}
-.card-head{display:flex;align-items:center;gap:10px;margin-bottom:20px;padding-bottom:14px;border-bottom:1px solid var(--border);}
-.card-icon{width:38px;height:38px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:18px;}
-.ci-filter{background:rgba(79,142,247,0.15);}
-.ci-subject{background:rgba(67,233,123,0.15);}
-.ci-faculty{background:rgba(255,179,71,0.15);}
-.ci-cart{background:rgba(124,92,252,0.15);}
-.card-title{font-size:16px;font-weight:700;color:white;}
-.card-sub{font-size:12px;color:var(--muted);margin-top:1px;}
-.field{margin-bottom:12px;}
-.field label{display:block;font-size:11px;font-weight:600;letter-spacing:1px;text-transform:uppercase;color:var(--muted);margin-bottom:6px;}
-.field select{width:100%;padding:11px 14px;background:rgba(255,255,255,0.05);border:1.5px solid var(--border);border-radius:10px;color:var(--text);font-family:'Space Grotesk',sans-serif;font-size:13px;outline:none;transition:all 0.2s;appearance:none;-moz-appearance:none;-webkit-appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%238892b0' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 14px center;background-color:rgba(255,255,255,0.05);padding-right:38px;cursor:pointer;}
-.field select option{background:#1a2040;color:var(--text);}
-.field select:focus{border-color:var(--accent);background-color:rgba(79,142,247,0.07);box-shadow:0 0 0 3px rgba(79,142,247,0.1);}
-.btn-load{width:100%;padding:12px;border:none;border-radius:12px;background:linear-gradient(135deg,var(--accent),var(--accent2));color:white;font-family:'Space Grotesk',sans-serif;font-size:14px;font-weight:600;cursor:pointer;transition:all 0.25s;margin-top:4px;}
+.sidebar{display:flex;flex-direction:column;gap:14px;}
+.card{background:var(--card);border:1px solid var(--border);border-radius:20px;padding:20px;backdrop-filter:blur(20px);}
+.card-head{display:flex;align-items:center;gap:9px;margin-bottom:16px;padding-bottom:12px;border-bottom:1px solid var(--border);}
+.ci{width:34px;height:34px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:15px;}
+.ci-f{background:rgba(79,142,247,0.15);}.ci-s{background:rgba(67,233,123,0.15);}.ci-fac{background:rgba(255,179,71,0.15);}.ci-c{background:rgba(124,92,252,0.15);}
+.card-title{font-size:14px;font-weight:700;color:white;}
+.card-sub{font-size:11px;color:var(--muted);margin-top:1px;}
+.opt-list{display:flex;flex-direction:column;gap:6px;}
+.opt{display:flex;align-items:center;justify-content:space-between;padding:10px 13px;border-radius:11px;border:1.5px solid var(--border);font-size:13px;font-weight:500;transition:all 0.2s;}
+.opt.mine{color:white;cursor:pointer;}
+.opt.mine:hover{background:rgba(255,255,255,0.05);}
+.opt.mine.sel{background:rgba(79,142,247,0.1);border-color:var(--accent);color:white;}
+.opt.dept-mine{border-color:rgba(67,233,123,0.35);background:rgba(67,233,123,0.04);}
+.opt.dept-mine.sel{background:rgba(67,233,123,0.1);border-color:var(--success);}
+.opt.locked-opt{color:var(--muted);cursor:not-allowed;opacity:0.5;}
+.sem-opt{display:flex;align-items:center;justify-content:space-between;padding:11px 14px;border-radius:12px;border:1.5px solid var(--border);cursor:pointer;transition:all 0.2s;font-size:13px;font-weight:600;}
+.sem-opt.sem-open{border-color:rgba(67,233,123,0.35);background:rgba(67,233,123,0.04);color:white;}
+.sem-opt.sem-open:hover{background:rgba(67,233,123,0.08);}
+.sem-opt.sem-open.sel{background:rgba(67,233,123,0.12);border-color:var(--success);}
+.sem-opt.sem-locked{color:var(--muted);cursor:not-allowed;opacity:0.6;}
+.sem-badge{font-size:10px;font-weight:700;padding:3px 8px;border-radius:20px;}
+.sb-open{background:rgba(67,233,123,0.15);color:var(--success);}
+.sb-locked{background:rgba(255,107,157,0.12);color:var(--error);}
+.btn-load{width:100%;padding:11px;border:none;border-radius:12px;background:linear-gradient(135deg,var(--accent),var(--accent2));color:white;font-family:'Space Grotesk',sans-serif;font-size:13px;font-weight:600;cursor:pointer;transition:all 0.25s;margin-top:10px;}
 .btn-load:hover{transform:translateY(-2px);box-shadow:0 10px 24px rgba(79,142,247,0.35);}
-.subject-grid{display:flex;flex-direction:column;gap:8px;}
-.subject-pill{padding:12px 16px;background:rgba(255,255,255,0.05);border:1.5px solid var(--border);border-radius:12px;cursor:pointer;transition:all 0.2s;font-size:14px;font-weight:500;display:flex;align-items:center;gap:10px;}
-.subject-pill:hover{border-color:rgba(79,142,247,0.4);background:rgba(79,142,247,0.07);}
-.subject-pill.active-sub{border-color:var(--success);background:rgba(67,233,123,0.07);color:var(--success);}
-.subject-pill.done{border-color:rgba(67,233,123,0.4);}
-.subject-num{width:24px;height:24px;background:rgba(79,142,247,0.15);border-radius:6px;font-size:11px;font-weight:700;display:flex;align-items:center;justify-content:center;color:var(--accent);flex-shrink:0;}
-.faculty-grid{display:flex;flex-direction:column;gap:14px;}
-.faculty-card{background:var(--card2);border:1.5px solid var(--border);border-radius:16px;padding:20px;transition:all 0.25s;position:relative;overflow:hidden;animation:fadeIn 0.3s ease both;}
-.faculty-card:hover{border-color:rgba(79,142,247,0.4);transform:translateY(-2px);box-shadow:0 12px 30px rgba(0,0,0,0.3);}
-.faculty-card.selected{border-color:var(--success);background:rgba(67,233,123,0.06);}
-.faculty-card.selected::after{content:'✓ Selected';position:absolute;top:14px;right:14px;background:linear-gradient(135deg,var(--success),#00e676);color:#0a1a10;font-size:11px;font-weight:700;padding:3px 10px;border-radius:20px;}
-@keyframes fadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
-.fc-top{display:flex;align-items:flex-start;gap:14px;}
-.fc-avatar{width:46px;height:46px;border-radius:12px;background:linear-gradient(135deg,var(--accent),var(--accent2));display:flex;align-items:center;justify-content:center;font-size:18px;font-weight:700;color:white;flex-shrink:0;font-family:'DM Serif Display',serif;}
-.fc-name{font-size:15px;font-weight:700;color:white;margin-bottom:4px;}
-.fc-subject-badge{display:inline-block;background:rgba(79,142,247,0.12);border:1px solid rgba(79,142,247,0.2);color:var(--accent);border-radius:6px;padding:2px 10px;font-size:11px;font-weight:600;}
-.fc-meta{display:flex;flex-wrap:wrap;gap:12px;margin-top:12px;}
-.meta-chip{display:flex;align-items:center;gap:5px;color:var(--muted);font-size:12px;}
-.rating-bar{display:flex;align-items:center;gap:8px;margin-top:12px;}
-.rating-fill{flex:1;height:4px;background:rgba(255,255,255,0.08);border-radius:99px;overflow:hidden;}
-.rating-fill-inner{height:100%;border-radius:99px;background:linear-gradient(to right,#ffd700,#ffb347);transition:width 0.5s ease;}
-.rating-val{font-size:12px;color:var(--warn);font-weight:600;}
-.btn-select{width:100%;padding:11px;margin-top:14px;border:none;border-radius:10px;background:linear-gradient(135deg,var(--accent),var(--accent2));color:white;font-family:'Space Grotesk',sans-serif;font-size:13px;font-weight:600;cursor:pointer;transition:all 0.2s;}
-.faculty-card.selected .btn-select{background:linear-gradient(135deg,var(--success),#00e676);color:#0a1a10;}
-.selection-item{display:flex;align-items:center;justify-content:space-between;padding:12px 14px;background:rgba(67,233,123,0.06);border:1px solid rgba(67,233,123,0.15);border-radius:12px;margin-bottom:10px;animation:fadeIn 0.2s ease;}
-.sel-subject{font-size:13px;font-weight:600;color:var(--text);}
-.sel-faculty{font-size:12px;color:var(--success);margin-top:2px;}
-.btn-remove{background:rgba(255,107,157,0.1);border:1px solid rgba(255,107,157,0.2);color:var(--error);border-radius:8px;padding:4px 10px;font-size:11px;font-weight:600;cursor:pointer;font-family:'Space Grotesk',sans-serif;transition:all 0.2s;}
-.btn-remove:hover{background:rgba(255,107,157,0.2);}
-.btn-continue{width:100%;padding:13px;border:none;border-radius:12px;background:linear-gradient(135deg,#43e97b,#38f9d7);color:#0a1a10;font-family:'Space Grotesk',sans-serif;font-size:14px;font-weight:700;cursor:pointer;transition:all 0.25s;}
-.btn-continue:hover{transform:translateY(-2px);box-shadow:0 10px 24px rgba(67,233,123,0.35);}
-.progress-bar{margin:16px 0;background:rgba(255,255,255,0.06);border-radius:99px;height:5px;overflow:hidden;}
-.progress-fill{height:100%;background:linear-gradient(to right,var(--accent),var(--accent2));border-radius:99px;transition:width 0.4s ease;}
-.progress-label{font-size:11px;color:var(--muted);margin-bottom:6px;display:flex;justify-content:space-between;}
-.empty{text-align:center;padding:32px 16px;color:var(--muted);}
-.empty-icon{font-size:36px;margin-bottom:10px;opacity:0.4;}
+.sub-list{display:flex;flex-direction:column;gap:6px;}
+.sub-pill{display:flex;align-items:center;gap:9px;padding:10px 13px;background:rgba(255,255,255,0.04);border:1.5px solid var(--border);border-radius:11px;cursor:pointer;transition:all 0.2s;font-size:13px;font-weight:500;}
+.sub-pill:hover{border-color:rgba(79,142,247,0.4);background:rgba(79,142,247,0.05);}
+.sub-pill.active-sub{border-color:var(--success);background:rgba(67,233,123,0.06);color:var(--success);}
+.sub-pill.done{border-color:rgba(67,233,123,0.35);}
+.sub-num{width:21px;height:21px;background:rgba(79,142,247,0.15);border-radius:6px;font-size:10px;font-weight:700;display:flex;align-items:center;justify-content:center;color:var(--accent);flex-shrink:0;}
+.fac-grid{display:flex;flex-direction:column;gap:13px;}
+.fac-card{background:var(--card2);border:1.5px solid var(--border);border-radius:16px;padding:17px;transition:all 0.25s;position:relative;overflow:hidden;animation:fi 0.3s ease both;}
+.fac-card:hover{border-color:rgba(79,142,247,0.4);transform:translateY(-2px);box-shadow:0 12px 30px rgba(0,0,0,0.3);}
+.fac-card.sel-card{border-color:var(--success);background:rgba(67,233,123,0.05);}
+.fac-card.full-card{border-color:rgba(255,107,157,0.2);opacity:0.75;}
+.sel-badge{position:absolute;top:12px;right:12px;background:linear-gradient(135deg,var(--success),#00e676);color:#0a1a10;font-size:10px;font-weight:700;padding:3px 10px;border-radius:20px;}
+.full-badge{position:absolute;top:12px;right:12px;background:rgba(255,107,157,0.12);border:1px solid rgba(255,107,157,0.3);color:var(--error);font-size:10px;font-weight:700;padding:3px 10px;border-radius:20px;}
+@keyframes fi{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+.fc-top{display:flex;align-items:flex-start;gap:12px;}
+.fc-av{width:42px;height:42px;border-radius:11px;background:linear-gradient(135deg,var(--accent),var(--accent2));display:flex;align-items:center;justify-content:center;font-size:15px;font-weight:700;color:white;flex-shrink:0;font-family:'DM Serif Display',serif;}
+.fc-name{font-size:14px;font-weight:700;color:white;margin-bottom:3px;}
+.fc-subj{display:inline-block;background:rgba(79,142,247,0.12);border:1px solid rgba(79,142,247,0.2);color:var(--accent);border-radius:6px;padding:2px 8px;font-size:10px;font-weight:600;}
+.fc-meta{display:flex;flex-wrap:wrap;gap:9px;margin-top:9px;}
+.mc{display:flex;align-items:center;gap:4px;color:var(--muted);font-size:11px;}
+.rt-bar{display:flex;align-items:center;gap:7px;margin-top:9px;}
+.rt-fill{flex:1;height:4px;background:rgba(255,255,255,0.07);border-radius:99px;overflow:hidden;}
+.rt-inner{height:100%;border-radius:99px;background:linear-gradient(to right,#ffd700,#ffb347);transition:width 0.5s ease;}
+.rt-val{font-size:11px;color:var(--warn);font-weight:600;}
+.en-wrap{margin-top:9px;}
+.en-bar{background:rgba(255,255,255,0.06);border-radius:99px;height:4px;overflow:hidden;}
+.en-fill{height:100%;border-radius:99px;transition:width 0.4s ease;}
+.en-lbl{font-size:10px;margin-top:3px;display:flex;justify-content:space-between;}
+.btn-sel{width:100%;padding:10px;margin-top:11px;border:none;border-radius:10px;background:linear-gradient(135deg,var(--accent),var(--accent2));color:white;font-family:'Space Grotesk',sans-serif;font-size:12px;font-weight:600;cursor:pointer;transition:all 0.2s;}
+.fac-card.sel-card .btn-sel{background:linear-gradient(135deg,var(--success),#00e676);color:#0a1a10;}
+.fac-card.full-card .btn-sel{background:rgba(255,107,157,0.1);border:1px solid rgba(255,107,157,0.25);color:var(--error);cursor:not-allowed;}
+.sel-item{display:flex;align-items:center;justify-content:space-between;padding:9px 11px;background:rgba(67,233,123,0.06);border:1px solid rgba(67,233,123,0.15);border-radius:10px;margin-bottom:7px;animation:fi 0.2s ease;}
+.si-sub{font-size:12px;font-weight:600;color:var(--text);}
+.si-fac{font-size:11px;color:var(--success);margin-top:2px;}
+.btn-rm{background:rgba(255,107,157,0.1);border:1px solid rgba(255,107,157,0.2);color:var(--error);border-radius:7px;padding:4px 9px;font-size:10px;font-weight:600;cursor:pointer;font-family:'Space Grotesk',sans-serif;}
+.prog-bar{margin:10px 0;background:rgba(255,255,255,0.06);border-radius:99px;height:5px;overflow:hidden;}
+.prog-fill{height:100%;background:linear-gradient(to right,var(--accent),var(--accent2));border-radius:99px;transition:width 0.4s ease;}
+.prog-lbl{font-size:10px;color:var(--muted);margin-bottom:4px;display:flex;justify-content:space-between;}
+.btn-cont{width:100%;padding:12px;border:none;border-radius:12px;background:linear-gradient(135deg,#43e97b,#38f9d7);color:#0a1a10;font-family:'Space Grotesk',sans-serif;font-size:13px;font-weight:700;cursor:pointer;transition:all 0.25s;}
+.btn-cont:hover{transform:translateY(-2px);box-shadow:0 10px 24px rgba(67,233,123,0.35);}
+.empty{text-align:center;padding:26px 12px;color:var(--muted);}
+.empty-icon{font-size:30px;margin-bottom:7px;opacity:0.4;}
+.alert{border-radius:12px;padding:13px 15px;font-size:12px;margin-bottom:14px;display:none;}
+.alert.show{display:block;}
+.alert.warn{background:rgba(255,179,71,0.08);border:1px solid rgba(255,179,71,0.25);color:var(--warn);}
+.alert.error{background:rgba(255,107,157,0.08);border:1px solid rgba(255,107,157,0.25);color:var(--error);}
+.slbl{font-size:10px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--muted);margin-bottom:7px;}
 </style>
 </head>
 <body>
-
 <div class="orb orb1"></div>
 <div class="orb orb2"></div>
-
 <nav class="topnav">
-  <div class="nav-brand">
-    <div class="nav-logo">🎓</div>
-    Faculty<span class="dot">Sync</span>
-  </div>
+  <div class="nav-brand"><div class="nav-logo">🎓</div>Faculty<span class="dot">Sync</span></div>
   <div class="nav-right">
-    <div class="badge-student">🎒 Student Portal</div>
-    <span style="color:var(--muted);font-size:13px;" id="userIdDisplay"></span>
+    <div class="badge-stu">🎒 Student</div>
+    <div class="user-chip" id="uChip">—</div>
     <button class="btn-logout" onclick="logout()">Sign Out</button>
   </div>
 </nav>
-
 <div class="page">
-  <div class="page-header">
-    <h1>Faculty Selection</h1>
-    <p>Choose your preferred faculty for each subject this semester</p>
+  <div style="margin-bottom:20px">
+    <h1 style="font-size:24px;font-weight:700;color:white;margin-bottom:3px">Faculty Selection</h1>
+    <p style="color:var(--muted);font-size:13px">Your department and year are locked to your profile. Only unlocked semesters are available.</p>
   </div>
+  <div class="alert warn" id="sgpaAlert"></div>
   <div class="layout">
     <div class="sidebar">
-      <!-- FILTER -->
       <div class="card">
-        <div class="card-head">
-          <div class="card-icon ci-filter">🔍</div>
-          <div><div class="card-title">Filter</div><div class="card-sub">Select your class details</div></div>
-        </div>
-        <div class="field"><label>Department</label>
-          <select id="dept"><option value="">Select Department</option><option>CSE</option><option>ECE</option><option>MBA</option></select>
-        </div>
-        <div class="field"><label>Year</label>
-          <select id="year"><option value="">Select Year</option><option>1</option><option>2</option><option>3</option><option>4</option></select>
-        </div>
-        <div class="field"><label>Semester</label>
-          <select id="sem"><option value="">Select Semester</option><option>1</option><option>2</option></select>
+        <div class="card-head"><div class="ci ci-f">🏛️</div><div><div class="card-title">Department</div><div class="card-sub">Locked to your profile</div></div></div>
+        <div class="slbl">Select Department</div>
+        <div class="opt-list" id="deptOpts"></div>
+      </div>
+      <div class="card">
+        <div class="card-head"><div class="ci ci-f">📅</div><div><div class="card-title">Year of Study</div><div class="card-sub">Detected from reg number</div></div></div>
+        <div class="slbl">Select Year</div>
+        <div class="opt-list" id="yearOpts"></div>
+      </div>
+      <div class="card">
+        <div class="card-head"><div class="ci ci-f">🔒</div><div><div class="card-title">Semester</div><div class="card-sub">Only unlocked semesters</div></div></div>
+        <div class="slbl">Select Semester</div>
+        <div class="opt-list" id="semOpts">
+          <div style="font-size:12px;color:var(--muted);padding:8px">Loading lock status...</div>
         </div>
         <button class="btn-load" onclick="loadSubjects()">Load Subjects →</button>
       </div>
-
-      <!-- SUBJECTS -->
       <div class="card" id="subjectCard" style="display:none">
-        <div class="card-head">
-          <div class="card-icon ci-subject">📚</div>
-          <div><div class="card-title">Subjects</div><div class="card-sub">Click to view faculty</div></div>
-        </div>
-        <div class="subject-grid" id="subjects"></div>
+        <div class="card-head"><div class="ci ci-s">📚</div><div><div class="card-title">Subjects</div><div class="card-sub">Click to view faculty</div></div></div>
+        <div class="sub-list" id="subjects"></div>
       </div>
-
-      <!-- SELECTION -->
       <div class="card">
-        <div class="card-head">
-          <div class="card-icon ci-cart">🛒</div>
-          <div><div class="card-title">My Selection</div><div class="card-sub" id="selCount">0 subjects selected</div></div>
+        <div class="card-head"><div class="ci ci-c">🛒</div><div><div class="card-title">My Selection</div><div class="card-sub" id="selCount">0 selected</div></div></div>
+        <div id="progWrap" style="display:none">
+          <div class="prog-lbl"><span>Progress</span><span id="progText">0/0</span></div>
+          <div class="prog-bar"><div class="prog-fill" id="progFill" style="width:0%"></div></div>
         </div>
-        <div id="progressWrap" style="display:none">
-          <div class="progress-label"><span>Progress</span><span id="progressText">0/0</span></div>
-          <div class="progress-bar"><div class="progress-fill" id="progressFill" style="width:0%"></div></div>
-        </div>
-        <div id="selectionList">
-          <div class="empty"><div class="empty-icon">🗂️</div><div>No selections yet</div></div>
-        </div>
-        <button class="btn-continue" onclick="submitSelection()" style="margin-top:12px">Review & Continue →</button>
+        <div id="selList"><div class="empty"><div class="empty-icon">🗂️</div>No selections yet</div></div>
+        <button class="btn-cont" onclick="submitSelection()" style="margin-top:10px">Review &amp; Submit →</button>
       </div>
     </div>
-
-    <!-- FACULTY PANEL -->
     <div>
-      <div class="card" id="facultyCard">
+      <div class="card">
         <div class="card-head">
-          <div class="card-icon ci-faculty">👨‍🏫</div>
+          <div class="ci ci-fac">👨‍🏫</div>
           <div>
-            <div class="card-title" id="facultyCardTitle">Faculty List</div>
-            <div class="card-sub">Select a subject to view available faculty</div>
+            <div class="card-title" id="facCardTitle">Faculty List</div>
+            <div class="card-sub">Select a subject from the left to view faculty</div>
           </div>
         </div>
-        <div id="facultyList">
-          <div class="empty"><div class="empty-icon">👈</div><div>Load subjects first, then click a subject</div></div>
+        <div id="facList">
+          <div class="empty"><div class="empty-icon">👈</div>Load subjects first, then click a subject</div>
         </div>
       </div>
     </div>
@@ -169,255 +168,286 @@ body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(
 </div>
 
 <script>
-// ── AUTH CHECK ──
-const token   = localStorage.getItem("token");
-const role    = localStorage.getItem("role");
-const userId  = localStorage.getItem("userId");
+// ── AUTH ──
+const token  = localStorage.getItem("token");
+const role   = localStorage.getItem("role");
+const userId = localStorage.getItem("userId");
+const myDept = (localStorage.getItem("department") || "").toUpperCase();
+const myYear = parseInt(localStorage.getItem("year")) || 0;
+const sgpaRaw = localStorage.getItem("sgpa");
+const mySgpa  = (sgpaRaw !== "" && sgpaRaw !== null && sgpaRaw !== "null") ? parseFloat(sgpaRaw) : null;
 
-if (!token || role !== "student") {
-  window.location = "login.html";
-}
-document.getElementById("userIdDisplay").textContent = userId || "";
+if (!token || role !== "student") window.location.href = "login.html";
+
+document.getElementById("uChip").innerHTML =
+  `<strong>${userId}</strong>${myDept ? " · " + myDept : ""}${myYear ? " Y" + myYear : ""}${mySgpa !== null ? " · SGPA:" + mySgpa : ""}`;
 
 // ── STATE ──
-let selected       = {};  // { subject: facultyName }
+let selected       = {};
 let currentSubject = "";
 let totalSubjects  = 0;
-let allSubjects    = []; // list of subject names from DB
-let currentDept, currentYear, currentSem;
+let currentDept    = myDept;
+let currentYear    = String(myYear);
+let currentSem     = "";
+let semStatuses    = [];
+let allFacData     = [];
 
-// ── API HELPER ──
-async function api(method, path, body = null) {
-  const opts = {
-    method,
-    headers: { "Content-Type": "application/json", "Authorization": token }
-  };
-  if (body) opts.body = JSON.stringify(body);
-  const res  = await fetch(`/api${path}`, opts);
-  const data = await res.json();
-  return { ok: res.ok, data };
+async function api(m, p, b = null) {
+  const o = { method: m, headers: { "Content-Type": "application/json", "Authorization": token } };
+  if (b) o.body = JSON.stringify(b);
+  const r = await fetch("/api" + p, o);
+  const d = await r.json();
+  return { ok: r.ok, data: d };
 }
 
-function logout() {
-  localStorage.clear();
-  window.location = "login.html";
+function logout() { localStorage.clear(); window.location.href = "login.html"; }
+
+// Safe id for HTML — replace non-alphanumeric with underscore
+function safeId(str) { return str.replace(/[^a-zA-Z0-9]/g, "_"); }
+
+// ── RENDER DEPTS ──
+function renderDepts() {
+  const DEPTS  = ["CSE","ECE","MBA"];
+  const labels = { "CSE":"💻 CSE","ECE":"⚡ ECE","MBA":"💼 MBA" };
+  document.getElementById("deptOpts").innerHTML = DEPTS.map(d => {
+    const isMine = d === myDept;
+    const isSel  = currentDept === d;
+    return `<div class="opt ${isMine ? "mine dept-mine" : "locked-opt"} ${isSel ? "sel" : ""}"
+      onclick="${isMine ? `chooseDept('${d}')` : `showLock('Department')`}">
+      <span>${labels[d] || d}</span>
+      <span>${isMine ? "🔓" : "🔒"}</span>
+    </div>`;
+  }).join("");
+}
+
+function chooseDept(d) {
+  if (d !== myDept) { showLock("Department"); return; }
+  currentDept = d; renderDepts();
+}
+
+// ── RENDER YEARS ──
+function renderYears() {
+  const YLABELS = ["","1st Year","2nd Year","3rd Year","4th Year"];
+  document.getElementById("yearOpts").innerHTML = [1,2,3,4].map(y => {
+    const isMine = y === myYear;
+    const isSel  = parseInt(currentYear) === y;
+    return `<div class="opt ${isMine ? "mine" : "locked-opt"} ${isSel ? "sel" : ""}"
+      onclick="${isMine ? `chooseYear(${y})` : `showLock('Year')`}">
+      <span>Year ${y} — ${YLABELS[y]}</span>
+      <span>${isMine ? "🔓" : "🔒"}</span>
+    </div>`;
+  }).join("");
+}
+
+function chooseYear(y) {
+  if (y !== myYear) { showLock("Year"); return; }
+  currentYear = String(y); renderYears();
+}
+
+// ── RENDER SEMESTERS (live lock status) ──
+async function renderSems() {
+  const el = document.getElementById("semOpts");
+  if (!currentDept || !currentYear) {
+    el.innerHTML = `<div style="font-size:12px;color:var(--muted);padding:8px">Select dept &amp; year first</div>`;
+    return;
+  }
+  const { ok, data } = await api("GET", `/semester?department=${currentDept}&year=${currentYear}`);
+  semStatuses = ok ? data : [];
+
+  el.innerHTML = [1, 2].map(s => {
+    const st     = semStatuses.find(x => x.semester === String(s));
+    const isOpen = !!(st && !st.isLocked);
+    const minS   = st?.minSgpa || 0;
+    const sgFail = minS > 0 && mySgpa !== null && mySgpa < minS;
+    const canUse = isOpen && !sgFail;
+    const isSel  = currentSem === String(s);
+    return `<div class="sem-opt ${canUse ? "sem-open" : "sem-locked"} ${isSel && canUse ? "sel" : ""}"
+      onclick="${canUse ? `chooseSem(${s}, this)` : `showSemLock(${s},${isOpen},${sgFail},${minS})`}">
+      <span>Semester ${s}</span>
+      <div style="display:flex;align-items:center;gap:6px">
+        ${minS > 0 ? `<span style="font-size:10px;color:var(--muted)">Min ${minS}</span>` : ""}
+        <span class="sem-badge ${canUse ? "sb-open" : "sb-locked"}">${canUse ? "🔓 Open" : "🔒 Locked"}</span>
+      </div>
+    </div>`;
+  }).join("");
+}
+
+function chooseSem(s, el) {
+  currentSem = String(s);
+  document.querySelectorAll(".sem-opt").forEach(e => e.classList.remove("sel"));
+  el.classList.add("sel");
+}
+
+function showLock(field) {
+  alert(`🔒 ${field} is locked to your profile.`);
+}
+
+function showSemLock(s, isOpen, sgFail, minS) {
+  if (sgFail) alert(`⚠️ Your SGPA (${mySgpa ?? "not set"}) is below the minimum requirement (${minS}) for Semester ${s}.`);
+  else alert(`🔒 Semester ${s} is locked by admin. Please wait for it to be unlocked.`);
 }
 
 // ── LOAD SUBJECTS ──
-// Gets all faculty from MongoDB for dept/year/sem
-// Extracts unique subject names from the results
 async function loadSubjects() {
-  const dept = document.getElementById("dept").value;
-  const year = document.getElementById("year").value;
-  const sem  = document.getElementById("sem").value;
-
-  if (!dept || !year || !sem) {
-    alert("Please select Department, Year and Semester.");
-    return;
+  if (!currentDept || !currentYear || !currentSem) {
+    alert("Select department, year and semester first."); return;
   }
+  const { ok, data } = await api("GET", `/semester/check?department=${currentDept}&year=${currentYear}&semester=${currentSem}`);
+  if (!ok || data.isLocked) { alert("This semester is locked. Please wait for admin to unlock it."); return; }
 
-  currentDept = dept;
-  currentYear = year;
-  currentSem  = sem;
-
-  const { ok, data } = await api("GET", `/faculty?department=${dept}&year=${year}&semester=${sem}`);
-
-  if (!ok || data.length === 0) {
-    alert("No subjects available for this selection.");
-    return;
+  if (data.minSgpa > 0 && mySgpa !== null && mySgpa < data.minSgpa) {
+    const al = document.getElementById("sgpaAlert");
+    al.textContent = `⚠️ Your SGPA (${mySgpa}) is below the minimum (${data.minSgpa}) required for Semester ${currentSem}. Contact your coordinator.`;
+    al.classList.add("show"); return;
   }
+  document.getElementById("sgpaAlert").classList.remove("show");
 
-  // Get unique subjects from faculty list
-  const subjectSet = [...new Set(data.map(f => f.subject))];
-  allSubjects  = subjectSet;
-  totalSubjects = subjectSet.length;
+  const { ok: fok, data: fdata } = await api("GET", `/faculty?department=${currentDept}&year=${currentYear}&semester=${currentSem}`);
+  allFacData = fdata || [];
+  if (!fok || !allFacData.length) { alert("No subjects available for this selection."); return; }
 
-  const container = document.getElementById("subjects");
-  container.innerHTML = "";
+  const subs = [...new Set(allFacData.map(f => f.subject))];
+  totalSubjects = subs.length;
 
-  subjectSet.forEach((sub, i) => {
-    const done = selected[sub] ? true : false;
-    const div  = document.createElement("div");
-    div.className = "subject-pill" + (done ? " done" : "");
-    div.id        = "subpill_" + sub;
-    div.innerHTML = `
-      <div class="subject-num">${i + 1}</div>
-      <span>${sub}</span>
-      ${done ? '<span style="margin-left:auto">✅</span>' : ""}
-    `;
-    div.onclick = () => showFaculty(sub);
-    container.appendChild(div);
-  });
+  document.getElementById("subjects").innerHTML = subs.map((s, i) => {
+    const done = !!selected[s];
+    const sid  = safeId(s);
+    return `<div class="sub-pill ${done ? "done" : ""}" id="sp_${sid}" onclick="showFac(this);" data-subject="${s}">
+      <div class="sub-num">${i + 1}</div><span style="flex:1">${s}</span>${done ? `<span class="dc">✅</span>` : ""}
+    </div>`;
+  }).join("");
 
   document.getElementById("subjectCard").style.display = "block";
-  updateProgress();
+  updateProg();
 }
 
-// ── SHOW FACULTY FOR A SUBJECT ──
-// Fetches faculty list from MongoDB
-async function showFaculty(subject) {
+// ── SHOW FACULTY ──
+function showFac(pillEl) {
+  const subject = pillEl ? pillEl.dataset.subject : currentSubject;
   currentSubject = subject;
 
-  document.querySelectorAll(".subject-pill").forEach(p => p.classList.remove("active-sub"));
-  const pill = document.getElementById("subpill_" + subject);
+  document.querySelectorAll(".sub-pill").forEach(p => p.classList.remove("active-sub"));
+  const pill = document.querySelector(`.sub-pill[data-subject="${subject}"]`);
   if (pill) pill.classList.add("active-sub");
 
-  document.getElementById("facultyCardTitle").textContent = `Faculty for: ${subject}`;
-  document.getElementById("facultyList").innerHTML = `<div class="empty"><div class="empty-icon">⏳</div><div>Loading faculty...</div></div>`;
+  document.getElementById("facCardTitle").textContent = `Faculty for: ${subject}`;
+  const list = document.getElementById("facList");
+  const facs = allFacData.filter(f => f.subject === subject);
+  if (!facs.length) { list.innerHTML = `<div class="empty"><div class="empty-icon">📭</div>No faculty found</div>`; return; }
 
-  const { ok, data } = await api("GET", `/faculty?department=${currentDept}&year=${currentYear}&semester=${currentSem}`);
-
-  if (!ok) return;
-
-  // Filter only faculty for this subject
-  const list = data.filter(f => f.subject === subject);
-
-  if (list.length === 0) {
-    document.getElementById("facultyList").innerHTML = `<div class="empty"><div class="empty-icon">📭</div><div>No faculty found for this subject</div></div>`;
-    return;
-  }
-
-  let html = '<div class="faculty-grid">';
-  list.forEach(f => {
-    const isSelected  = selected[subject] === f.name;
-    const ratingPct   = f.rating ? (f.rating / 5) * 100 : 0;
-    const initials    = f.name.split(" ").map(w => w[0]).join("").substring(0, 2).toUpperCase();
-
-    html += `
-    <div class="faculty-card ${isSelected ? "selected" : ""}">
+  list.innerHTML = `<div class="fac-grid">` + facs.map(f => {
+    const isSel  = selected[subject]?.name === f.name;
+    const isFull = (f.enrolledCount || 0) >= (f.studentLimit || 60);
+    const rpct   = f.rating ? (f.rating / 5) * 100 : 0;
+    const epct   = Math.min(100, (f.enrolledCount || 0) / (f.studentLimit || 60) * 100);
+    const fc     = isFull ? "#ff6b9d" : epct > 80 ? "#ffb347" : "#43e97b";
+    const init   = f.name.split(" ").map(w => w[0]).join("").substring(0, 2).toUpperCase();
+    const canSel = !isFull || isSel;
+    return `<div class="fac-card ${isSel ? "sel-card" : ""} ${isFull && !isSel ? "full-card" : ""}">
+      ${isSel ? `<div class="sel-badge">✓ Selected</div>` : isFull ? `<div class="full-badge">Access Full</div>` : ""}
       <div class="fc-top">
-        <div class="fc-avatar">${initials}</div>
-        <div>
-          <div class="fc-name">${f.name}</div>
-          <div class="fc-subject-badge">${f.subject}</div>
-        </div>
+        <div class="fc-av">${init}</div>
+        <div><div class="fc-name">${f.name}</div><div class="fc-subj">${f.subject}</div></div>
       </div>
       <div class="fc-meta">
-        ${f.experience ? `<div class="meta-chip">🏆 ${f.experience}</div>` : ""}
-        ${f.email      ? `<div class="meta-chip">📧 ${f.email}</div>`      : ""}
+        ${f.experience ? `<div class="mc">🏆 ${f.experience}</div>` : ""}
+        ${f.email      ? `<div class="mc">📧 ${f.email}</div>`        : ""}
+        <div class="mc">📅 ${f.periodsPerWeek || 4} periods/wk</div>
       </div>
-      ${f.rating ? `
-      <div class="rating-bar">
-        <div class="rating-fill"><div class="rating-fill-inner" style="width:${ratingPct}%"></div></div>
-        <div class="rating-val">⭐ ${f.rating}</div>
-      </div>` : ""}
-      <button class="btn-select" onclick="selectFaculty('${subject}','${f.name}')">
-        ${isSelected ? "✓ Selected" : "Select Faculty"}
+      ${f.rating ? `<div class="rt-bar"><div class="rt-fill"><div class="rt-inner" style="width:${rpct}%"></div></div><div class="rt-val">⭐ ${f.rating}</div></div>` : ""}
+      <div class="en-wrap">
+        <div class="en-bar"><div class="en-fill" style="width:${epct}%;background:${fc}"></div></div>
+        <div class="en-lbl"><span style="color:${fc}">${f.enrolledCount || 0}/${f.studentLimit || 60} enrolled</span><span style="color:var(--muted)">${isFull ? "FULL" : Math.round(epct) + "%"}</span></div>
+      </div>
+      <button class="btn-sel" data-subject="${subject}" data-name="${f.name}" data-id="${f._id}" data-full="${isFull && !isSel ? "1" : "0"}" onclick="chooseFacFromBtn(this)">
+        ${isSel ? "✓ Selected" : isFull ? "🔴 Access Full" : "Select Faculty"}
       </button>
     </div>`;
-  });
-  html += "</div>";
-
-  document.getElementById("facultyList").innerHTML = html;
+  }).join("") + `</div>`;
 }
 
-// ── SELECT FACULTY ──
-function selectFaculty(subject, name) {
-  selected[subject] = name;
-  // Save selection to localStorage temporarily
-  localStorage.setItem("studentSelection", JSON.stringify({
-    selections: Object.entries(selected).map(([sub, fac]) => ({ subject: sub, facultyName: fac })),
-    department: currentDept,
-    year:       currentYear,
-    semester:   currentSem
-  }));
-  updateSelection();
-  updateProgress();
-  showFaculty(subject);
-  // Mark pill as done
-  const pill = document.getElementById("subpill_" + subject);
+function chooseFacFromBtn(btn) {
+  if (btn.dataset.full === "1") return;
+  const subject = btn.dataset.subject;
+  const name    = btn.dataset.name;
+  const id      = btn.dataset.id;
+  chooseFac(subject, name, id);
+}
+
+function chooseFac(subject, name, id) {
+  selected[subject] = { name, id };
+  saveLS(); updateSelPanel(); updateProg();
+  // Re-render faculty list to reflect selection
+  showFac(null);
+  // Mark subject pill as done
+  const pill = document.querySelector(`.sub-pill[data-subject="${subject}"]`);
   if (pill) {
     pill.classList.add("done");
-    if (!pill.querySelector(".done-check")) {
-      pill.innerHTML += `<span class="done-check" style="margin-left:auto">✅</span>`;
-    }
+    if (!pill.querySelector(".dc")) pill.innerHTML += `<span class="dc">✅</span>`;
   }
 }
 
-// ── UPDATE SELECTION PANEL ──
-function updateSelection() {
-  const panel = document.getElementById("selectionList");
-  const count = Object.keys(selected).length;
-  document.getElementById("selCount").textContent = count + " subject" + (count !== 1 ? "s" : "") + " selected";
-
-  if (count === 0) {
-    panel.innerHTML = `<div class="empty"><div class="empty-icon">🗂️</div><div>No selections yet</div></div>`;
-    return;
-  }
-
-  let html = "";
-  for (const sub in selected) {
-    html += `
-    <div class="selection-item">
-      <div>
-        <div class="sel-subject">${sub}</div>
-        <div class="sel-faculty">👨‍🏫 ${selected[sub]}</div>
-      </div>
-      <button class="btn-remove" onclick="removeSelection('${sub}')">✕</button>
-    </div>`;
-  }
-  panel.innerHTML = html;
+function updateSelPanel() {
+  const panel = document.getElementById("selList");
+  const cnt   = Object.keys(selected).length;
+  document.getElementById("selCount").textContent = `${cnt} subject${cnt !== 1 ? "s" : ""} selected`;
+  if (!cnt) { panel.innerHTML = `<div class="empty"><div class="empty-icon">🗂️</div>No selections yet</div>`; return; }
+  panel.innerHTML = Object.entries(selected).map(([s, f]) => `
+    <div class="sel-item">
+      <div><div class="si-sub">${s}</div><div class="si-fac">👨‍🏫 ${f.name}</div></div>
+      <button class="btn-rm" data-subject="${s}" onclick="rmSelFromBtn(this)">✕</button>
+    </div>`).join("");
 }
 
-function removeSelection(sub) {
-  delete selected[sub];
-  updateSelection();
-  updateProgress();
-  if (currentSubject === sub) showFaculty(sub);
-  const pill = document.getElementById("subpill_" + sub);
-  if (pill) {
-    const check = pill.querySelector(".done-check");
-    if (check) check.remove();
-    pill.classList.remove("done");
-  }
+function rmSelFromBtn(btn) { rmSel(btn.dataset.subject); }
+
+function rmSel(s) {
+  delete selected[s];
+  saveLS(); updateSelPanel(); updateProg();
+  if (currentSubject === s) showFac(null);
+  const p = document.querySelector(`.sub-pill[data-subject="${s}"]`);
+  if (p) { p.querySelector(".dc")?.remove(); p.classList.remove("done"); }
 }
 
-function updateProgress() {
-  const count = Object.keys(selected).length;
+function updateProg() {
+  const cnt = Object.keys(selected).length;
   if (totalSubjects > 0) {
-    document.getElementById("progressWrap").style.display = "block";
-    const pct = Math.min(100, (count / totalSubjects) * 100);
-    document.getElementById("progressFill").style.width   = pct + "%";
-    document.getElementById("progressText").textContent   = count + "/" + totalSubjects;
+    document.getElementById("progWrap").style.display = "block";
+    const pct = Math.min(100, (cnt / totalSubjects) * 100);
+    document.getElementById("progFill").style.width     = pct + "%";
+    document.getElementById("progText").textContent     = `${cnt}/${totalSubjects}`;
   }
 }
 
-// ── SUBMIT SELECTION ──
-// Saves to MongoDB via backend API
-async function submitSelection() {
-  if (Object.keys(selected).length === 0) {
-    alert("Please select at least one faculty before continuing.");
-    return;
-  }
-
-  const selections = Object.entries(selected).map(([subject, facultyName]) => ({ subject, facultyName }));
-
-  // Save to backend MongoDB
-  const { ok, data } = await api("POST", "/selection", {
-    studentId:  userId,
-    department: currentDept,
-    year:       currentYear,
-    semester:   currentSem,
-    selections
-  });
-
-  if (!ok) {
-    alert("Error saving selection: " + data.message);
-    return;
-  }
-
-  // Also keep in localStorage for summary/timetable pages
+function saveLS() {
   localStorage.setItem("studentSelection", JSON.stringify({
-    selections,
-    department: currentDept,
-    year:       currentYear,
-    semester:   currentSem
+    selections: Object.entries(selected).map(([s, f]) => ({ subject: s, facultyName: f.name, facultyId: f.id })),
+    department: currentDept, year: currentYear, semester: currentSem,
+  }));
+}
+
+async function submitSelection() {
+  if (!Object.keys(selected).length) { alert("Select at least one faculty."); return; }
+  if (!currentSem) { alert("Select a semester first."); return; }
+
+  const selections = Object.entries(selected).map(([subject, f]) => ({
+    subject, facultyName: f.name, facultyId: f.id,
   }));
 
-  window.location = "summary.html";
+  const { ok, data } = await api("POST", "/selection", {
+    studentId: userId, department: currentDept, year: currentYear, semester: currentSem, selections,
+  });
+
+  if (!ok) { alert("Error: " + data.message); return; }
+  saveLS();
+  window.location.href = "summary.html";
 }
 
-updateSelection();
+// ── INIT ──
+renderDepts();
+renderYears();
+renderSems();
+updateSelPanel();
 </script>
 </body>
 </html>

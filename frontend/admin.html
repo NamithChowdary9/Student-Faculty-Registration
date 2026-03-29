@@ -13,487 +13,795 @@ body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(
 .orb{position:fixed;border-radius:50%;filter:blur(130px);opacity:0.1;pointer-events:none;z-index:0;}
 .orb1{width:600px;height:600px;background:var(--accent2);top:-200px;left:-200px;}
 .orb2{width:400px;height:400px;background:var(--accent);bottom:-100px;right:100px;}
-.topnav{position:sticky;top:0;z-index:100;background:rgba(10,15,30,0.85);backdrop-filter:blur(20px);border-bottom:1px solid var(--border);padding:0 36px;height:64px;display:flex;align-items:center;justify-content:space-between;}
-.nav-brand{display:flex;align-items:center;gap:12px;font-family:'DM Serif Display',serif;font-size:20px;color:white;}
+.topnav{position:sticky;top:0;z-index:100;background:rgba(10,15,30,0.9);backdrop-filter:blur(20px);border-bottom:1px solid var(--border);padding:0 24px;height:64px;display:flex;align-items:center;justify-content:space-between;}
+.nav-brand{display:flex;align-items:center;gap:10px;font-family:'DM Serif Display',serif;font-size:20px;color:white;}
 .nav-logo{width:36px;height:36px;background:linear-gradient(135deg,var(--accent),var(--accent2));border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:18px;}
 .dot{color:var(--accent);}
-.nav-right{display:flex;align-items:center;gap:16px;}
+.nav-right{display:flex;align-items:center;gap:12px;}
 .badge-admin{background:rgba(79,142,247,0.15);border:1px solid rgba(79,142,247,0.3);color:var(--accent);border-radius:20px;padding:5px 14px;font-size:12px;font-weight:600;}
-.btn-logout{background:rgba(255,107,157,0.1);border:1px solid rgba(255,107,157,0.25);color:#ff6b9d;border-radius:10px;padding:8px 18px;font-family:'Space Grotesk',sans-serif;font-size:13px;font-weight:600;cursor:pointer;transition:all 0.2s;}
+.btn-logout{background:rgba(255,107,157,0.1);border:1px solid rgba(255,107,157,0.25);color:#ff6b9d;border-radius:10px;padding:8px 16px;font-family:'Space Grotesk',sans-serif;font-size:13px;font-weight:600;cursor:pointer;transition:all 0.2s;}
 .btn-logout:hover{background:rgba(255,107,157,0.2);}
-.page{max-width:1200px;margin:0 auto;padding:32px 24px;position:relative;z-index:1;}
-.page-header{margin-bottom:32px;}
-.page-header h1{font-size:28px;font-weight:700;color:white;margin-bottom:4px;}
-.page-header p{color:var(--muted);font-size:14px;}
-.stat-bar{display:flex;gap:16px;margin-bottom:28px;flex-wrap:wrap;}
-.stat{flex:1;min-width:120px;background:var(--card);border:1px solid var(--border);border-radius:14px;padding:16px 18px;text-align:center;}
-.stat-num{font-size:28px;font-weight:700;color:white;}
-.stat-label{font-size:11px;color:var(--muted);margin-top:4px;letter-spacing:0.5px;}
-.grid-2{display:grid;grid-template-columns:1fr 1.5fr;gap:24px;align-items:start;}
-@media(max-width:900px){.grid-2{grid-template-columns:1fr;}}
-.card{background:var(--card);border:1px solid var(--border);border-radius:20px;padding:28px;backdrop-filter:blur(20px);}
-.card-header{display:flex;align-items:center;gap:12px;margin-bottom:24px;padding-bottom:16px;border-bottom:1px solid var(--border);}
-.card-icon{width:42px;height:42px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:20px;}
-.icon-add{background:rgba(67,233,123,0.15);}
-.icon-list{background:rgba(79,142,247,0.15);}
-.card-title{font-size:17px;font-weight:700;color:white;}
-.card-subtitle{font-size:12px;color:var(--muted);margin-top:2px;}
-.form-row{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
-.field{margin-bottom:14px;}
-.field label{display:block;font-size:11px;font-weight:600;letter-spacing:1px;text-transform:uppercase;color:var(--muted);margin-bottom:6px;}
-.field select,.field input{width:100%;padding:11px 14px;background:rgba(255,255,255,0.05);border:1.5px solid var(--border);border-radius:10px;color:var(--text);font-family:'Space Grotesk',sans-serif;font-size:13px;outline:none;transition:all 0.2s;}
-.field select{appearance:none;-moz-appearance:none;-webkit-appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%238892b0' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 14px center;background-color:rgba(255,255,255,0.05);padding-right:38px;cursor:pointer;}
-.field select option{background:#1a2040;color:var(--text);}
-.field select:focus,.field input:focus{border-color:var(--accent);background:rgba(79,142,247,0.07);box-shadow:0 0 0 3px rgba(79,142,247,0.1);}
+.tab-bar{display:flex;gap:2px;padding:0 24px;background:rgba(10,15,30,0.7);border-bottom:1px solid var(--border);overflow-x:auto;}
+.tab-btn{padding:14px 18px;border:none;background:transparent;color:var(--muted);font-family:'Space Grotesk',sans-serif;font-size:13px;font-weight:600;cursor:pointer;border-bottom:2px solid transparent;transition:all 0.2s;white-space:nowrap;}
+.tab-btn:hover{color:var(--text);}
+.tab-btn.active{color:white;border-bottom-color:var(--accent);}
+.page{max-width:1300px;margin:0 auto;padding:24px 20px;position:relative;z-index:1;}
+.tab-pane{display:none;}
+.tab-pane.active{display:block;}
+.stat-bar{display:flex;gap:12px;margin-bottom:20px;flex-wrap:wrap;}
+.stat{flex:1;min-width:100px;background:var(--card);border:1px solid var(--border);border-radius:14px;padding:14px 16px;text-align:center;}
+.stat-num{font-size:26px;font-weight:700;color:white;}
+.stat-label{font-size:10px;color:var(--muted);margin-top:4px;letter-spacing:0.5px;text-transform:uppercase;}
+.grid-2{display:grid;grid-template-columns:1fr 1.5fr;gap:18px;align-items:start;}
+.grid-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px;align-items:start;}
+@media(max-width:900px){.grid-2,.grid-3{grid-template-columns:1fr;}}
+.card{background:var(--card);border:1px solid var(--border);border-radius:20px;padding:22px;backdrop-filter:blur(20px);}
+.card-header{display:flex;align-items:center;gap:10px;margin-bottom:18px;padding-bottom:12px;border-bottom:1px solid var(--border);}
+.card-icon{width:38px;height:38px;border-radius:11px;display:flex;align-items:center;justify-content:center;font-size:17px;}
+.ia{background:rgba(67,233,123,0.15);}.il{background:rgba(79,142,247,0.15);}.ik{background:rgba(255,179,71,0.15);}.ir{background:rgba(124,92,252,0.15);}.is{background:rgba(0,212,255,0.15);}.it{background:rgba(255,107,157,0.15);}
+.card-title{font-size:15px;font-weight:700;color:white;}
+.card-sub{font-size:11px;color:var(--muted);margin-top:1px;}
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+.field{margin-bottom:11px;}
+.field label{display:block;font-size:10px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--muted);margin-bottom:5px;}
+.field select,.field input,.field textarea{width:100%;padding:9px 12px;background:rgba(255,255,255,0.05);border:1.5px solid var(--border);border-radius:10px;color:var(--text);font-family:'Space Grotesk',sans-serif;font-size:13px;outline:none;transition:all 0.2s;}
+.field select{appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%238892b0' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 12px center;background-color:rgba(255,255,255,0.05);padding-right:34px;cursor:pointer;}
+.field select option{background:#1a2040;}
+.field select:focus,.field input:focus,.field textarea:focus{border-color:var(--accent);background:rgba(79,142,247,0.07);box-shadow:0 0 0 3px rgba(79,142,247,0.1);}
 .field input::placeholder{color:rgba(136,146,176,0.4);}
-.btn{padding:12px 22px;border:none;border-radius:12px;font-family:'Space Grotesk',sans-serif;font-size:14px;font-weight:600;cursor:pointer;transition:all 0.25s;}
-.btn-primary{background:linear-gradient(135deg,var(--accent),var(--accent2));color:white;width:100%;margin-top:4px;}
+.field textarea{resize:vertical;min-height:90px;}
+.btn{padding:10px 16px;border:none;border-radius:11px;font-family:'Space Grotesk',sans-serif;font-size:13px;font-weight:600;cursor:pointer;transition:all 0.25s;}
+.btn-primary{background:linear-gradient(135deg,var(--accent),var(--accent2));color:white;width:100%;padding:12px;margin-top:4px;}
 .btn-primary:hover{transform:translateY(-2px);box-shadow:0 10px 25px rgba(79,142,247,0.35);}
 .btn-primary:disabled{opacity:0.6;cursor:not-allowed;transform:none;}
-.btn-sm{padding:7px 14px;font-size:12px;border-radius:8px;}
+.btn-warn{background:rgba(255,179,71,0.1);border:1px solid rgba(255,179,71,0.25);color:var(--warn);width:100%;padding:12px;margin-top:4px;}
+.btn-warn:hover{transform:translateY(-2px);}
+.btn-sm{padding:6px 11px;font-size:11px;border-radius:8px;}
 .btn-edit{background:rgba(255,179,71,0.12);border:1px solid rgba(255,179,71,0.25);color:var(--warn);}
 .btn-edit:hover{background:rgba(255,179,71,0.2);}
-.btn-delete{background:rgba(255,107,157,0.12);border:1px solid rgba(255,107,157,0.25);color:var(--error);}
-.btn-delete:hover{background:rgba(255,107,157,0.2);}
-.filter-row{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-bottom:20px;}
-.faculty-item{background:var(--card2);border:1px solid var(--border);border-radius:14px;padding:16px;margin-bottom:12px;transition:all 0.2s;animation:fadeIn 0.3s ease both;}
-.faculty-item:hover{border-color:rgba(79,142,247,0.3);transform:translateX(3px);}
-@keyframes fadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
-.faculty-header{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:10px;}
-.faculty-name{font-size:15px;font-weight:700;color:white;}
-.faculty-subject{display:inline-block;background:rgba(79,142,247,0.12);border:1px solid rgba(79,142,247,0.2);color:var(--accent);border-radius:6px;padding:2px 10px;font-size:11px;font-weight:600;margin-top:4px;}
-.faculty-meta{display:flex;flex-wrap:wrap;gap:12px;margin-top:10px;}
-.meta-item{display:flex;align-items:center;gap:5px;color:var(--muted);font-size:12px;}
-.faculty-actions{display:flex;gap:8px;margin-top:12px;}
-.stars{color:#ffd700;font-size:13px;}
-.empty{text-align:center;padding:40px 20px;color:var(--muted);}
-.empty-icon{font-size:40px;margin-bottom:12px;opacity:0.4;}
-.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.7);backdrop-filter:blur(6px);display:none;align-items:center;justify-content:center;z-index:200;}
+.btn-del{background:rgba(255,107,157,0.12);border:1px solid rgba(255,107,157,0.25);color:var(--error);}
+.btn-del:hover{background:rgba(255,107,157,0.2);}
+.btn-ok{background:rgba(67,233,123,0.12);border:1px solid rgba(67,233,123,0.25);color:var(--success);}
+.btn-ok:hover{background:rgba(67,233,123,0.2);}
+.filter-row{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:14px;}
+.fac-item{background:var(--card2);border:1px solid var(--border);border-radius:13px;padding:13px;margin-bottom:9px;transition:all 0.2s;animation:fi 0.3s ease both;}
+.fac-item:hover{border-color:rgba(79,142,247,0.3);transform:translateX(2px);}
+@keyframes fi{from{opacity:0;transform:translateY(7px)}to{opacity:1;transform:translateY(0)}}
+.fac-name{font-size:14px;font-weight:700;color:white;}
+.fac-subj{display:inline-block;background:rgba(79,142,247,0.12);border:1px solid rgba(79,142,247,0.2);color:var(--accent);border-radius:6px;padding:2px 8px;font-size:10px;font-weight:600;margin-top:3px;}
+.fac-meta{display:flex;flex-wrap:wrap;gap:8px;margin-top:7px;}
+.meta-i{display:flex;align-items:center;gap:3px;color:var(--muted);font-size:11px;}
+.fac-acts{display:flex;gap:6px;margin-top:9px;flex-wrap:wrap;}
+.enroll-bar{background:rgba(255,255,255,0.06);border-radius:99px;height:4px;margin-top:7px;overflow:hidden;}
+.enroll-fill{height:100%;border-radius:99px;transition:width 0.4s ease;}
+.enroll-lbl{font-size:10px;color:var(--muted);margin-top:3px;display:flex;justify-content:space-between;}
+.pill{display:inline-flex;align-items:center;gap:3px;padding:3px 9px;border-radius:20px;font-size:10px;font-weight:700;}
+.pill-full{background:rgba(255,107,157,0.12);border:1px solid rgba(255,107,157,0.25);color:var(--error);}
+.pill-open{background:rgba(67,233,123,0.1);border:1px solid rgba(67,233,123,0.2);color:var(--success);}
+.sem-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:10px;margin-top:14px;}
+.sem-card{background:var(--card2);border:1.5px solid var(--border);border-radius:13px;padding:14px;transition:all 0.25s;}
+.sem-card.open{border-color:rgba(67,233,123,0.3);background:rgba(67,233,123,0.04);}
+.sem-card.locked{border-color:rgba(255,107,157,0.2);}
+.sem-card-title{font-size:13px;font-weight:700;color:white;margin-bottom:3px;}
+.sem-card-sub{font-size:11px;color:var(--muted);margin-bottom:10px;}
+.lock-badge{display:inline-flex;align-items:center;gap:4px;border-radius:20px;padding:4px 10px;font-size:11px;font-weight:700;}
+.lb-open{background:rgba(67,233,123,0.15);color:var(--success);border:1px solid rgba(67,233,123,0.3);}
+.lb-locked{background:rgba(255,107,157,0.1);color:var(--error);border:1px solid rgba(255,107,157,0.25);}
+.tog-btn{width:100%;margin-top:10px;padding:8px;border:none;border-radius:9px;font-family:'Space Grotesk',sans-serif;font-size:11px;font-weight:600;cursor:pointer;transition:all 0.2s;}
+.tb-unlock{background:linear-gradient(135deg,var(--success),#38f9d7);color:#0a1a10;}
+.tb-lock{background:rgba(255,107,157,0.12);border:1px solid rgba(255,107,157,0.25);color:var(--error);}
+.dtable{width:100%;border-collapse:collapse;}
+.dtable th{padding:9px 12px;font-size:10px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--muted);border-bottom:1px solid var(--border);text-align:left;}
+.dtable td{padding:9px 12px;font-size:12px;color:var(--text);border-bottom:1px solid rgba(255,255,255,0.03);}
+.dtable tr:last-child td{border-bottom:none;}
+.dtable tr:hover td{background:rgba(255,255,255,0.02);}
+.tt-wrap{overflow-x:auto;border-radius:13px;border:1px solid var(--border);}
+.tt-table{width:100%;border-collapse:collapse;min-width:680px;}
+.tt-table th{padding:11px 9px;font-size:10px;font-weight:700;letter-spacing:0.8px;text-transform:uppercase;color:var(--muted);border-bottom:1px solid var(--border);text-align:center;background:rgba(79,142,247,0.05);}
+.tt-table th:first-child{text-align:left;padding-left:14px;}
+.tt-table td{padding:9px;text-align:center;border-bottom:1px solid rgba(255,255,255,0.03);vertical-align:middle;}
+.tt-table td:first-child{text-align:left;padding-left:14px;font-weight:600;color:white;font-size:12px;}
+.tt-slot{border-radius:8px;padding:7px 9px;display:inline-block;font-size:10px;}
+.c1{background:rgba(79,142,247,0.1);border:1px solid rgba(79,142,247,0.2);}
+.c2{background:rgba(124,92,252,0.1);border:1px solid rgba(124,92,252,0.2);}
+.c3{background:rgba(67,233,123,0.07);border:1px solid rgba(67,233,123,0.2);}
+.c4{background:rgba(255,179,71,0.07);border:1px solid rgba(255,179,71,0.2);}
+.c5{background:rgba(0,212,255,0.07);border:1px solid rgba(0,212,255,0.2);}
+.sec-title{font-size:18px;font-weight:700;color:white;margin-bottom:3px;}
+.sec-sub{font-size:13px;color:var(--muted);margin-bottom:18px;}
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.75);backdrop-filter:blur(6px);display:none;align-items:center;justify-content:center;z-index:200;padding:16px;}
 .modal-overlay.open{display:flex;}
-.modal{background:#111827;border:1px solid var(--border);border-radius:20px;padding:32px;width:100%;max-width:420px;animation:popIn 0.3s ease;}
-@keyframes popIn{from{opacity:0;transform:scale(0.93)}to{opacity:1;transform:scale(1)}}
-.modal-icon{font-size:48px;text-align:center;margin-bottom:16px;}
-.modal h3{font-size:20px;text-align:center;color:white;margin-bottom:8px;}
-.modal p{text-align:center;color:var(--muted);font-size:14px;margin-bottom:24px;}
-.modal-btns{display:flex;gap:10px;}
-.modal-btns button{flex:1;padding:13px;border-radius:12px;font-family:'Space Grotesk',sans-serif;font-size:14px;font-weight:600;cursor:pointer;border:none;}
-.btn-cancel{background:var(--card2);border:1px solid var(--border)!important;color:var(--text);}
-.btn-confirm-del{background:linear-gradient(135deg,#ff4e7a,#ff6b9d);color:white;}
-.btn-confirm-ok{background:linear-gradient(135deg,var(--accent),var(--accent2));color:white;}
-.modal-edit .field input,.modal-edit .field select{background:rgba(255,255,255,0.05);border:1.5px solid var(--border);border-radius:10px;color:var(--text);font-family:'Space Grotesk',sans-serif;font-size:13px;outline:none;transition:all 0.2s;}
-.modal-edit .field input:focus,.modal-edit .field select:focus{border-color:var(--accent);}
+.modal{background:#0f1728;border:1px solid var(--border);border-radius:20px;padding:26px;width:100%;max-width:440px;animation:pop 0.3s ease;max-height:90vh;overflow-y:auto;}
+@keyframes pop{from{opacity:0;transform:scale(0.93)}to{opacity:1;transform:scale(1)}}
+.modal h3{font-size:17px;color:white;margin-bottom:14px;}
+.modal-icon{font-size:42px;text-align:center;margin-bottom:10px;}
+.modal-msg{text-align:center;color:var(--muted);font-size:13px;margin-bottom:18px;}
+.modal-btns{display:flex;gap:8px;margin-top:6px;}
+.modal-btns button{flex:1;padding:11px;border-radius:11px;font-family:'Space Grotesk',sans-serif;font-size:13px;font-weight:600;cursor:pointer;border:none;}
+.mb-cancel{background:var(--card2);border:1px solid var(--border)!important;color:var(--text);}
+.mb-del{background:linear-gradient(135deg,#ff4e7a,#ff6b9d);color:white;}
+.mb-ok{background:linear-gradient(135deg,var(--accent),var(--accent2));color:white;}
+.modal .field input,.modal .field select{background:rgba(255,255,255,0.05);border:1.5px solid var(--border);border-radius:10px;color:var(--text);font-family:'Space Grotesk',sans-serif;font-size:13px;outline:none;}
+.modal .field input:focus,.modal .field select:focus{border-color:var(--accent);}
+.toast{position:fixed;bottom:22px;right:22px;z-index:999;padding:13px 18px;border-radius:13px;font-size:13px;font-weight:600;animation:slideUp 0.3s ease;display:flex;align-items:center;gap:7px;max-width:340px;box-shadow:0 10px 30px rgba(0,0,0,0.4);}
+.toast.success{background:#0f2a1a;border:1px solid rgba(67,233,123,0.3);color:var(--success);}
+.toast.error{background:#2a0f1a;border:1px solid rgba(255,107,157,0.3);color:var(--error);}
+.toast.info{background:#0f1a2a;border:1px solid rgba(79,142,247,0.3);color:var(--accent);}
+@keyframes slideUp{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
+.empty{text-align:center;padding:28px 14px;color:var(--muted);}
+.empty-icon{font-size:32px;margin-bottom:8px;opacity:0.4;}
+.info-tip{background:rgba(79,142,247,0.05);border:1px solid rgba(79,142,247,0.15);border-radius:10px;padding:10px 13px;font-size:12px;color:var(--muted);margin-bottom:11px;}
+.warn-tip{background:rgba(255,179,71,0.06);border:1px solid rgba(255,179,71,0.2);border-radius:10px;padding:10px 13px;font-size:12px;color:var(--warn);margin-bottom:11px;}
 </style>
 </head>
 <body>
-
 <div class="orb orb1"></div>
 <div class="orb orb2"></div>
-
 <nav class="topnav">
-  <div class="nav-brand">
-    <div class="nav-logo">🎓</div>
-    Faculty<span class="dot">Sync</span>
-  </div>
+  <div class="nav-brand"><div class="nav-logo">🎓</div>Faculty<span class="dot">Sync</span></div>
   <div class="nav-right">
-    <div class="badge-admin">🛡️ Admin Panel</div>
-    <span style="color:var(--muted);font-size:13px;" id="userIdDisplay"></span>
+    <div class="badge-admin">🛡️ Admin</div>
+    <span style="color:var(--muted);font-size:12px" id="uid"></span>
     <button class="btn-logout" onclick="logout()">Sign Out</button>
   </div>
 </nav>
-
+<div class="tab-bar">
+  <button class="tab-btn active" onclick="tab('faculty',this)">📋 Faculty</button>
+  <button class="tab-btn"        onclick="tab('semester',this)">🔒 Semester Lock</button>
+  <button class="tab-btn"        onclick="tab('rooms',this)">🏫 Rooms &amp; Allocation</button>
+  <button class="tab-btn"        onclick="tab('students',this)">👥 Students</button>
+  <button class="tab-btn"        onclick="tab('timetable',this)">🗓️ Timetable</button>
+</div>
 <div class="page">
-  <div class="page-header">
-    <h1>Faculty Management</h1>
-    <p>Manage faculty records across departments, years, and semesters</p>
+
+  <!-- ═══ FACULTY TAB ═══ -->
+  <div class="tab-pane active" id="tab-faculty">
+    <div class="stat-bar">
+      <div class="stat"><div class="stat-num" id="sTotal">0</div><div class="stat-label">Total Faculty</div></div>
+      <div class="stat"><div class="stat-num" id="sCSE">0</div><div class="stat-label">CSE</div></div>
+      <div class="stat"><div class="stat-num" id="sECE">0</div><div class="stat-label">ECE</div></div>
+      <div class="stat"><div class="stat-num" id="sMBA">0</div><div class="stat-label">MBA</div></div>
+      <div class="stat"><div class="stat-num" id="sStu">0</div><div class="stat-label">Students</div></div>
+    </div>
+    <div class="grid-2">
+      <div class="card">
+        <div class="card-header"><div class="card-icon ia">➕</div><div><div class="card-title">Add Faculty</div><div class="card-sub">* = required</div></div></div>
+        <div class="form-row">
+          <div class="field"><label>Department *</label>
+            <select id="aDept"><option value="">Select</option><option>CSE</option><option>ECE</option><option>MBA</option></select>
+          </div>
+          <div class="field"><label>Year *</label>
+            <select id="aYear"><option value="">Select</option><option>1</option><option>2</option><option>3</option><option>4</option></select>
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="field"><label>Semester *</label>
+            <select id="aSem"><option value="">Select</option><option>1</option><option>2</option></select>
+          </div>
+          <div class="field"><label>Periods / Week</label>
+            <input id="aPeriods" type="number" min="1" max="10" placeholder="4">
+          </div>
+        </div>
+        <div class="field"><label>Subject *</label><input id="aSubject" placeholder="e.g. Data Structures"></div>
+        <div class="field"><label>Faculty Name *</label><input id="aName" placeholder="e.g. Dr. Ramesh Kumar"></div>
+        <div class="form-row">
+          <div class="field"><label>Experience</label><input id="aExp" placeholder="e.g. 8 years"></div>
+          <div class="field"><label>Rating (1–5)</label><input id="aRating" type="number" min="1" max="5" step="0.1" placeholder="4.5"></div>
+        </div>
+        <div class="form-row">
+          <div class="field"><label>Email</label><input id="aEmail" type="email" placeholder="faculty@college.edu"></div>
+          <div class="field"><label>Student Limit</label><input id="aLimit" type="number" min="1" max="240" placeholder="60"></div>
+        </div>
+        <button class="btn btn-primary" id="addFacBtn" onclick="addFaculty()">➕ Add Faculty</button>
+      </div>
+      <div class="card">
+        <div class="card-header"><div class="card-icon il">📋</div><div><div class="card-title">Faculty Database</div><div class="card-sub">Filter to view records</div></div></div>
+        <div class="filter-row">
+          <div class="field" style="margin:0"><label>Dept</label>
+            <select id="fDept" onchange="loadFac()"><option value="">All</option><option>CSE</option><option>ECE</option><option>MBA</option></select>
+          </div>
+          <div class="field" style="margin:0"><label>Year</label>
+            <select id="fYear" onchange="loadFac()"><option value="">All</option><option>1</option><option>2</option><option>3</option><option>4</option></select>
+          </div>
+          <div class="field" style="margin:0"><label>Semester</label>
+            <select id="fSem" onchange="loadFac()"><option value="">All</option><option>1</option><option>2</option></select>
+          </div>
+        </div>
+        <div id="facList"><div class="empty"><div class="empty-icon">🔍</div>Select filters above</div></div>
+      </div>
+    </div>
   </div>
 
-  <div class="stat-bar">
-    <div class="stat"><div class="stat-num" id="statTotal">0</div><div class="stat-label">TOTAL FACULTY</div></div>
-    <div class="stat"><div class="stat-num" id="statCSE">0</div><div class="stat-label">CSE DEPT</div></div>
-    <div class="stat"><div class="stat-num" id="statECE">0</div><div class="stat-label">ECE DEPT</div></div>
-    <div class="stat"><div class="stat-num" id="statMBA">0</div><div class="stat-label">MBA DEPT</div></div>
-  </div>
-
-  <div class="grid-2">
-    <!-- ADD FACULTY -->
-    <div class="card">
-      <div class="card-header">
-        <div class="card-icon icon-add">➕</div>
-        <div>
-          <div class="card-title">Add Faculty</div>
-          <div class="card-subtitle">Fill in all required fields (*)</div>
+  <!-- ═══ SEMESTER TAB ═══ -->
+  <div class="tab-pane" id="tab-semester">
+    <div class="sec-title">Semester Lock Control</div>
+    <div class="sec-sub">Lock / unlock semesters for student registration.</div>
+    <div class="card" style="margin-bottom:18px">
+      <div class="card-header"><div class="card-icon ik">🔐</div><div><div class="card-title">Add / Update Semester Status</div><div class="card-sub">Set lock state and minimum SGPA requirement</div></div></div>
+      <div class="grid-3">
+        <div class="field"><label>Department</label>
+          <select id="smDept"><option value="">Select</option><option>CSE</option><option>ECE</option><option>MBA</option></select>
+        </div>
+        <div class="field"><label>Year</label>
+          <select id="smYear"><option value="">Select</option><option>1</option><option>2</option><option>3</option><option>4</option></select>
+        </div>
+        <div class="field"><label>Semester</label>
+          <select id="smSem"><option value="">Select</option><option>1</option><option>2</option></select>
         </div>
       </div>
       <div class="form-row">
-        <div class="field">
-          <label>Department *</label>
-          <select id="dept">
-            <option value="">Select</option>
-            <option>CSE</option><option>ECE</option><option>MBA</option>
-          </select>
+        <div class="field"><label>Status</label>
+          <select id="smStatus"><option value="locked">🔒 Locked</option><option value="unlocked">🔓 Unlocked</option></select>
         </div>
-        <div class="field">
-          <label>Year *</label>
-          <select id="year">
-            <option value="">Select</option>
-            <option>1</option><option>2</option><option>3</option><option>4</option>
-          </select>
+        <div class="field"><label>Min SGPA (0 = no requirement)</label>
+          <input id="smSgpa" type="number" min="0" max="10" step="0.1" placeholder="e.g. 6.5">
         </div>
       </div>
-      <div class="field">
-        <label>Semester *</label>
-        <select id="sem">
-          <option value="">Select</option>
-          <option>1</option><option>2</option>
-        </select>
-      </div>
-      <div class="field">
-        <label>Subject *</label>
-        <input id="subject" placeholder="e.g. Data Structures">
-      </div>
-      <div class="field">
-        <label>Faculty Name *</label>
-        <input id="name" placeholder="e.g. Dr. Ramesh Kumar">
-      </div>
-      <div class="form-row">
-        <div class="field">
-          <label>Experience</label>
-          <input id="exp" placeholder="e.g. 8 years">
-        </div>
-        <div class="field">
-          <label>Rating (1–5)</label>
-          <input id="rating" type="number" min="1" max="5" step="0.1" placeholder="e.g. 4.5">
-        </div>
-      </div>
-      <div class="field">
-        <label>Email</label>
-        <input id="email" type="email" placeholder="faculty@institution.edu">
-      </div>
-      <button class="btn btn-primary" id="addBtn" onclick="addFaculty()">➕ Add Faculty</button>
+      <button class="btn btn-primary" onclick="saveSemStatus()">💾 Save Semester Status</button>
     </div>
-
-    <!-- FACULTY DATABASE -->
     <div class="card">
-      <div class="card-header">
-        <div class="card-icon icon-list">📋</div>
-        <div>
-          <div class="card-title">Faculty Database</div>
-          <div class="card-subtitle">Filter to view and manage records</div>
+      <div class="card-header"><div class="card-icon ik">📊</div><div><div class="card-title">All Semester Statuses</div><div class="card-sub">Click toggle to change lock state instantly</div></div></div>
+      <div id="semGrid"><div class="empty"><div class="empty-icon">⏳</div>Loading...</div></div>
+    </div>
+  </div>
+
+  <!-- ═══ ROOMS TAB ═══ -->
+  <div class="tab-pane" id="tab-rooms">
+    <div class="sec-title">Room Management &amp; Allocation</div>
+    <div class="sec-sub">Add classrooms and view the room allocation report after timetable generation.</div>
+    <div class="grid-2">
+      <div class="card">
+        <div class="card-header"><div class="card-icon ir">🏫</div><div><div class="card-title">Add Classroom</div><div class="card-sub">Rooms are auto-created if none exist</div></div></div>
+        <div class="form-row">
+          <div class="field"><label>Room Number *</label><input id="rNo" placeholder="e.g. R101"></div>
+          <div class="field"><label>Capacity</label><input id="rCap" type="number" min="1" max="120" placeholder="60"></div>
+        </div>
+        <div class="form-row">
+          <div class="field"><label>Block</label><input id="rBlock" placeholder="A"></div>
+          <div class="field"><label>Floor</label><input id="rFloor" type="number" min="0" max="15" placeholder="1"></div>
+        </div>
+        <button class="btn btn-primary" onclick="addRoom()">🏫 Add Room</button>
+        <div style="margin-top:18px;padding-top:14px;border-top:1px solid var(--border)">
+          <div style="font-size:10px;font-weight:700;color:var(--muted);margin-bottom:10px;letter-spacing:0.5px;text-transform:uppercase">Room List</div>
+          <div id="roomList"><div class="empty"><div class="empty-icon">🏫</div>No rooms added yet</div></div>
         </div>
       </div>
-      <div class="filter-row">
-        <div class="field" style="margin:0">
-          <label>Dept</label>
-          <select id="filterDept" onchange="loadFaculty()">
-            <option value="">All</option>
-            <option>CSE</option><option>ECE</option><option>MBA</option>
-          </select>
+      <div class="card">
+        <div class="card-header"><div class="card-icon ir">📍</div><div><div class="card-title">Room Allocation Report</div><div class="card-sub">Which room is allocated to whom</div></div></div>
+        <div class="filter-row">
+          <div class="field" style="margin:0"><label>Dept</label>
+            <select id="alDept"><option value="">Select</option><option>CSE</option><option>ECE</option><option>MBA</option></select>
+          </div>
+          <div class="field" style="margin:0"><label>Year</label>
+            <select id="alYear"><option value="">Select</option><option>1</option><option>2</option><option>3</option><option>4</option></select>
+          </div>
+          <div class="field" style="margin:0"><label>Semester</label>
+            <select id="alSem"><option value="">Select</option><option>1</option><option>2</option></select>
+          </div>
         </div>
-        <div class="field" style="margin:0">
-          <label>Year</label>
-          <select id="filterYear" onchange="loadFaculty()">
-            <option value="">All</option>
-            <option>1</option><option>2</option><option>3</option><option>4</option>
-          </select>
+        <button class="btn btn-primary" onclick="loadAlloc()">📍 Load Allocation</button>
+        <div id="allocTable" style="margin-top:14px"><div class="empty"><div class="empty-icon">📍</div>Generate timetable first, then load</div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ STUDENTS TAB ═══ -->
+  <div class="tab-pane" id="tab-students">
+    <div class="sec-title">Student Management</div>
+    <div class="sec-sub">Add students individually, seed batch datasets, upload SGPA records.</div>
+    <div class="grid-2">
+      <div>
+        <div class="card" style="margin-bottom:14px">
+          <div class="card-header"><div class="card-icon is">👤</div><div><div class="card-title">Add Single User</div><div class="card-sub">Student or Admin account</div></div></div>
+          <div class="form-row">
+            <div class="field"><label>User ID (Reg No.)</label><input id="nId" placeholder="231FA04812" oninput="this.value=this.value.toUpperCase()"></div>
+            <div class="field"><label>Role</label>
+              <select id="nRole"><option value="student">Student</option><option value="admin">Admin</option></select>
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="field"><label>Password (blank = last 3)</label><input id="nPass" placeholder="auto from reg no."></div>
+            <div class="field"><label>Department</label>
+              <select id="nDept"><option value="">Select</option><option>CSE</option><option>ECE</option><option>MBA</option></select>
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="field"><label>Name</label><input id="nName" placeholder="Full name"></div>
+            <div class="field"><label>Email</label><input id="nEmail" type="email" placeholder="email@college.edu"></div>
+          </div>
+          <div class="field"><label>Previous Semester SGPA</label><input id="nSgpa" type="number" min="0" max="10" step="0.1" placeholder="e.g. 7.5"></div>
+          <button class="btn btn-primary" onclick="addUser()">➕ Add User</button>
         </div>
-        <div class="field" style="margin:0">
-          <label>Semester</label>
-          <select id="filterSem" onchange="loadFaculty()">
-            <option value="">All</option>
-            <option>1</option><option>2</option>
-          </select>
+        <div class="card">
+          <div class="card-header"><div class="card-icon is">📊</div><div><div class="card-title">Bulk SGPA Upload</div><div class="card-sub">CSV format: RegNo,SGPA (one per line)</div></div></div>
+          <div class="field"><textarea id="sgpaData" placeholder="231FA04001,7.5&#10;231FA04002,8.2&#10;241FA04003,6.9"></textarea></div>
+          <button class="btn btn-primary" onclick="bulkSgpa()">📥 Update SGPA Records</button>
         </div>
       </div>
-      <div id="facultyList">
-        <div class="empty">
-          <div class="empty-icon">🔍</div>
-          <div>Select filters above to view faculty</div>
+      <div>
+        <div class="card" style="margin-bottom:14px">
+          <div class="card-header"><div class="card-icon is">🌱</div><div><div class="card-title">Seed Student Dataset</div><div class="card-sub">Generate reg numbers 04001–04300</div></div></div>
+          <div class="form-row">
+            <div class="field"><label>Year Prefix</label>
+              <select id="sdYear">
+                <option value="25">25 — 1st Year (2025 batch)</option>
+                <option value="24">24 — 2nd Year (2024 batch)</option>
+                <option value="23">23 — 3rd Year (2023 batch)</option>
+                <option value="22">22 — 4th Year (2022 batch)</option>
+              </select>
+            </div>
+            <div class="field"><label>Department</label>
+              <select id="sdDept"><option value="">Select</option><option>CSE</option><option>ECE</option><option>MBA</option></select>
+            </div>
+          </div>
+          <div class="field"><label>Count (max 300)</label><input id="sdCount" type="number" min="1" max="300" placeholder="300"></div>
+          <div class="warn-tip">⚠️ Creates accounts like <strong>251FA04001 – 251FA04300</strong>. Default password = last 3 digits.</div>
+          <button class="btn btn-warn" id="seedBtn" onclick="seedStudents()">🌱 Seed Students</button>
+        </div>
+        <div class="card">
+          <div class="card-header"><div class="card-icon is">👥</div><div><div class="card-title">View Students</div><div class="card-sub">Browse registered student accounts</div></div></div>
+          <div class="filter-row">
+            <div class="field" style="margin:0"><label>Dept</label>
+              <select id="vsDept"><option value="">All</option><option>CSE</option><option>ECE</option><option>MBA</option></select>
+            </div>
+            <div class="field" style="margin:0"><label>Year</label>
+              <select id="vsYear"><option value="">All</option><option>1</option><option>2</option><option>3</option><option>4</option></select>
+            </div>
+            <div class="field" style="margin:0"><label>&nbsp;</label>
+              <button class="btn btn-ok btn-sm" style="width:100%;padding:9px" onclick="loadStudents()">🔍 Search</button>
+            </div>
+          </div>
+          <div id="stuList"><div class="empty"><div class="empty-icon">👥</div>Select filters and search</div></div>
         </div>
       </div>
     </div>
   </div>
-</div>
 
-<!-- Alert Modal -->
-<div class="modal-overlay" id="alertModal">
-  <div class="modal">
-    <div class="modal-icon" id="alertIcon">✅</div>
-    <h3 id="alertTitle">Done!</h3>
-    <p id="alertMsg"></p>
-    <div class="modal-btns">
-      <button class="btn-confirm-ok" onclick="closeAlert()">OK</button>
+  <!-- ═══ TIMETABLE TAB ═══ -->
+  <div class="tab-pane" id="tab-timetable">
+    <div class="sec-title">Timetable Generation</div>
+    <div class="sec-sub">Generate after registration closes. Auto-assigns rooms, periods and enforces faculty daily limits.</div>
+    <div class="grid-2" style="margin-bottom:18px">
+      <div class="card">
+        <div class="card-header"><div class="card-icon it">🗓️</div><div><div class="card-title">Generate Timetable</div><div class="card-sub">Auto-assigns rooms &amp; periods per faculty</div></div></div>
+        <div class="form-row">
+          <div class="field"><label>Department</label>
+            <select id="ttDept"><option value="">Select</option><option>CSE</option><option>ECE</option><option>MBA</option></select>
+          </div>
+          <div class="field"><label>Year</label>
+            <select id="ttYear"><option value="">Select</option><option>1</option><option>2</option><option>3</option><option>4</option></select>
+          </div>
+        </div>
+        <div class="field"><label>Semester</label>
+          <select id="ttSem"><option value="">Select</option><option>1</option><option>2</option></select>
+        </div>
+        <div class="info-tip">ℹ️ Faculty: max 4 classes/day. All students of the same faculty share one room.</div>
+        <button class="btn btn-primary" id="genBtn" onclick="genTT()">⚡ Generate Timetable</button>
+        <button class="btn" style="width:100%;margin-top:9px;background:rgba(255,179,71,0.1);border:1px solid rgba(255,179,71,0.25);color:var(--warn)" onclick="mailFac()">📧 Email Timetables to Faculty</button>
+      </div>
+      <div class="card">
+        <div class="card-header"><div class="card-icon it">👁️</div><div><div class="card-title">View Timetable</div><div class="card-sub">Master grid for selected semester</div></div></div>
+        <div class="filter-row">
+          <div class="field" style="margin:0"><label>Dept</label>
+            <select id="vttDept"><option value="">Select</option><option>CSE</option><option>ECE</option><option>MBA</option></select>
+          </div>
+          <div class="field" style="margin:0"><label>Year</label>
+            <select id="vttYear"><option value="">Select</option><option>1</option><option>2</option><option>3</option><option>4</option></select>
+          </div>
+          <div class="field" style="margin:0"><label>Semester</label>
+            <select id="vttSem"><option value="">Select</option><option>1</option><option>2</option></select>
+          </div>
+        </div>
+        <button class="btn btn-primary" onclick="viewTT()">📋 View Grid</button>
+      </div>
     </div>
+    <div id="ttDisplay"></div>
   </div>
-</div>
 
-<!-- Delete Confirm Modal -->
-<div class="modal-overlay" id="deleteModal">
-  <div class="modal">
+</div><!-- /page -->
+
+<!-- MODALS -->
+<div class="modal-overlay" id="delModal">
+  <div class="modal" style="text-align:center">
     <div class="modal-icon">🗑️</div>
     <h3>Delete Faculty?</h3>
-    <p id="deleteMsg">This action cannot be undone.</p>
+    <div class="modal-msg" id="delMsg">Cannot be undone.</div>
     <div class="modal-btns">
-      <button class="btn-cancel" onclick="closeDelete()">Cancel</button>
-      <button class="btn-confirm-del" id="confirmDelBtn">Delete</button>
+      <button class="mb-cancel" onclick="closeM('delModal')">Cancel</button>
+      <button class="mb-del" id="delConfBtn">Delete</button>
     </div>
   </div>
 </div>
 
-<!-- Edit Modal -->
 <div class="modal-overlay" id="editModal">
-  <div class="modal modal-edit" style="max-width:460px">
-    <h3 style="margin-bottom:20px;color:white">✏️ Edit Faculty</h3>
-    <input type="hidden" id="editId">
-    <div class="field"><label>Faculty Name *</label><input id="editName" placeholder="Faculty Name"></div>
+  <div class="modal">
+    <h3>✏️ Edit Faculty</h3>
+    <input type="hidden" id="eId">
+    <div class="field"><label>Name *</label><input id="eName"></div>
     <div class="form-row">
-      <div class="field"><label>Experience</label><input id="editExp" placeholder="e.g. 8 years"></div>
-      <div class="field"><label>Rating (1–5)</label><input id="editRating" type="number" min="1" max="5" step="0.1"></div>
+      <div class="field"><label>Experience</label><input id="eExp"></div>
+      <div class="field"><label>Rating</label><input id="eRating" type="number" min="1" max="5" step="0.1"></div>
     </div>
-    <div class="field"><label>Email</label><input id="editEmail" type="email" placeholder="faculty@institution.edu"></div>
-    <div class="modal-btns" style="margin-top:8px">
-      <button class="btn-cancel" onclick="closeEdit()">Cancel</button>
-      <button class="btn-confirm-ok" onclick="saveEdit()">Save Changes</button>
+    <div class="form-row">
+      <div class="field"><label>Email</label><input id="eEmail" type="email"></div>
+      <div class="field"><label>Periods/Week</label><input id="ePeriods" type="number" min="1" max="10"></div>
+    </div>
+    <div class="field"><label>Student Limit</label><input id="eLimit" type="number" min="1" max="240"></div>
+    <div class="modal-btns">
+      <button class="mb-cancel" onclick="closeM('editModal')">Cancel</button>
+      <button class="mb-ok" onclick="saveEdit()">Save Changes</button>
     </div>
   </div>
 </div>
 
 <script>
-// ── AUTH CHECK ──
 const token  = localStorage.getItem("token");
 const role   = localStorage.getItem("role");
 const userId = localStorage.getItem("userId");
+if (!token || role !== "admin") window.location.href = "login.html";
+document.getElementById("uid").textContent = userId || "";
 
-if (!token || role !== "admin") {
-  window.location = "login.html";
+async function api(m, p, b = null) {
+  const o = { method: m, headers: { "Content-Type": "application/json", "Authorization": token } };
+  if (b) o.body = JSON.stringify(b);
+  const r = await fetch("/api" + p, o);
+  const d = await r.json();
+  return { ok: r.ok, data: d };
 }
 
-document.getElementById("userIdDisplay").textContent = userId || "";
+function logout() { localStorage.clear(); window.location.href = "login.html"; }
+function v(id)    { return document.getElementById(id).value.trim(); }
+function openM(id) { document.getElementById(id).classList.add("open"); }
+function closeM(id){ document.getElementById(id).classList.remove("open"); }
 
-// ── API HELPER ──
-// All fetch calls go to the backend with JWT token in header
-async function api(method, path, body = null) {
-  const opts = {
-    method,
-    headers: {
-      "Content-Type":  "application/json",
-      "Authorization": token
-    }
-  };
-  if (body) opts.body = JSON.stringify(body);
-  const res  = await fetch(`/api${path}`, opts);
-  const data = await res.json();
-  return { ok: res.ok, data };
+function toast(msg, type = "success") {
+  const el = document.createElement("div");
+  el.className = "toast " + type;
+  el.innerHTML = (type === "success" ? "✅" : type === "error" ? "❌" : "ℹ️") + " " + msg;
+  document.body.appendChild(el);
+  setTimeout(() => el.remove(), 3500);
 }
 
-// ── LOGOUT ──
-function logout() {
-  localStorage.clear();
-  window.location = "login.html";
+function tab(name, btn) {
+  document.querySelectorAll(".tab-pane").forEach(t => t.classList.remove("active"));
+  document.querySelectorAll(".tab-btn").forEach(b => b.classList.remove("active"));
+  document.getElementById("tab-" + name).classList.add("active");
+  btn.classList.add("active");
+  if (name === "semester") loadSemGrid();
+  if (name === "rooms")    loadRooms();
 }
 
-// ── MODALS ──
-function showAlert(title, msg, icon = "✅") {
-  document.getElementById("alertTitle").textContent = title;
-  document.getElementById("alertMsg").textContent   = msg;
-  document.getElementById("alertIcon").textContent  = icon;
-  document.getElementById("alertModal").classList.add("open");
-}
-function closeAlert() { document.getElementById("alertModal").classList.remove("open"); }
-
-function closeDelete() { document.getElementById("deleteModal").classList.remove("open"); }
-
-function openEdit(id, name, exp, rating, email) {
-  document.getElementById("editId").value     = id;
-  document.getElementById("editName").value   = name;
-  document.getElementById("editExp").value    = exp    || "";
-  document.getElementById("editRating").value = rating || "";
-  document.getElementById("editEmail").value  = email  || "";
-  document.getElementById("editModal").classList.add("open");
-}
-function closeEdit() { document.getElementById("editModal").classList.remove("open"); }
-
-// ── GET value helper ──
-function val(id) { return document.getElementById(id).value.trim(); }
-
-// ── ADD FACULTY ──
-// Sends a POST request to backend → saved in MongoDB
+// ═══ FACULTY ═══
 async function addFaculty() {
-  const dept    = val("dept");
-  const year    = val("year");
-  const sem     = val("sem");
-  const subject = val("subject");
-  const name    = val("name");
-  const exp     = val("exp");
-  const rating  = val("rating");
-  const email   = val("email");
+  const d = v("aDept"), yr = v("aYear"), sm = v("aSem"), sub = v("aSubject"), nm = v("aName");
+  if (!d || !yr || !sm || !sub || !nm) { toast("Fill all required fields", "error"); return; }
+  const em = v("aEmail");
+  if (em && !/^[^\s]+@[^\s]+\.[a-z]{2,}$/i.test(em)) { toast("Invalid email", "error"); return; }
+  const rt = v("aRating");
+  if (rt && (parseFloat(rt) < 1 || parseFloat(rt) > 5)) { toast("Rating must be 1–5", "error"); return; }
 
-  if (!dept || !year || !sem || !subject || !name) {
-    showAlert("Missing Fields", "Please fill all required (*) fields.", "⚠️");
-    return;
-  }
-  if (email && !/^[^ ]+@[^ ]+\.[a-z]{2,3}$/.test(email)) {
-    showAlert("Invalid Email", "Enter a valid email address.", "⚠️");
-    return;
-  }
-  if (rating && (parseFloat(rating) < 1 || parseFloat(rating) > 5)) {
-    showAlert("Invalid Rating", "Rating must be between 1 and 5.", "⚠️");
-    return;
-  }
+  const btn = document.getElementById("addFacBtn");
+  btn.disabled = true; btn.textContent = "Adding...";
 
-  const btn = document.getElementById("addBtn");
-  btn.disabled    = true;
-  btn.textContent = "Adding...";
-
-  // POST to backend — data goes to MongoDB
   const { ok, data } = await api("POST", "/faculty", {
-    name,
-    department: dept,
-    year,
-    semester:   sem,
-    subject,
-    experience: exp,
-    rating:     rating ? parseFloat(rating) : null,
-    email
+    name: nm, department: d, year: yr, semester: sm, subject: sub,
+    experience: v("aExp"), rating: rt ? parseFloat(rt) : null, email: em,
+    periodsPerWeek: parseInt(v("aPeriods")) || 4,
+    studentLimit:   parseInt(v("aLimit"))   || 60,
   });
 
-  btn.disabled    = false;
-  btn.textContent = "➕ Add Faculty";
+  btn.disabled = false; btn.textContent = "➕ Add Faculty";
+  if (!ok) { toast(data.message || "Error", "error"); return; }
+  toast(`${nm} added`);
+  ["aSubject","aName","aExp","aRating","aEmail","aPeriods","aLimit"].forEach(i => document.getElementById(i).value = "");
+  loadFac(); loadStats();
+}
 
-  if (!ok) {
-    showAlert("Error", data.message || "Could not add faculty.", "⚠️");
+async function loadFac() {
+  const d = v("fDept"), yr = v("fYear"), sm = v("fSem");
+  const el = document.getElementById("facList");
+  if (!d || !yr || !sm) {
+    el.innerHTML = `<div class="empty"><div class="empty-icon">🔍</div>Select dept, year &amp; semester</div>`;
     return;
   }
+  el.innerHTML = `<div class="empty"><div class="empty-icon">⏳</div>Loading...</div>`;
+  const { ok, data } = await api("GET", `/faculty?department=${d}&year=${yr}&semester=${sm}`);
+  if (!ok || !data.length) {
+    el.innerHTML = `<div class="empty"><div class="empty-icon">📭</div>No faculty found</div>`;
+    return;
+  }
+  el.innerHTML = data.map(f => {
+    const pct  = Math.min(100, (f.enrolledCount || 0) / (f.studentLimit || 60) * 100);
+    const full = pct >= 100;
+    const fc   = full ? "#ff6b9d" : pct > 80 ? "#ffb347" : "#43e97b";
+    return `<div class="fac-item">
+      <div style="display:flex;justify-content:space-between;align-items:flex-start">
+        <div><div class="fac-name">${f.name}</div><div class="fac-subj">${f.subject}</div></div>
+        <span class="pill ${full ? "pill-full" : "pill-open"}">${full ? "🔴 Full" : "🟢 Open"}</span>
+      </div>
+      <div class="fac-meta">
+        ${f.experience ? `<div class="meta-i">🏆 ${f.experience}</div>` : ""}
+        ${f.rating     ? `<div class="meta-i">⭐ ${f.rating}/5</div>`    : ""}
+        ${f.email      ? `<div class="meta-i">📧 ${f.email}</div>`        : ""}
+        <div class="meta-i">📅 ${f.periodsPerWeek || 4}/wk</div>
+        <div class="meta-i">👥 ${f.enrolledCount || 0}/${f.studentLimit || 60}</div>
+      </div>
+      <div class="enroll-bar"><div class="enroll-fill" style="width:${pct}%;background:${fc}"></div></div>
+      <div class="enroll-lbl"><span style="color:${fc}">${Math.round(pct)}% enrolled</span><span>${f.enrolledCount || 0}/${f.studentLimit || 60}</span></div>
+      <div class="fac-acts">
+        <button class="btn btn-sm btn-edit" data-id="${f._id}" data-name="${f.name}" data-exp="${f.experience || ""}" data-rating="${f.rating || ""}" data-email="${f.email || ""}" data-periods="${f.periodsPerWeek || 4}" data-limit="${f.studentLimit || 60}" onclick="openEditFromBtn(this)">✏️ Edit</button>
+        <button class="btn btn-sm btn-del" onclick="confirmDel('${f._id}','${encodeURIComponent(f.name)}')">🗑️ Delete</button>
+      </div>
+    </div>`;
+  }).join("");
+}
 
-  showAlert("Faculty Added! 🎉", `${name} has been added to ${subject} (${dept} - Year ${year}, Sem ${sem}).`);
-  clearForm();
-  loadFaculty();
+async function loadStats() {
+  let total = 0, cse = 0, ece = 0, mba = 0;
+  for (const d of ["CSE","ECE","MBA"]) {
+    const { ok, data } = await api("GET", `/faculty?department=${d}`);
+    if (ok) {
+      total += data.length;
+      if (d === "CSE") cse = data.length;
+      if (d === "ECE") ece = data.length;
+      if (d === "MBA") mba = data.length;
+    }
+  }
+  document.getElementById("sTotal").textContent = total;
+  document.getElementById("sCSE").textContent   = cse;
+  document.getElementById("sECE").textContent   = ece;
+  document.getElementById("sMBA").textContent   = mba;
+  const { ok, data } = await api("GET", "/auth/users?role=student");
+  if (ok) document.getElementById("sStu").textContent = data.length;
+}
+
+function confirmDel(id, name) {
+  const decoded = decodeURIComponent(name);
+  document.getElementById("delMsg").textContent = `Remove "${decoded}"? Cannot be undone.`;
+  document.getElementById("delConfBtn").onclick = async () => {
+    const { ok, data } = await api("DELETE", `/faculty/${id}`);
+    closeM("delModal");
+    if (!ok) { toast(data.message, "error"); return; }
+    toast(`${decoded} deleted`);
+    loadFac(); loadStats();
+  };
+  openM("delModal");
+}
+
+// Use data attributes to avoid quote-injection in onclick strings
+function openEditFromBtn(btn) {
+  document.getElementById("eId").value      = btn.dataset.id;
+  document.getElementById("eName").value    = btn.dataset.name;
+  document.getElementById("eExp").value     = btn.dataset.exp;
+  document.getElementById("eRating").value  = btn.dataset.rating;
+  document.getElementById("eEmail").value   = btn.dataset.email;
+  document.getElementById("ePeriods").value = btn.dataset.periods;
+  document.getElementById("eLimit").value   = btn.dataset.limit;
+  openM("editModal");
+}
+
+async function saveEdit() {
+  const id = document.getElementById("eId").value;
+  const nm = v("eName");
+  if (!nm) { toast("Name required", "error"); return; }
+
+  const { ok, data } = await api("PUT", `/faculty/${id}`, {
+    name:           nm,
+    experience:     v("eExp"),
+    rating:         v("eRating")  ? parseFloat(v("eRating"))  : null,
+    email:          v("eEmail"),
+    periodsPerWeek: parseInt(v("ePeriods")) || 4,
+    studentLimit:   parseInt(v("eLimit"))   || 60,
+  });
+  closeM("editModal");
+  if (!ok) { toast(data.message, "error"); return; }
+  toast("Faculty updated"); loadFac();
+}
+
+// ═══ SEMESTER ═══
+async function loadSemGrid() {
+  const grid = document.getElementById("semGrid");
+  const { ok, data } = await api("GET", "/semester");
+  if (!ok || !data.length) {
+    grid.innerHTML = `<div class="empty"><div class="empty-icon">🔒</div>No semester statuses yet.</div>`;
+    return;
+  }
+  grid.innerHTML = `<div class="sem-grid">` + data.map(s => `
+    <div class="sem-card ${s.isLocked ? "locked" : "open"}">
+      <div class="sem-card-title">${s.department} — Year ${s.year}</div>
+      <div class="sem-card-sub">Semester ${s.semester}${s.minSgpa > 0 ? ` · Min SGPA: ${s.minSgpa}` : ""}</div>
+      <div class="lock-badge ${s.isLocked ? "lb-locked" : "lb-open"}">${s.isLocked ? "🔒 Locked" : "🔓 Open"}</div>
+      ${s.lockedBy ? `<div style="font-size:10px;color:var(--muted);margin-top:5px">by ${s.lockedBy}</div>` : ""}
+      <button class="tog-btn ${s.isLocked ? "tb-unlock" : "tb-lock"}" onclick="toggleSem('${s._id}')">
+        ${s.isLocked ? "🔓 Unlock for Registration" : "🔒 Lock Semester"}
+      </button>
+    </div>`).join("") + `</div>`;
+}
+
+async function saveSemStatus() {
+  const d = v("smDept"), yr = v("smYear"), sm = v("smSem"), st = v("smStatus");
+  if (!d || !yr || !sm) { toast("Select dept, year, semester", "error"); return; }
+  const { ok, data } = await api("POST", "/semester", {
+    department: d, year: yr, semester: sm,
+    isLocked: st === "locked",
+    minSgpa: parseFloat(v("smSgpa")) || 0,
+  });
+  if (!ok) { toast(data.message, "error"); return; }
+  toast(`${d} Y${yr} S${sm} — ${st}`); loadSemGrid();
+}
+
+async function toggleSem(id) {
+  const { ok, data } = await api("PATCH", `/semester/${id}/toggle`);
+  if (!ok) { toast(data.message, "error"); return; }
+  toast(`Semester ${data.isLocked ? "locked" : "unlocked"}`); loadSemGrid();
+}
+
+// ═══ ROOMS ═══
+async function addRoom() {
+  const no = v("rNo");
+  if (!no) { toast("Room number required", "error"); return; }
+  const { ok, data } = await api("POST", "/timetable/rooms/add", {
+    roomNumber: no, capacity: parseInt(v("rCap")) || 60,
+    block: v("rBlock") || "A", floor: parseInt(v("rFloor")) || 1,
+  });
+  if (!ok) { toast(data.message, "error"); return; }
+  toast(`Room ${no} added`);
+  ["rNo","rCap","rBlock","rFloor"].forEach(i => document.getElementById(i).value = "");
+  loadRooms();
+}
+
+async function loadRooms() {
+  const { ok, data } = await api("GET", "/timetable/rooms/list");
+  const el = document.getElementById("roomList");
+  if (!ok || !data.length) { el.innerHTML = `<div class="empty"><div class="empty-icon">🏫</div>No rooms added yet</div>`; return; }
+  el.innerHTML = `<table class="dtable"><thead><tr><th>Room</th><th>Block</th><th>Floor</th><th>Cap.</th></tr></thead><tbody>
+    ${data.map(r => `<tr><td><strong>${r.roomNumber}</strong></td><td>${r.block || "A"}</td><td>${r.floor || 1}</td><td>${r.capacity}</td></tr>`).join("")}
+  </tbody></table>`;
+}
+
+async function loadAlloc() {
+  const d = v("alDept"), yr = v("alYear"), sm = v("alSem");
+  if (!d || !yr || !sm) { toast("Select dept, year &amp; semester", "error"); return; }
+  const { ok, data } = await api("GET", `/timetable/rooms?department=${d}&year=${yr}&semester=${sm}`);
+  const el = document.getElementById("allocTable");
+  if (!ok || !data.length) { el.innerHTML = `<div class="empty"><div class="empty-icon">📍</div>No allocations found. Generate timetable first.</div>`; return; }
+  el.innerHTML = `<table class="dtable"><thead><tr><th>Room</th><th>Subject</th><th>Faculty</th><th>Day</th><th>Period</th><th>Students</th></tr></thead><tbody>
+    ${data.map(a => `<tr>
+      <td><strong style="color:var(--accent)">${a.roomNumber}</strong></td>
+      <td>${a.subject}</td><td>${a.facultyName}</td><td>${a.day}</td>
+      <td>P${a.period}</td>
+      <td><span style="color:var(--success);font-weight:700">${a.studentCount}</span></td>
+    </tr>`).join("")}
+  </tbody></table>`;
+}
+
+// ═══ STUDENTS ═══
+async function addUser() {
+  const id = v("nId"), rl = v("nRole"), d = v("nDept");
+  if (!id) { toast("User ID required", "error"); return; }
+  const pass = v("nPass") || id.slice(-3);
+  const sgpaVal = v("nSgpa");
+  const { ok, data } = await api("POST", "/auth/user", {
+    userId: id, password: pass, role: rl, department: d,
+    name: v("nName"), email: v("nEmail"),
+    sgpa: sgpaVal ? parseFloat(sgpaVal) : null,
+  });
+  if (!ok) { toast(data.message, "error"); return; }
+  toast(`User ${id} created`);
+  ["nId","nPass","nName","nEmail","nSgpa"].forEach(i => document.getElementById(i).value = "");
   loadStats();
 }
 
-function clearForm() {
-  ["subject", "name", "exp", "rating", "email"].forEach(id => {
-    document.getElementById(id).value = "";
+async function seedStudents() {
+  const yr = v("sdYear"), d = v("sdDept"), cnt = parseInt(v("sdCount")) || 300;
+  if (!d) { toast("Select department", "error"); return; }
+  const btn = document.getElementById("seedBtn");
+  btn.disabled = true; btn.textContent = "Seeding...";
+  const { ok, data } = await api("POST", "/auth/seed-students", { yearPrefix: parseInt(yr), department: d, count: cnt });
+  btn.disabled = false; btn.textContent = "🌱 Seed Students";
+  if (!ok) { toast(data.message, "error"); return; }
+  toast(`${data.inserted} students seeded (${data.skipped} skipped)`);
+  loadStats();
+}
+
+async function bulkSgpa() {
+  const raw = document.getElementById("sgpaData").value.trim();
+  if (!raw) { toast("Paste SGPA data first", "error"); return; }
+  const records = raw.split("\n").filter(Boolean).map(l => {
+    const [uid, sgpa] = l.split(",");
+    return { userId: uid?.trim(), sgpa: parseFloat(sgpa) };
+  }).filter(r => r.userId && !isNaN(r.sgpa));
+  if (!records.length) { toast("No valid records. Format: RegNo,SGPA", "error"); return; }
+  const { ok, data } = await api("POST", "/auth/bulk-sgpa", { records });
+  if (!ok) { toast(data.message, "error"); return; }
+  toast(data.message); document.getElementById("sgpaData").value = "";
+}
+
+async function loadStudents() {
+  const d = v("vsDept"), yr = v("vsYear");
+  let url = "/auth/users?role=student";
+  if (d)  url += `&department=${d}`;
+  if (yr) url += `&year=${yr}`;
+  const el = document.getElementById("stuList");
+  el.innerHTML = `<div class="empty"><div class="empty-icon">⏳</div>Loading...</div>`;
+  const { ok, data } = await api("GET", url);
+  if (!ok || !data.length) { el.innerHTML = `<div class="empty"><div class="empty-icon">👥</div>No students found</div>`; return; }
+  el.innerHTML = `<div style="font-size:11px;color:var(--muted);margin-bottom:8px">${data.length} students found</div>
+    <table class="dtable"><thead><tr><th>Reg No.</th><th>Dept</th><th>Year</th><th>SGPA</th></tr></thead><tbody>
+    ${data.slice(0, 100).map(s => `<tr>
+      <td><strong>${s.userId}</strong></td>
+      <td>${s.department || "—"}</td>
+      <td>${s.yearOfStudy || "—"}</td>
+      <td style="color:${(s.sgpa || 0) >= 6 ? "var(--success)" : "var(--warn)"}">${s.sgpa ?? ""}</td>
+    </tr>`).join("")}
+    </tbody></table>${data.length > 100 ? `<div style="font-size:11px;color:var(--muted);margin-top:7px">Showing first 100 of ${data.length}</div>` : ""}`;
+}
+
+// ═══ TIMETABLE ═══
+async function genTT() {
+  const d = v("ttDept"), yr = v("ttYear"), sm = v("ttSem");
+  if (!d || !yr || !sm) { toast("Select dept, year &amp; semester", "error"); return; }
+  const btn = document.getElementById("genBtn");
+  btn.disabled = true; btn.textContent = "Generating...";
+  const { ok, data } = await api("POST", "/timetable/generate", { department: d, year: yr, semester: sm });
+  btn.disabled = false; btn.textContent = "⚡ Generate Timetable";
+  if (!ok) { toast(data.message, "error"); return; }
+  toast(data.message);
+  document.getElementById("vttDept").value = d;
+  document.getElementById("vttYear").value = yr;
+  document.getElementById("vttSem").value  = sm;
+  viewTT();
+}
+
+async function mailFac() {
+  const d = v("ttDept"), yr = v("ttYear"), sm = v("ttSem");
+  if (!d || !yr || !sm) { toast("Select dept, year &amp; semester", "error"); return; }
+  const { ok, data } = await api("POST", "/timetable/mail-faculty", { department: d, year: yr, semester: sm });
+  if (!ok) { toast(data.message, "error"); return; }
+  toast(data.message, "info");
+}
+
+async function viewTT() {
+  const d = v("vttDept"), yr = v("vttYear"), sm = v("vttSem");
+  if (!d || !yr || !sm) { toast("Select dept, year &amp; semester", "error"); return; }
+  const area = document.getElementById("ttDisplay");
+  area.innerHTML = `<div class="empty"><div class="empty-icon">⏳</div>Loading...</div>`;
+  const { ok, data } = await api("GET", `/timetable/all?department=${d}&year=${yr}&semester=${sm}`);
+  if (!ok || !data.length) { area.innerHTML = `<div class="empty"><div class="empty-icon">📭</div>No timetable yet. Generate one first.</div>`; return; }
+
+  const DAYS = ["Monday","Tuesday","Wednesday","Thursday","Friday"];
+  const CC   = ["c1","c2","c3","c4","c5"];
+  const byFac = {};
+  data.forEach(s => {
+    if (!byFac[s.facultyName]) byFac[s.facultyName] = { sub: s.subject, slots: [] };
+    byFac[s.facultyName].slots.push(s);
   });
-}
+  const fNames = Object.keys(byFac);
 
-// ── LOAD FACULTY ──
-// GET from backend — reads from MongoDB
-async function loadFaculty() {
-  const dept = val("filterDept");
-  const year = val("filterYear");
-  const sem  = val("filterSem");
-  const list = document.getElementById("facultyList");
+  let html = `<div class="card"><div class="card-header"><div class="card-icon it">🗓️</div><div>
+    <div class="card-title">${d} Year ${yr} Sem ${sm} — Master Timetable</div>
+    <div class="card-sub">${fNames.length} faculty · ${data.length} total slots</div>
+  </div></div><div class="tt-wrap"><table class="tt-table"><thead><tr><th>Faculty / Subject</th>`;
+  DAYS.forEach(dy => html += `<th>${dy.slice(0, 3)}</th>`);
+  html += `</tr></thead><tbody>`;
 
-  if (!dept || !year || !sem) {
-    list.innerHTML = `<div class="empty"><div class="empty-icon">🔍</div><div>Select department, year and semester</div></div>`;
-    return;
-  }
-
-  list.innerHTML = `<div class="empty"><div class="empty-icon">⏳</div><div>Loading...</div></div>`;
-
-  const { ok, data } = await api("GET", `/faculty?department=${dept}&year=${year}&semester=${sem}`);
-
-  if (!ok || data.length === 0) {
-    list.innerHTML = `<div class="empty"><div class="empty-icon">📭</div><div>No faculty found for selected filters</div></div>`;
-    return;
-  }
-
-  let html = "";
-  data.forEach(f => {
-    const stars = f.rating ? "⭐".repeat(Math.round(f.rating)) : "—";
-    html += `
-    <div class="faculty-item">
-      <div class="faculty-header">
-        <div>
-          <div class="faculty-name">${f.name}</div>
-          <div class="faculty-subject">${f.subject}</div>
-        </div>
-        <div class="stars">${stars}</div>
-      </div>
-      <div class="faculty-meta">
-        ${f.experience ? `<div class="meta-item">🏆 ${f.experience}</div>` : ""}
-        ${f.rating     ? `<div class="meta-item">⭐ ${f.rating}/5</div>`   : ""}
-        ${f.email      ? `<div class="meta-item">📧 ${f.email}</div>`      : ""}
-      </div>
-      <div class="faculty-actions">
-        <button class="btn btn-sm btn-edit"
-          onclick="openEdit('${f._id}','${f.name}','${f.experience}','${f.rating}','${f.email}')">
-          ✏️ Edit
-        </button>
-        <button class="btn btn-sm btn-delete"
-          onclick="confirmDelete('${f._id}','${f.name}')">
-          🗑️ Delete
-        </button>
-      </div>
-    </div>`;
+  fNames.forEach((nm, fi) => {
+    const info = byFac[nm];
+    const cc   = CC[fi % 5];
+    html += `<tr><td><div style="font-weight:700;color:white">${nm}</div><div style="font-size:10px;color:var(--muted)">${info.sub}</div></td>`;
+    DAYS.forEach(dy => {
+      const sl = info.slots.find(s => s.day === dy);
+      if (sl) html += `<td><div class="tt-slot ${cc}"><div style="font-weight:700">P${sl.periodNumber}</div><div style="color:var(--muted)">${sl.roomNumber}</div><div style="font-size:9px">${sl.studentCount} stu.</div></div></td>`;
+      else html += `<td><span style="color:rgba(136,146,176,0.25)">–</span></td>`;
+    });
+    html += `</tr>`;
   });
 
-  list.innerHTML = html;
+  html += `</tbody></table></div></div>`;
+  area.innerHTML = html;
 }
 
-// ── DELETE FACULTY ──
-function confirmDelete(id, name) {
-  document.getElementById("deleteMsg").textContent = `Remove "${name}"? This cannot be undone.`;
-  document.getElementById("confirmDelBtn").onclick = async () => {
-    const { ok, data } = await api("DELETE", `/faculty/${id}`);
-    closeDelete();
-    if (!ok) { showAlert("Error", data.message, "⚠️"); return; }
-    showAlert("Deleted", `${name} has been removed.`, "🗑️");
-    loadFaculty();
-    loadStats();
-  };
-  document.getElementById("deleteModal").classList.add("open");
-}
-
-// ── EDIT FACULTY ──
-async function saveEdit() {
-  const id     = document.getElementById("editId").value;
-  const name   = val("editName");
-  const exp    = val("editExp");
-  const rating = val("editRating");
-  const email  = val("editEmail");
-
-  if (!name) { showAlert("Error", "Faculty name is required.", "⚠️"); return; }
-  if (email  && !/^[^ ]+@[^ ]+\.[a-z]{2,3}$/.test(email)) { showAlert("Error", "Enter a valid email.", "⚠️"); return; }
-  if (rating && (parseFloat(rating) < 1 || parseFloat(rating) > 5)) { showAlert("Error", "Rating must be between 1 and 5.", "⚠️"); return; }
-
-  const { ok, data } = await api("PUT", `/faculty/${id}`, {
-    name,
-    experience: exp,
-    rating:     rating ? parseFloat(rating) : null,
-    email
-  });
-
-  closeEdit();
-  if (!ok) { showAlert("Error", data.message, "⚠️"); return; }
-  showAlert("Updated!", "Faculty details saved successfully.");
-  loadFaculty();
-}
-
-// ── STATS ──
-// Loads total counts from MongoDB for the stat bar
-async function loadStats() {
-  const depts = ["CSE", "ECE", "MBA"];
-  let total = 0, cse = 0, ece = 0, mba = 0;
-
-  for (const dept of depts) {
-    const { ok, data } = await api("GET", `/faculty?department=${dept}`);
-    if (ok) {
-      const count = data.length;
-      total += count;
-      if (dept === "CSE") cse = count;
-      if (dept === "ECE") ece = count;
-      if (dept === "MBA") mba = count;
-    }
-  }
-
-  document.getElementById("statTotal").textContent = total;
-  document.getElementById("statCSE").textContent   = cse;
-  document.getElementById("statECE").textContent   = ece;
-  document.getElementById("statMBA").textContent   = mba;
-}
-
-// Load stats on page open
+// ═══ INIT ═══
 loadStats();
 </script>
 </body>

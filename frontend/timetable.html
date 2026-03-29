@@ -1,8 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>FacultySync — Timetable</title>
 <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=DM+Serif+Display&display=swap" rel="stylesheet">
 <style>
@@ -13,229 +12,195 @@ body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(
 .orb{position:fixed;border-radius:50%;filter:blur(130px);opacity:0.1;pointer-events:none;z-index:0;}
 .orb1{width:600px;height:600px;background:var(--accent);top:-200px;right:-200px;}
 .orb2{width:400px;height:400px;background:var(--accent2);bottom:-100px;left:-100px;}
-.topnav{position:sticky;top:0;z-index:100;background:rgba(10,15,30,0.85);backdrop-filter:blur(20px);border-bottom:1px solid var(--border);padding:0 36px;height:64px;display:flex;align-items:center;justify-content:space-between;}
-.nav-brand{display:flex;align-items:center;gap:12px;font-family:'DM Serif Display',serif;font-size:20px;color:white;}
+.topnav{position:sticky;top:0;z-index:100;background:rgba(10,15,30,0.88);backdrop-filter:blur(20px);border-bottom:1px solid var(--border);padding:0 24px;height:64px;display:flex;align-items:center;justify-content:space-between;}
+.nav-brand{display:flex;align-items:center;gap:10px;font-family:'DM Serif Display',serif;font-size:20px;color:white;}
 .nav-logo{width:36px;height:36px;background:linear-gradient(135deg,var(--accent),var(--accent2));border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:18px;}
 .dot{color:var(--accent);}
-.nav-right{display:flex;align-items:center;gap:14px;}
-.badge-tt{background:rgba(79,142,247,0.12);border:1px solid rgba(79,142,247,0.25);color:var(--accent);border-radius:20px;padding:5px 14px;font-size:12px;font-weight:600;}
-.btn-nav{padding:8px 18px;border:none;border-radius:10px;font-family:'Space Grotesk',sans-serif;font-size:13px;font-weight:600;cursor:pointer;transition:all 0.2s;}
-.btn-back-nav{background:var(--card2);border:1px solid var(--border);color:var(--text);}
-.btn-back-nav:hover{background:rgba(255,255,255,0.1);}
-.btn-logout{background:rgba(255,107,157,0.1);border:1px solid rgba(255,107,157,0.25);color:#ff6b9d;}
-.btn-logout:hover{background:rgba(255,107,157,0.2);}
-.page{max-width:1300px;margin:0 auto;padding:32px 24px;position:relative;z-index:1;}
-.page-header{margin-bottom:28px;display:flex;align-items:flex-start;justify-content:space-between;flex-wrap:wrap;gap:16px;}
-.page-header h1{font-size:28px;font-weight:700;color:white;margin-bottom:4px;}
-.page-header p{color:var(--muted);font-size:14px;}
-.btn-print{padding:11px 20px;border:none;border-radius:12px;background:linear-gradient(135deg,var(--accent),var(--accent2));color:white;font-family:'Space Grotesk',sans-serif;font-size:13px;font-weight:600;cursor:pointer;transition:all 0.2s;}
-.btn-print:hover{transform:translateY(-2px);box-shadow:0 8px 20px rgba(79,142,247,0.35);}
-.info-bar{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:14px;margin-bottom:28px;}
-.info-stat{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:16px 18px;}
-.info-stat-num{font-size:26px;font-weight:700;color:white;}
-.info-stat-label{font-size:11px;color:var(--muted);margin-top:3px;letter-spacing:0.5px;}
-.legend{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:20px 24px;margin-bottom:24px;display:flex;flex-wrap:wrap;gap:12px;align-items:center;}
-.legend-title{font-size:12px;font-weight:700;letter-spacing:0.8px;text-transform:uppercase;color:var(--muted);margin-right:8px;}
-.legend-item{display:flex;align-items:center;gap:8px;background:var(--card2);border:1px solid var(--border);border-radius:8px;padding:6px 12px;font-size:12px;font-weight:500;color:var(--text);}
-.legend-dot{width:10px;height:10px;border-radius:3px;}
-.table-wrap{background:var(--card);border:1px solid var(--border);border-radius:20px;overflow:hidden;overflow-x:auto;margin-bottom:24px;animation:fadeIn 0.5s ease both;}
-@keyframes fadeIn{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
-table{width:100%;border-collapse:collapse;min-width:700px;}
-thead tr{background:rgba(79,142,247,0.1);}
-th{padding:16px 14px;font-size:12px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--muted);border-bottom:1px solid var(--border);text-align:center;white-space:nowrap;}
-th:first-child{text-align:left;padding-left:24px;color:var(--text);}
-.slot-time{font-size:11px;font-weight:700;color:var(--accent);display:block;}
-.slot-period{font-size:10px;color:var(--muted);margin-top:2px;}
-tbody tr{border-bottom:1px solid rgba(255,255,255,0.04);transition:background 0.2s;}
-tbody tr:hover{background:rgba(255,255,255,0.02);}
+.nav-right{display:flex;align-items:center;gap:10px;}
+.btn-n{padding:8px 14px;border:none;border-radius:10px;font-family:'Space Grotesk',sans-serif;font-size:12px;font-weight:600;cursor:pointer;transition:all 0.2s;}
+.btn-back{background:var(--card2);border:1px solid var(--border);color:var(--text);}
+.btn-lo{background:rgba(255,107,157,0.1);border:1px solid rgba(255,107,157,0.25);color:#ff6b9d;}
+.page{max-width:1300px;margin:0 auto;padding:26px 20px;position:relative;z-index:1;}
+.page-header{margin-bottom:22px;display:flex;align-items:flex-start;justify-content:space-between;flex-wrap:wrap;gap:12px;}
+.page-header h1{font-size:24px;font-weight:700;color:white;margin-bottom:3px;}
+.page-header p{color:var(--muted);font-size:13px;}
+.btn-print{padding:10px 16px;border:none;border-radius:11px;background:linear-gradient(135deg,var(--accent),var(--accent2));color:white;font-family:'Space Grotesk',sans-serif;font-size:12px;font-weight:600;cursor:pointer;}
+/* INFO BAR */
+.info-bar{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:11px;margin-bottom:20px;}
+.is{background:var(--card);border:1px solid var(--border);border-radius:13px;padding:13px 15px;}
+.is-num{font-size:22px;font-weight:700;color:white;}
+.is-lbl{font-size:10px;color:var(--muted);margin-top:3px;text-transform:uppercase;letter-spacing:0.5px;}
+/* LEGEND */
+.legend{background:var(--card);border:1px solid var(--border);border-radius:13px;padding:14px 18px;margin-bottom:18px;display:flex;flex-wrap:wrap;gap:9px;align-items:center;}
+.legend-ttl{font-size:10px;font-weight:700;letter-spacing:0.8px;text-transform:uppercase;color:var(--muted);margin-right:5px;}
+.legend-item{display:flex;align-items:center;gap:6px;background:var(--card2);border:1px solid var(--border);border-radius:7px;padding:4px 9px;font-size:11px;font-weight:500;}
+.leg-dot{width:8px;height:8px;border-radius:3px;}
+/* TABLE */
+.tt-wrap{background:var(--card);border:1px solid var(--border);border-radius:18px;overflow:hidden;overflow-x:auto;animation:fi 0.5s ease both;}
+@keyframes fi{from{opacity:0;transform:translateY(13px)}to{opacity:1;transform:translateY(0)}}
+table{width:100%;border-collapse:collapse;min-width:680px;}
+thead tr{background:rgba(79,142,247,0.07);}
+th{padding:13px 10px;font-size:10px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--muted);border-bottom:1px solid var(--border);text-align:center;white-space:nowrap;}
+th:first-child{text-align:left;padding-left:18px;color:var(--text);}
+.sl-time{font-size:11px;font-weight:700;color:var(--accent);}
+.sl-per{font-size:10px;color:var(--muted);margin-top:1px;}
+tbody tr{border-bottom:1px solid rgba(255,255,255,0.03);}
 tbody tr:last-child{border-bottom:none;}
-td{padding:14px;text-align:center;vertical-align:middle;border-right:1px solid rgba(255,255,255,0.04);}
+tbody tr:hover{background:rgba(255,255,255,0.02);}
+td{padding:11px 9px;text-align:center;vertical-align:middle;border-right:1px solid rgba(255,255,255,0.03);}
 td:last-child{border-right:none;}
-td:first-child{text-align:left;padding-left:24px;}
-.day-cell{display:flex;align-items:center;gap:10px;}
-.day-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0;}
-.day-name{font-size:14px;font-weight:600;color:white;}
-.day-abbr{font-size:11px;color:var(--muted);}
-.class-cell{border-radius:10px;padding:10px 12px;display:inline-block;min-width:110px;transition:all 0.2s;}
-.class-cell:hover{filter:brightness(1.2);}
-.class-subject{font-size:12px;font-weight:700;color:var(--text);margin-bottom:3px;}
-.class-faculty{font-size:11px;}
-.color-1{background:rgba(79,142,247,0.08);border:1px solid rgba(79,142,247,0.2);}
-.color-2{background:rgba(124,92,252,0.08);border:1px solid rgba(124,92,252,0.2);}
-.color-3{background:rgba(67,233,123,0.08);border:1px solid rgba(67,233,123,0.2);}
-.color-4{background:rgba(255,179,71,0.08);border:1px solid rgba(255,179,71,0.2);}
-.color-5{background:rgba(0,212,255,0.08);border:1px solid rgba(0,212,255,0.2);}
-.color-1 .class-faculty{color:#4f8ef7;}
-.color-2 .class-faculty{color:#9c7cfc;}
-.color-3 .class-faculty{color:#43e97b;}
-.color-4 .class-faculty{color:#ffb347;}
-.color-5 .class-faculty{color:#00d4ff;}
-.break-cell{background:rgba(255,255,255,0.03);border:1px solid var(--border);border-radius:10px;padding:10px;color:var(--muted);font-size:11px;display:inline-block;min-width:80px;}
-.empty-cell{color:rgba(136,146,176,0.3);font-size:18px;}
-.empty-state{text-align:center;padding:60px 20px;}
-.empty-state .icon{font-size:60px;margin-bottom:16px;opacity:0.4;}
-.empty-state h3{font-size:22px;color:white;margin-bottom:8px;}
-.empty-state p{color:var(--muted);}
-@media print{.topnav,.page-header .btn-print{display:none!important;}body{background:white;color:black;}.table-wrap{border:1px solid #ccc;}th,td{color:black;}}
+td:first-child{text-align:left;padding-left:18px;}
+.day-cell{display:flex;align-items:center;gap:8px;}
+.day-dot{width:7px;height:7px;border-radius:50%;flex-shrink:0;}
+.day-name{font-size:13px;font-weight:600;color:white;}
+.day-abbr{font-size:10px;color:var(--muted);}
+.cls{border-radius:9px;padding:8px 10px;display:inline-block;min-width:108px;}
+.cls-sub{font-size:11px;font-weight:700;margin-bottom:2px;}
+.cls-fac{font-size:10px;opacity:0.8;margin-bottom:2px;}
+.cls-rm{font-size:10px;font-weight:700;color:var(--warn);}
+.c1{background:rgba(79,142,247,0.08);border:1px solid rgba(79,142,247,0.2);}.c1 .cls-sub{color:#4f8ef7;}
+.c2{background:rgba(124,92,252,0.08);border:1px solid rgba(124,92,252,0.2);}.c2 .cls-sub{color:#9c7cfc;}
+.c3{background:rgba(67,233,123,0.06);border:1px solid rgba(67,233,123,0.2);}.c3 .cls-sub{color:#43e97b;}
+.c4{background:rgba(255,179,71,0.06);border:1px solid rgba(255,179,71,0.2);}.c4 .cls-sub{color:#ffb347;}
+.c5{background:rgba(0,212,255,0.06);border:1px solid rgba(0,212,255,0.2);}.c5 .cls-sub{color:#00d4ff;}
+.brk{background:rgba(255,255,255,0.03);border:1px solid var(--border);border-radius:8px;padding:7px;color:var(--muted);font-size:10px;display:inline-block;}
+.empty-cell{color:rgba(136,146,176,0.25);font-size:15px;}
+/* PENDING CARD */
+.pending{background:rgba(255,179,71,0.05);border:1px solid rgba(255,179,71,0.2);border-radius:15px;padding:20px;text-align:center;margin-bottom:20px;}
+.pending h3{color:var(--warn);font-size:15px;margin-bottom:7px;}
+.pending p{color:var(--muted);font-size:13px;line-height:1.6;}
+.empty-state{text-align:center;padding:56px 20px;}
+.empty-state .icon{font-size:52px;margin-bottom:12px;opacity:0.4;}
+@media print{.topnav,.page-header .btn-print{display:none!important;}body{background:white;color:black;}.tt-wrap{border:1px solid #ccc;}th,td{color:black;}}
 </style>
 </head>
 <body>
-
 <div class="orb orb1"></div>
 <div class="orb orb2"></div>
-
 <nav class="topnav">
-  <div class="nav-brand">
-    <div class="nav-logo">🎓</div>
-    Faculty<span class="dot">Sync</span>
-  </div>
+  <div class="nav-brand"><div class="nav-logo">🎓</div>Faculty<span class="dot">Sync</span></div>
   <div class="nav-right">
-    <div class="badge-tt">🗓️ Timetable</div>
-    <button class="btn-nav btn-back-nav" onclick="goBack()">← Back</button>
-    <button class="btn-nav btn-logout" onclick="logout()">Sign Out</button>
+    <button class="btn-n btn-back" onclick="window.location='summary.html'">← Back</button>
+    <button class="btn-n btn-lo" onclick="logout()">Sign Out</button>
   </div>
 </nav>
-
 <div class="page">
   <div class="page-header">
     <div>
       <h1>Your Timetable</h1>
-      <p>Generated based on your faculty selections for this semester</p>
+      <p id="subtitle">Generated from your faculty selections</p>
     </div>
-    <button class="btn-print" onclick="window.print()">🖨️ Print Timetable</button>
+    <button class="btn-print" onclick="window.print()">🖨️ Print</button>
   </div>
-  <div id="mainContent"></div>
+  <div id="main"><div class="empty-state"><div class="icon">⏳</div><h3 style="color:white;font-size:18px">Loading...</h3></div></div>
 </div>
-
 <script>
-// ── AUTH CHECK ──
-const token = localStorage.getItem("token");
-const role  = localStorage.getItem("role");
-if (!token || role !== "student") { window.location = "login.html"; }
+const token=localStorage.getItem("token"),role=localStorage.getItem("role"),userId=localStorage.getItem("userId");
+if(!token||role!=="student")window.location="login.html";
+const raw=JSON.parse(localStorage.getItem("studentSelection")||"{}");
+const sels=raw.selections||[],dept=raw.department||"",year=raw.year||"",sem=raw.semester||"";
+document.getElementById("subtitle").textContent=dept&&year&&sem?`${dept} · Year ${year} · Semester ${sem}`:"Generated from your faculty selections";
 
-// ── LOAD SELECTION from localStorage (saved by student.html) ──
-const raw        = JSON.parse(localStorage.getItem("studentSelection") || "{}");
-const selections = raw.selections || [];
-
-const slots = [
-  { time: "09:00 – 10:00", label: "Period 1", type: "class" },
-  { time: "10:00 – 11:00", label: "Period 2", type: "class" },
-  { time: "11:00 – 11:15", label: "Break",    type: "break" },
-  { time: "11:15 – 12:15", label: "Period 3", type: "class" },
-  { time: "12:15 – 01:00", label: "Lunch",    type: "break" },
-  { time: "01:00 – 02:00", label: "Period 4", type: "class" },
-  { time: "02:00 – 03:00", label: "Period 5", type: "class" },
+const DAYS=["Monday","Tuesday","Wednesday","Thursday","Friday"];
+const SLOTS=[
+  {time:"09:00–10:00",label:"Period 1",type:"class",num:1},
+  {time:"10:00–11:00",label:"Period 2",type:"class",num:2},
+  {time:"11:00–11:15",label:"Break",type:"break"},
+  {time:"11:15–12:15",label:"Period 3",type:"class",num:3},
+  {time:"12:15–01:00",label:"Lunch",type:"break"},
+  {time:"01:00–02:00",label:"Period 4",type:"class",num:4},
+  {time:"02:00–03:00",label:"Period 5",type:"class",num:5},
 ];
+const CC=["c1","c2","c3","c4","c5"];
+const DC=["#4f8ef7","#7c5cfc","#43e97b","#ffb347","#00d4ff"];
+const LC=["#4f8ef7","#9c7cfc","#43e97b","#ffb347","#00d4ff"];
 
-const days = [
-  { name: "Monday",    abbr: "MON", color: "#4f8ef7" },
-  { name: "Tuesday",   abbr: "TUE", color: "#7c5cfc" },
-  { name: "Wednesday", abbr: "WED", color: "#43e97b" },
-  { name: "Thursday",  abbr: "THU", color: "#ffb347" },
-  { name: "Friday",    abbr: "FRI", color: "#00d4ff" },
-];
+async function init(){
+  const container=document.getElementById("main");
+  let serverSlots=[];
+  if(dept&&year&&sem){
+    try{
+      const r=await fetch(`/api/timetable/student/${userId}?department=${dept}&year=${year}&semester=${sem}`,{headers:{"Authorization":token}});
+      if(r.ok)serverSlots=await r.json();
+    }catch{}
+  }
+  const subColors={};
+  sels.forEach((s,i)=>subColors[s.subject]=CC[i%5]);
 
-const colorMap = ["color-1","color-2","color-3","color-4","color-5"];
-const container = document.getElementById("mainContent");
-
-if (selections.length === 0) {
-  container.innerHTML = `
-  <div class="empty-state">
-    <div class="icon">📭</div>
-    <h3>No subjects selected</h3>
-    <p>Please go back and select faculty for your subjects.</p>
-  </div>`;
-} else {
-
-  // Assign each subject a color
-  const subjectColors = {};
-  selections.forEach((s, i) => {
-    subjectColors[s.subject] = colorMap[i % colorMap.length];
-  });
-
-  // Build schedule grid
-  const classSlots = slots.filter(s => s.type === "class");
-  const schedule   = {};
-
-  days.forEach(d => {
-    schedule[d.name] = {};
-    slots.forEach(s => schedule[d.name][s.time] = null);
-  });
-
-  // Distribute subjects across days and class slots
-  selections.forEach((item, i) => {
-    const dayIdx  = i % days.length;
-    const slotIdx = Math.floor(i / days.length);
-    if (slotIdx < classSlots.length) {
-      schedule[days[dayIdx].name][classSlots[slotIdx].time] = item;
-    }
-  });
-
-  // STATS BAR
-  let statsHTML = `
-  <div class="info-bar">
-    <div class="info-stat"><div class="info-stat-num">${selections.length}</div><div class="info-stat-label">SUBJECTS</div></div>
-    <div class="info-stat"><div class="info-stat-num">5</div><div class="info-stat-label">DAYS / WEEK</div></div>
-    <div class="info-stat"><div class="info-stat-num">${classSlots.length}</div><div class="info-stat-label">PERIODS / DAY</div></div>
-    <div class="info-stat"><div class="info-stat-num">${selections.length}</div><div class="info-stat-label">WEEKLY CLASSES</div></div>
-  </div>`;
-
-  // LEGEND
-  const colors = ["#4f8ef7","#9c7cfc","#43e97b","#ffb347","#00d4ff"];
-  let legendHTML = `<div class="legend"><span class="legend-title">Subjects</span>`;
-  selections.forEach((s, i) => {
-    legendHTML += `<div class="legend-item"><div class="legend-dot" style="background:${colors[i%5]}"></div>${s.subject}</div>`;
-  });
-  legendHTML += `</div>`;
-
-  // TABLE
-  let tableHTML = `
-  <div class="table-wrap">
-    <table>
-      <thead><tr><th>Day</th>`;
-
-  slots.forEach(s => {
-    tableHTML += `<th><span class="slot-time">${s.time}</span><span class="slot-period">${s.label}</span></th>`;
-  });
-  tableHTML += `</tr></thead><tbody>`;
-
-  days.forEach(d => {
-    tableHTML += `<tr>
-      <td>
-        <div class="day-cell">
-          <div class="day-dot" style="background:${d.color}"></div>
-          <div><div class="day-name">${d.name}</div><div class="day-abbr">${d.abbr}</div></div>
-        </div>
-      </td>`;
-
-    slots.forEach(s => {
-      if (s.type === "break") {
-        tableHTML += `<td><div class="break-cell">${s.label}</div></td>`;
-      } else {
-        const item = schedule[d.name][s.time];
-        if (item) {
-          const cc = subjectColors[item.subject];
-          tableHTML += `<td>
-            <div class="class-cell ${cc}">
-              <div class="class-subject">${item.subject}</div>
-              <div class="class-faculty">👨‍🏫 ${item.facultyName}</div>
-            </div>
-          </td>`;
-        } else {
-          tableHTML += `<td><span class="empty-cell">–</span></td>`;
-        }
-      }
-    });
-
-    tableHTML += `</tr>`;
-  });
-
-  tableHTML += `</tbody></table></div>`;
-  container.innerHTML = statsHTML + legendHTML + tableHTML;
+  if(serverSlots&&serverSlots.length){
+    renderServer(serverSlots,subColors,container);
+  }else if(sels.length){
+    renderPreview(sels,subColors,container);
+  }else{
+    container.innerHTML=`<div class="empty-state"><div class="icon">📭</div><h3 style="color:white;font-size:18px">No selections found</h3><p style="color:var(--muted)">Go back and select faculty.</p></div>`;
+  }
 }
 
-function goBack()  { window.location = "summary.html"; }
-function logout()  { localStorage.clear(); window.location = "login.html"; }
+function renderServer(slots,subColors,c){
+  const sch={};DAYS.forEach(d=>{sch[d]={};});
+  slots.forEach(s=>sch[s.day][s.periodNumber]=s);
+  const subs=[...new Set(slots.map(s=>s.subject))];
+  c.innerHTML=stats(slots.length,subs.length)+legend(subs)+buildTable(sch,subColors,true);
+}
+
+function renderPreview(sel,subColors,c){
+  const clsSlots=SLOTS.filter(s=>s.type==="class");
+  const sch={};DAYS.forEach(d=>{sch[d]={};});
+  sel.forEach((it,i)=>{
+    const di=i%DAYS.length,si=Math.floor(i/DAYS.length);
+    if(clsSlots[si])sch[DAYS[di]][clsSlots[si].num]={subject:it.subject,facultyName:it.facultyName,roomNumber:"TBD"};
+  });
+  const subs=sel.map(s=>s.subject);
+  c.innerHTML=`<div class="pending"><h3>⏳ Official Timetable Pending</h3><p>Admin hasn't generated the timetable yet.<br>This is a <strong>preview</strong>. Room numbers will be confirmed after admin generates the timetable.</p></div>`
+    +stats(sel.length,subs.length)+legend(subs)+buildTable(sch,subColors,false);
+}
+
+function stats(cls,subs){
+  return`<div class="info-bar">
+    <div class="is"><div class="is-num">${subs}</div><div class="is-lbl">Subjects</div></div>
+    <div class="is"><div class="is-num">5</div><div class="is-lbl">Days/Week</div></div>
+    <div class="is"><div class="is-num">${cls}</div><div class="is-lbl">Total Slots</div></div>
+    <div class="is"><div class="is-num">${dept||"—"}</div><div class="is-lbl">Dept</div></div>
+  </div>`;
+}
+
+function legend(subs){
+  return`<div class="legend"><span class="legend-ttl">Subjects</span>
+    ${subs.map((s,i)=>`<div class="legend-item"><div class="leg-dot" style="background:${LC[i%5]}"></div>${s}</div>`).join("")}
+  </div>`;
+}
+
+function buildTable(sch,subColors,server){
+  let h=`<div class="tt-wrap"><table><thead><tr><th>Day</th>`;
+  SLOTS.forEach(sl=>{h+=`<th><div class="sl-time">${sl.time}</div><div class="sl-per">${sl.label}</div></th>`;});
+  h+=`</tr></thead><tbody>`;
+  DAYS.forEach((day,di)=>{
+    h+=`<tr><td><div class="day-cell">
+      <div class="day-dot" style="background:${DC[di]}"></div>
+      <div><div class="day-name">${day}</div><div class="day-abbr">${day.slice(0,3).toUpperCase()}</div></div>
+    </div></td>`;
+    SLOTS.forEach(sl=>{
+      if(sl.type==="break"){h+=`<td><div class="brk">${sl.label}</div></td>`;}
+      else{
+        const item=sch[day]?.[sl.num];
+        if(item){
+          const cc=subColors[item.subject]||"c1";
+          h+=`<td><div class="cls ${cc}">
+            <div class="cls-sub">${item.subject}</div>
+            <div class="cls-fac">👨‍🏫 ${item.facultyName||""}</div>
+            ${item.roomNumber?`<div class="cls-rm">🏫 ${item.roomNumber}</div>`:""}
+          </div></td>`;
+        }else{h+=`<td><span class="empty-cell">–</span></td>`;}
+      }
+    });
+    h+=`</tr>`;
+  });
+  h+=`</tbody></table></div>`;
+  return h;
+}
+
+function logout(){localStorage.clear();window.location="login.html";}
+init();
 </script>
 </body>
 </html>
