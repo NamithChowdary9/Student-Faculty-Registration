@@ -1,4 +1,4 @@
-const router         = require("express").Router();
+const router = require("express").Router();
 const SemesterStatus = require("../models/SemesterStatus");
 const { auth, adminOnly } = require("../middleware/authMiddleware");
 
@@ -10,7 +10,10 @@ router.get("/", auth, async (req, res) => {
     if (req.query.year)       filter.year       = req.query.year;
     if (req.query.semester)   filter.semester   = req.query.semester;
 
-    const list = await SemesterStatus.find(filter).sort({ department: 1, year: 1, semester: 1 });
+    const list = await SemesterStatus
+      .find(filter)
+      .sort({ department: 1, year: 1, semester: 1 });
+
     res.json(list);
   } catch (e) {
     res.status(500).json({ message: e.message });
@@ -21,10 +24,15 @@ router.get("/", auth, async (req, res) => {
 router.get("/check", auth, async (req, res) => {
   try {
     const { department, year, semester } = req.query;
-    if (!department || !year || !semester)
-      return res.status(400).json({ message: "department, year, semester required" });
+
+    if (!department || !year || !semester) {
+      return res.status(400).json({
+        message: "department, year, semester required"
+      });
+    }
 
     const s = await SemesterStatus.findOne({ department, year, semester });
+
     res.json({
       isLocked: s ? s.isLocked : true,
       minSgpa:  s ? s.minSgpa  : 0,
@@ -39,8 +47,12 @@ router.get("/check", auth, async (req, res) => {
 router.post("/", auth, adminOnly, async (req, res) => {
   try {
     const { department, year, semester, isLocked, minSgpa } = req.body;
-    if (!department || !year || !semester)
-      return res.status(400).json({ message: "department, year, semester required" });
+
+    if (!department || !year || !semester) {
+      return res.status(400).json({
+        message: "department, year, semester required"
+      });
+    }
 
     const status = await SemesterStatus.findOneAndUpdate(
       { department, year, semester },
@@ -50,7 +62,10 @@ router.post("/", auth, adminOnly, async (req, res) => {
         lockedAt: new Date(),
         minSgpa:  minSgpa != null ? parseFloat(minSgpa) : 0,
       },
-      { upsert: true, new: true }
+      {
+        upsert: true,
+        returnDocument: "after"   // ✅ FIXED (replaces `new: true`)
+      }
     );
 
     res.json(status);
@@ -63,11 +78,17 @@ router.post("/", auth, adminOnly, async (req, res) => {
 router.patch("/:id/toggle", auth, adminOnly, async (req, res) => {
   try {
     const s = await SemesterStatus.findById(req.params.id);
-    if (!s) return res.status(404).json({ message: "Semester status not found" });
+
+    if (!s) {
+      return res.status(404).json({
+        message: "Semester status not found"
+      });
+    }
 
     s.isLocked = !s.isLocked;
     s.lockedBy = req.user.userId;
     s.lockedAt = new Date();
+
     await s.save();
 
     res.json(s);
