@@ -69,23 +69,22 @@ body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(
   <div id="content"></div>
   <div class="act-bar">
     <button class="btn btn-back" onclick="window.location.href='student.html'">← Back</button>
-    <button class="btn btn-go"   onclick="goTT()">View Timetable 🗓️</button>
-    <button class="btn btn-clr"  onclick="clearSel()">🗑️ Clear</button>
+    <button class="btn btn-go" onclick="goTT()">View Timetable 🗓️</button>
+    <button class="btn btn-clr" onclick="clearSel()">🗑️ Clear</button>
   </div>
 </div>
 <script>
-const token  = localStorage.getItem("token");
-const role   = localStorage.getItem("role");
+const token = localStorage.getItem("token");
+const role  = localStorage.getItem("role");
 if (!token || role !== "student") window.location.href = "login.html";
-
 document.getElementById("uid").textContent = localStorage.getItem("userId") || "";
 
 const rawStr = localStorage.getItem("studentSelection");
-const raw    = rawStr ? JSON.parse(rawStr) : {};
-const sels   = Array.isArray(raw.selections) ? raw.selections : [];
-const dept   = raw.department || "";
-const year   = raw.year       || "";
-const sem    = raw.semester   || "";
+const raw = rawStr ? JSON.parse(rawStr) : {};
+const sels = Array.isArray(raw.selections) ? raw.selections : [];
+const dept = raw.department || "";
+const year = raw.year || "";
+const sem  = raw.semester || "";
 
 const el = document.getElementById("content");
 

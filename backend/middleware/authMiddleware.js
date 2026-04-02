@@ -2,8 +2,14 @@ const jwt = require("jsonwebtoken");
 const SECRET = process.env.JWT_SECRET || "facultysync_secret_2025";
 
 function auth(req, res, next) {
-  const token = req.headers["authorization"];
-  if (!token) return res.status(401).json({ message: "No token provided" });
+  const authHeader = req.headers["authorization"];
+  if (!authHeader) return res.status(401).json({ message: "No token provided" });
+
+  // Support both "Bearer <token>" and raw token
+  const token = authHeader.startsWith("Bearer ")
+    ? authHeader.slice(7)
+    : authHeader;
+
   try {
     req.user = jwt.verify(token, SECRET);
     next();

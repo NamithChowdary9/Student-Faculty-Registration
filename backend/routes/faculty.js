@@ -1,4 +1,4 @@
-const router  = require("express").Router();
+const router = require("express").Router();
 const Faculty = require("../models/Faculty");
 const { auth, adminOnly } = require("../middleware/authMiddleware");
 
@@ -7,9 +7,10 @@ router.get("/", auth, async (req, res) => {
   try {
     const filter = {};
     if (req.query.department) filter.department = req.query.department;
-    if (req.query.year)       filter.year       = req.query.year;
-    if (req.query.semester)   filter.semester   = req.query.semester;
-    if (req.query.subject)    filter.subject    = req.query.subject;
+    // Parse to Number to match schema type
+    if (req.query.year) filter.year = parseInt(req.query.year);
+    if (req.query.semester) filter.semester = parseInt(req.query.semester);
+    if (req.query.subject) filter.subject = req.query.subject;
 
     const list = await Faculty.find(filter).sort({ subject: 1, name: 1 });
     res.json(list);
@@ -30,12 +31,16 @@ router.post("/", auth, adminOnly, async (req, res) => {
       return res.status(400).json({ message: "name, department, year, semester, subject are required" });
 
     const f = await Faculty.create({
-      name, department, year, semester, subject,
-      experience:     experience     || "",
-      rating:         rating != null  ? parseFloat(rating) : null,
-      email:          email          || "",
+      name,
+      department,
+      year: parseInt(year),
+      semester: parseInt(semester),
+      subject,
+      experience: experience || "",
+      rating: rating != null ? parseFloat(rating) : null,
+      email: email || "",
       periodsPerWeek: periodsPerWeek ? parseInt(periodsPerWeek) : 4,
-      studentLimit:   studentLimit   ? parseInt(studentLimit)   : 60,
+      studentLimit: studentLimit ? parseInt(studentLimit) : 60,
     });
 
     res.status(201).json(f);
@@ -47,13 +52,18 @@ router.post("/", auth, adminOnly, async (req, res) => {
 /* ── UPDATE ── */
 router.put("/:id", auth, adminOnly, async (req, res) => {
   try {
-    // Sanitise numeric fields before update
     const update = { ...req.body };
-    if (update.rating       != null) update.rating       = parseFloat(update.rating);
+    // Sanitise numeric fields
+    if (update.rating != null) update.rating = parseFloat(update.rating);
     if (update.periodsPerWeek != null) update.periodsPerWeek = parseInt(update.periodsPerWeek);
     if (update.studentLimit != null) update.studentLimit = parseInt(update.studentLimit);
+    if (update.year != null) update.year = parseInt(update.year);
+    if (update.semester != null) update.semester = parseInt(update.semester);
 
-    const f = await Faculty.findByIdAndUpdate(req.params.id, update, { new: true, runValidators: true });
+    const f = await Faculty.findByIdAndUpdate(req.params.id, update, {
+      new: true,
+      runValidators: true,
+    });
     if (!f) return res.status(404).json({ message: "Faculty not found" });
     res.json(f);
   } catch (e) {

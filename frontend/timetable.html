@@ -25,17 +25,14 @@ body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(
 .page-header h1{font-size:24px;font-weight:700;color:white;margin-bottom:3px;}
 .page-header p{color:var(--muted);font-size:13px;}
 .btn-print{padding:10px 16px;border:none;border-radius:11px;background:linear-gradient(135deg,var(--accent),var(--accent2));color:white;font-family:'Space Grotesk',sans-serif;font-size:12px;font-weight:600;cursor:pointer;}
-/* INFO BAR */
 .info-bar{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:11px;margin-bottom:20px;}
 .is{background:var(--card);border:1px solid var(--border);border-radius:13px;padding:13px 15px;}
 .is-num{font-size:22px;font-weight:700;color:white;}
 .is-lbl{font-size:10px;color:var(--muted);margin-top:3px;text-transform:uppercase;letter-spacing:0.5px;}
-/* LEGEND */
 .legend{background:var(--card);border:1px solid var(--border);border-radius:13px;padding:14px 18px;margin-bottom:18px;display:flex;flex-wrap:wrap;gap:9px;align-items:center;}
 .legend-ttl{font-size:10px;font-weight:700;letter-spacing:0.8px;text-transform:uppercase;color:var(--muted);margin-right:5px;}
 .legend-item{display:flex;align-items:center;gap:6px;background:var(--card2);border:1px solid var(--border);border-radius:7px;padding:4px 9px;font-size:11px;font-weight:500;}
 .leg-dot{width:8px;height:8px;border-radius:3px;}
-/* TABLE */
 .tt-wrap{background:var(--card);border:1px solid var(--border);border-radius:18px;overflow:hidden;overflow-x:auto;animation:fi 0.5s ease both;}
 @keyframes fi{from{opacity:0;transform:translateY(13px)}to{opacity:1;transform:translateY(0)}}
 table{width:100%;border-collapse:collapse;min-width:680px;}
@@ -65,7 +62,6 @@ td:first-child{text-align:left;padding-left:18px;}
 .c5{background:rgba(0,212,255,0.06);border:1px solid rgba(0,212,255,0.2);}.c5 .cls-sub{color:#00d4ff;}
 .brk{background:rgba(255,255,255,0.03);border:1px solid var(--border);border-radius:8px;padding:7px;color:var(--muted);font-size:10px;display:inline-block;}
 .empty-cell{color:rgba(136,146,176,0.25);font-size:15px;}
-/* PENDING CARD */
 .pending{background:rgba(255,179,71,0.05);border:1px solid rgba(255,179,71,0.2);border-radius:15px;padding:20px;text-align:center;margin-bottom:20px;}
 .pending h3{color:var(--warn);font-size:15px;margin-bottom:7px;}
 .pending p{color:var(--muted);font-size:13px;line-height:1.6;}
@@ -95,111 +91,149 @@ td:first-child{text-align:left;padding-left:18px;}
   <div id="main"><div class="empty-state"><div class="icon">⏳</div><h3 style="color:white;font-size:18px">Loading...</h3></div></div>
 </div>
 <script>
-const token=localStorage.getItem("token"),role=localStorage.getItem("role"),userId=localStorage.getItem("userId");
-if(!token||role!=="student")window.location="login.html";
-const raw=JSON.parse(localStorage.getItem("studentSelection")||"{}");
-const sels=raw.selections||[],dept=raw.department||"",year=raw.year||"",sem=raw.semester||"";
-document.getElementById("subtitle").textContent=dept&&year&&sem?`${dept} · Year ${year} · Semester ${sem}`:"Generated from your faculty selections";
+const token  = localStorage.getItem("token");
+const role   = localStorage.getItem("role");
+const userId = localStorage.getItem("userId");
+if (!token || role !== "student") window.location = "login.html";
 
-const DAYS=["Monday","Tuesday","Wednesday","Thursday","Friday"];
-const SLOTS=[
-  {time:"09:00–10:00",label:"Period 1",type:"class",num:1},
-  {time:"10:00–11:00",label:"Period 2",type:"class",num:2},
-  {time:"11:00–11:15",label:"Break",type:"break"},
-  {time:"11:15–12:15",label:"Period 3",type:"class",num:3},
-  {time:"12:15–01:00",label:"Lunch",type:"break"},
-  {time:"01:00–02:00",label:"Period 4",type:"class",num:4},
-  {time:"02:00–03:00",label:"Period 5",type:"class",num:5},
+const raw  = JSON.parse(localStorage.getItem("studentSelection") || "{}");
+const sels = raw.selections || [];
+const dept = raw.department || "";
+const year = raw.year || "";
+const sem  = raw.semester || "";
+
+document.getElementById("subtitle").textContent =
+  dept && year && sem
+    ? `${dept} · Year ${year} · Semester ${sem}`
+    : "Generated from your faculty selections";
+
+const DAYS = ["Monday","Tuesday","Wednesday","Thursday","Friday"];
+const SLOTS = [
+  { time:"09:00–10:00", label:"Period 1", type:"class", num:1 },
+  { time:"10:00–11:00", label:"Period 2", type:"class", num:2 },
+  { time:"11:00–11:15", label:"Break",    type:"break" },
+  { time:"11:15–12:15", label:"Period 3", type:"class", num:3 },
+  { time:"12:15–01:00", label:"Lunch",    type:"break" },
+  { time:"01:00–02:00", label:"Period 4", type:"class", num:4 },
+  { time:"02:00–03:00", label:"Period 5", type:"class", num:5 },
 ];
-const CC=["c1","c2","c3","c4","c5"];
-const DC=["#4f8ef7","#7c5cfc","#43e97b","#ffb347","#00d4ff"];
-const LC=["#4f8ef7","#9c7cfc","#43e97b","#ffb347","#00d4ff"];
+const CC = ["c1","c2","c3","c4","c5"];
+const DC = ["#4f8ef7","#7c5cfc","#43e97b","#ffb347","#00d4ff"];
+const LC = ["#4f8ef7","#9c7cfc","#43e97b","#ffb347","#00d4ff"];
 
-async function init(){
-  const container=document.getElementById("main");
-  let serverSlots=[];
-  if(dept&&year&&sem){
-    try{
-      const r=await fetch(`/api/timetable/student/${userId}?department=${dept}&year=${year}&semester=${sem}`,{headers:{"Authorization":token}});
-      if(r.ok)serverSlots=await r.json();
-    }catch{}
+async function init() {
+  const container = document.getElementById("main");
+  let serverSlots = [];
+
+  if (dept && year && sem) {
+    try {
+      // FIX: Bearer token
+      const r = await fetch(
+        `/api/timetable/student/${userId}?department=${dept}&year=${year}&semester=${sem}`,
+        { headers: { "Authorization": "Bearer " + token } }
+      );
+      if (r.ok) serverSlots = await r.json();
+    } catch {}
   }
-  const subColors={};
-  sels.forEach((s,i)=>subColors[s.subject]=CC[i%5]);
 
-  if(serverSlots&&serverSlots.length){
-    renderServer(serverSlots,subColors,container);
-  }else if(sels.length){
-    renderPreview(sels,subColors,container);
-  }else{
-    container.innerHTML=`<div class="empty-state"><div class="icon">📭</div><h3 style="color:white;font-size:18px">No selections found</h3><p style="color:var(--muted)">Go back and select faculty.</p></div>`;
+  const subColors = {};
+  sels.forEach((s, i) => { subColors[s.subject] = CC[i % 5]; });
+
+  if (serverSlots && serverSlots.length) {
+    renderServer(serverSlots, subColors, container);
+  } else if (sels.length) {
+    renderPreview(sels, subColors, container);
+  } else {
+    container.innerHTML = `<div class="empty-state"><div class="icon">📭</div>
+      <h3 style="color:white;font-size:18px">No selections found</h3>
+      <p style="color:var(--muted)">Go back and select faculty.</p></div>`;
   }
 }
 
-function renderServer(slots,subColors,c){
-  const sch={};DAYS.forEach(d=>{sch[d]={};});
-  slots.forEach(s=>sch[s.day][s.periodNumber]=s);
-  const subs=[...new Set(slots.map(s=>s.subject))];
-  c.innerHTML=stats(slots.length,subs.length)+legend(subs)+buildTable(sch,subColors,true);
+function renderServer(slots, subColors, c) {
+  const sch = {};
+  DAYS.forEach(d => { sch[d] = {}; });
+  slots.forEach(s => { sch[s.day][s.periodNumber] = s; });
+  const subs = [...new Set(slots.map(s => s.subject))];
+  c.innerHTML = stats(slots.length, subs.length) + legend(subs) + buildTable(sch, subColors, true);
 }
 
-function renderPreview(sel,subColors,c){
-  const clsSlots=SLOTS.filter(s=>s.type==="class");
-  const sch={};DAYS.forEach(d=>{sch[d]={};});
-  sel.forEach((it,i)=>{
-    const di=i%DAYS.length,si=Math.floor(i/DAYS.length);
-    if(clsSlots[si])sch[DAYS[di]][clsSlots[si].num]={subject:it.subject,facultyName:it.facultyName,roomNumber:"TBD"};
+function renderPreview(sel, subColors, c) {
+  const clsSlots = SLOTS.filter(s => s.type === "class");
+  const sch = {};
+  DAYS.forEach(d => { sch[d] = {}; });
+  sel.forEach((it, i) => {
+    const di = i % DAYS.length;
+    const si = Math.floor(i / DAYS.length);
+    if (clsSlots[si])
+      sch[DAYS[di]][clsSlots[si].num] = {
+        subject: it.subject,
+        facultyName: it.facultyName,
+        roomNumber: "TBD",
+      };
   });
-  const subs=sel.map(s=>s.subject);
-  c.innerHTML=`<div class="pending"><h3>⏳ Official Timetable Pending</h3><p>Admin hasn't generated the timetable yet.<br>This is a <strong>preview</strong>. Room numbers will be confirmed after admin generates the timetable.</p></div>`
-    +stats(sel.length,subs.length)+legend(subs)+buildTable(sch,subColors,false);
+  const subs = sel.map(s => s.subject);
+  c.innerHTML =
+    `<div class="pending"><h3>⏳ Official Timetable Pending</h3>
+      <p>Admin hasn't generated the timetable yet.<br>
+      This is a <strong>preview</strong>. Room numbers will be confirmed after admin generates the timetable.</p></div>` +
+    stats(sel.length, subs.length) + legend(subs) + buildTable(sch, subColors, false);
 }
 
-function stats(cls,subs){
-  return`<div class="info-bar">
+function stats(cls, subs) {
+  return `<div class="info-bar">
     <div class="is"><div class="is-num">${subs}</div><div class="is-lbl">Subjects</div></div>
     <div class="is"><div class="is-num">5</div><div class="is-lbl">Days/Week</div></div>
     <div class="is"><div class="is-num">${cls}</div><div class="is-lbl">Total Slots</div></div>
-    <div class="is"><div class="is-num">${dept||"—"}</div><div class="is-lbl">Dept</div></div>
+    <div class="is"><div class="is-num">${dept || "—"}</div><div class="is-lbl">Dept</div></div>
   </div>`;
 }
 
-function legend(subs){
-  return`<div class="legend"><span class="legend-ttl">Subjects</span>
-    ${subs.map((s,i)=>`<div class="legend-item"><div class="leg-dot" style="background:${LC[i%5]}"></div>${s}</div>`).join("")}
+function legend(subs) {
+  return `<div class="legend"><span class="legend-ttl">Subjects</span>
+    ${subs.map((s, i) => `<div class="legend-item"><div class="leg-dot" style="background:${LC[i % 5]}"></div>${s}</div>`).join("")}
   </div>`;
 }
 
-function buildTable(sch,subColors,server){
-  let h=`<div class="tt-wrap"><table><thead><tr><th>Day</th>`;
-  SLOTS.forEach(sl=>{h+=`<th><div class="sl-time">${sl.time}</div><div class="sl-per">${sl.label}</div></th>`;});
-  h+=`</tr></thead><tbody>`;
-  DAYS.forEach((day,di)=>{
-    h+=`<tr><td><div class="day-cell">
+function buildTable(sch, subColors, server) {
+  let h = `<div class="tt-wrap"><table><thead><tr><th>Day</th>`;
+  SLOTS.forEach(sl => {
+    h += `<th><div class="sl-time">${sl.time}</div><div class="sl-per">${sl.label}</div></th>`;
+  });
+  h += `</tr></thead><tbody>`;
+
+  DAYS.forEach((day, di) => {
+    h += `<tr><td><div class="day-cell">
       <div class="day-dot" style="background:${DC[di]}"></div>
-      <div><div class="day-name">${day}</div><div class="day-abbr">${day.slice(0,3).toUpperCase()}</div></div>
+      <div><div class="day-name">${day}</div><div class="day-abbr">${day.slice(0, 3).toUpperCase()}</div></div>
     </div></td>`;
-    SLOTS.forEach(sl=>{
-      if(sl.type==="break"){h+=`<td><div class="brk">${sl.label}</div></td>`;}
-      else{
-        const item=sch[day]?.[sl.num];
-        if(item){
-          const cc=subColors[item.subject]||"c1";
-          h+=`<td><div class="cls ${cc}">
+
+    SLOTS.forEach(sl => {
+      if (sl.type === "break") {
+        h += `<td><div class="brk">${sl.label}</div></td>`;
+      } else {
+        const item = sch[day]?.[sl.num];
+        if (item) {
+          const cc = subColors[item.subject] || "c1";
+          h += `<td><div class="cls ${cc}">
             <div class="cls-sub">${item.subject}</div>
-            <div class="cls-fac">👨‍🏫 ${item.facultyName||""}</div>
-            ${item.roomNumber?`<div class="cls-rm">🏫 ${item.roomNumber}</div>`:""}
+            <div class="cls-fac">👨‍🏫 ${item.facultyName || ""}</div>
+            ${item.roomNumber ? `<div class="cls-rm">🏫 ${item.roomNumber}</div>` : ""}
           </div></td>`;
-        }else{h+=`<td><span class="empty-cell">–</span></td>`;}
+        } else {
+          h += `<td><span class="empty-cell">–</span></td>`;
+        }
       }
     });
-    h+=`</tr>`;
+    h += `</tr>`;
   });
-  h+=`</tbody></table></div>`;
+
+  h += `</tbody></table></div>`;
   return h;
 }
 
-function logout(){localStorage.clear();window.location="login.html";}
+function logout() { localStorage.clear(); window.location = "login.html"; }
+
 init();
 </script>
 </body>

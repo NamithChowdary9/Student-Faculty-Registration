@@ -169,13 +169,15 @@ body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(
 
 <script>
 // ── AUTH ──
-const token  = localStorage.getItem("token");
-const role   = localStorage.getItem("role");
+const token = localStorage.getItem("token");
+const role = localStorage.getItem("role");
 const userId = localStorage.getItem("userId");
 const myDept = (localStorage.getItem("department") || "").toUpperCase();
 const myYear = parseInt(localStorage.getItem("year")) || 0;
 const sgpaRaw = localStorage.getItem("sgpa");
-const mySgpa  = (sgpaRaw !== "" && sgpaRaw !== null && sgpaRaw !== "null") ? parseFloat(sgpaRaw) : null;
+const mySgpa = (sgpaRaw !== "" && sgpaRaw !== null && sgpaRaw !== "null")
+  ? parseFloat(sgpaRaw)
+  : null;
 
 if (!token || role !== "student") window.location.href = "login.html";
 
@@ -183,17 +185,24 @@ document.getElementById("uChip").innerHTML =
   `<strong>${userId}</strong>${myDept ? " · " + myDept : ""}${myYear ? " Y" + myYear : ""}${mySgpa !== null ? " · SGPA:" + mySgpa : ""}`;
 
 // ── STATE ──
-let selected       = {};
+let selected = {};
 let currentSubject = "";
-let totalSubjects  = 0;
-let currentDept    = myDept;
-let currentYear    = String(myYear);
-let currentSem     = "";
-let semStatuses    = [];
-let allFacData     = [];
+let totalSubjects = 0;
+let currentDept = myDept;
+let currentYear = String(myYear);
+let currentSem = "";
+let semStatuses = [];
+let allFacData = [];
 
+// FIX: Bearer token format
 async function api(m, p, b = null) {
-  const o = { method: m, headers: { "Content-Type": "application/json", "Authorization": token } };
+  const o = {
+    method: m,
+    headers: {
+      "Content-Type": "application/json",
+      "Authorization": "Bearer " + token
+    }
+  };
   if (b) o.body = JSON.stringify(b);
   const r = await fetch("/api" + p, o);
   const d = await r.json();
@@ -202,16 +211,15 @@ async function api(m, p, b = null) {
 
 function logout() { localStorage.clear(); window.location.href = "login.html"; }
 
-// Safe id for HTML — replace non-alphanumeric with underscore
 function safeId(str) { return str.replace(/[^a-zA-Z0-9]/g, "_"); }
 
 // ── RENDER DEPTS ──
 function renderDepts() {
-  const DEPTS  = ["CSE","ECE","MBA"];
+  const DEPTS = ["CSE","ECE","MBA"];
   const labels = { "CSE":"💻 CSE","ECE":"⚡ ECE","MBA":"💼 MBA" };
   document.getElementById("deptOpts").innerHTML = DEPTS.map(d => {
     const isMine = d === myDept;
-    const isSel  = currentDept === d;
+    const isSel = currentDept === d;
     return `<div class="opt ${isMine ? "mine dept-mine" : "locked-opt"} ${isSel ? "sel" : ""}"
       onclick="${isMine ? `chooseDept('${d}')` : `showLock('Department')`}">
       <span>${labels[d] || d}</span>
@@ -230,7 +238,7 @@ function renderYears() {
   const YLABELS = ["","1st Year","2nd Year","3rd Year","4th Year"];
   document.getElementById("yearOpts").innerHTML = [1,2,3,4].map(y => {
     const isMine = y === myYear;
-    const isSel  = parseInt(currentYear) === y;
+    const isSel = parseInt(currentYear) === y;
     return `<div class="opt ${isMine ? "mine" : "locked-opt"} ${isSel ? "sel" : ""}"
       onclick="${isMine ? `chooseYear(${y})` : `showLock('Year')`}">
       <span>Year ${y} — ${YLABELS[y]}</span>
@@ -255,12 +263,14 @@ async function renderSems() {
   semStatuses = ok ? data : [];
 
   el.innerHTML = [1, 2].map(s => {
-    const st     = semStatuses.find(x => x.semester === String(s));
+    // FIX: compare as Number since schema stores Number
+    const st = semStatuses.find(x => Number(x.semester) === s);
     const isOpen = !!(st && !st.isLocked);
-    const minS   = st?.minSgpa || 0;
+    const minS = st?.minSgpa || 0;
     const sgFail = minS > 0 && mySgpa !== null && mySgpa < minS;
     const canUse = isOpen && !sgFail;
-    const isSel  = currentSem === String(s);
+    const isSel = currentSem === String(s);
+
     return `<div class="sem-opt ${canUse ? "sem-open" : "sem-locked"} ${isSel && canUse ? "sel" : ""}"
       onclick="${canUse ? `chooseSem(${s}, this)` : `showSemLock(${s},${isOpen},${sgFail},${minS})`}">
       <span>Semester ${s}</span>
@@ -283,8 +293,10 @@ function showLock(field) {
 }
 
 function showSemLock(s, isOpen, sgFail, minS) {
-  if (sgFail) alert(`⚠️ Your SGPA (${mySgpa ?? "not set"}) is below the minimum requirement (${minS}) for Semester ${s}.`);
-  else alert(`🔒 Semester ${s} is locked by admin. Please wait for it to be unlocked.`);
+  if (sgFail)
+    alert(`⚠️ Your SGPA (${mySgpa ?? "not set"}) is below the minimum requirement (${minS}) for Semester ${s}.`);
+  else
+    alert(`🔒 Semester ${s} is locked by admin. Please wait for it to be unlocked.`);
 }
 
 // ── LOAD SUBJECTS ──
@@ -292,9 +304,15 @@ async function loadSubjects() {
   if (!currentDept || !currentYear || !currentSem) {
     alert("Select department, year and semester first."); return;
   }
-  const { ok, data } = await api("GET", `/semester/check?department=${currentDept}&year=${currentYear}&semester=${currentSem}`);
-  if (!ok || data.isLocked) { alert("This semester is locked. Please wait for admin to unlock it."); return; }
 
+  // FIX: verify semester status
+  const { ok, data } = await api(
+    "GET",
+    `/semester/check?department=${currentDept}&year=${currentYear}&semester=${currentSem}`
+  );
+  if (!ok || data.isLocked) {
+    alert("This semester is locked. Please wait for admin to unlock it."); return;
+  }
   if (data.minSgpa > 0 && mySgpa !== null && mySgpa < data.minSgpa) {
     const al = document.getElementById("sgpaAlert");
     al.textContent = `⚠️ Your SGPA (${mySgpa}) is below the minimum (${data.minSgpa}) required for Semester ${currentSem}. Contact your coordinator.`;
@@ -302,16 +320,21 @@ async function loadSubjects() {
   }
   document.getElementById("sgpaAlert").classList.remove("show");
 
-  const { ok: fok, data: fdata } = await api("GET", `/faculty?department=${currentDept}&year=${currentYear}&semester=${currentSem}`);
+  const { ok: fok, data: fdata } = await api(
+    "GET",
+    `/faculty?department=${currentDept}&year=${currentYear}&semester=${currentSem}`
+  );
   allFacData = fdata || [];
-  if (!fok || !allFacData.length) { alert("No subjects available for this selection."); return; }
+  if (!fok || !allFacData.length) {
+    alert("No subjects available for this selection."); return;
+  }
 
   const subs = [...new Set(allFacData.map(f => f.subject))];
   totalSubjects = subs.length;
 
   document.getElementById("subjects").innerHTML = subs.map((s, i) => {
     const done = !!selected[s];
-    const sid  = safeId(s);
+    const sid = safeId(s);
     return `<div class="sub-pill ${done ? "done" : ""}" id="sp_${sid}" onclick="showFac(this);" data-subject="${s}">
       <div class="sub-num">${i + 1}</div><span style="flex:1">${s}</span>${done ? `<span class="dc">✅</span>` : ""}
     </div>`;
@@ -325,7 +348,6 @@ async function loadSubjects() {
 function showFac(pillEl) {
   const subject = pillEl ? pillEl.dataset.subject : currentSubject;
   currentSubject = subject;
-
   document.querySelectorAll(".sub-pill").forEach(p => p.classList.remove("active-sub"));
   const pill = document.querySelector(`.sub-pill[data-subject="${subject}"]`);
   if (pill) pill.classList.add("active-sub");
@@ -333,16 +355,19 @@ function showFac(pillEl) {
   document.getElementById("facCardTitle").textContent = `Faculty for: ${subject}`;
   const list = document.getElementById("facList");
   const facs = allFacData.filter(f => f.subject === subject);
-  if (!facs.length) { list.innerHTML = `<div class="empty"><div class="empty-icon">📭</div>No faculty found</div>`; return; }
+  if (!facs.length) {
+    list.innerHTML = `<div class="empty"><div class="empty-icon">📭</div>No faculty found</div>`;
+    return;
+  }
 
   list.innerHTML = `<div class="fac-grid">` + facs.map(f => {
-    const isSel  = selected[subject]?.name === f.name;
+    const isSel = selected[subject]?.name === f.name;
     const isFull = (f.enrolledCount || 0) >= (f.studentLimit || 60);
-    const rpct   = f.rating ? (f.rating / 5) * 100 : 0;
-    const epct   = Math.min(100, (f.enrolledCount || 0) / (f.studentLimit || 60) * 100);
-    const fc     = isFull ? "#ff6b9d" : epct > 80 ? "#ffb347" : "#43e97b";
-    const init   = f.name.split(" ").map(w => w[0]).join("").substring(0, 2).toUpperCase();
-    const canSel = !isFull || isSel;
+    const rpct = f.rating ? (f.rating / 5) * 100 : 0;
+    const epct = Math.min(100, (f.enrolledCount || 0) / (f.studentLimit || 60) * 100);
+    const fc = isFull ? "#ff6b9d" : epct > 80 ? "#ffb347" : "#43e97b";
+    const init = f.name.split(" ").map(w => w[0]).join("").substring(0, 2).toUpperCase();
+
     return `<div class="fac-card ${isSel ? "sel-card" : ""} ${isFull && !isSel ? "full-card" : ""}">
       ${isSel ? `<div class="sel-badge">✓ Selected</div>` : isFull ? `<div class="full-badge">Access Full</div>` : ""}
       <div class="fc-top">
@@ -351,7 +376,7 @@ function showFac(pillEl) {
       </div>
       <div class="fc-meta">
         ${f.experience ? `<div class="mc">🏆 ${f.experience}</div>` : ""}
-        ${f.email      ? `<div class="mc">📧 ${f.email}</div>`        : ""}
+        ${f.email ? `<div class="mc">📧 ${f.email}</div>` : ""}
         <div class="mc">📅 ${f.periodsPerWeek || 4} periods/wk</div>
       </div>
       ${f.rating ? `<div class="rt-bar"><div class="rt-fill"><div class="rt-inner" style="width:${rpct}%"></div></div><div class="rt-val">⭐ ${f.rating}</div></div>` : ""}
@@ -359,7 +384,12 @@ function showFac(pillEl) {
         <div class="en-bar"><div class="en-fill" style="width:${epct}%;background:${fc}"></div></div>
         <div class="en-lbl"><span style="color:${fc}">${f.enrolledCount || 0}/${f.studentLimit || 60} enrolled</span><span style="color:var(--muted)">${isFull ? "FULL" : Math.round(epct) + "%"}</span></div>
       </div>
-      <button class="btn-sel" data-subject="${subject}" data-name="${f.name}" data-id="${f._id}" data-full="${isFull && !isSel ? "1" : "0"}" onclick="chooseFacFromBtn(this)">
+      <button class="btn-sel"
+        data-subject="${subject}"
+        data-name="${f.name}"
+        data-id="${f._id}"
+        data-full="${isFull && !isSel ? "1" : "0"}"
+        onclick="chooseFacFromBtn(this)">
         ${isSel ? "✓ Selected" : isFull ? "🔴 Access Full" : "Select Faculty"}
       </button>
     </div>`;
@@ -368,18 +398,13 @@ function showFac(pillEl) {
 
 function chooseFacFromBtn(btn) {
   if (btn.dataset.full === "1") return;
-  const subject = btn.dataset.subject;
-  const name    = btn.dataset.name;
-  const id      = btn.dataset.id;
-  chooseFac(subject, name, id);
+  chooseFac(btn.dataset.subject, btn.dataset.name, btn.dataset.id);
 }
 
 function chooseFac(subject, name, id) {
   selected[subject] = { name, id };
   saveLS(); updateSelPanel(); updateProg();
-  // Re-render faculty list to reflect selection
   showFac(null);
-  // Mark subject pill as done
   const pill = document.querySelector(`.sub-pill[data-subject="${subject}"]`);
   if (pill) {
     pill.classList.add("done");
@@ -389,9 +414,12 @@ function chooseFac(subject, name, id) {
 
 function updateSelPanel() {
   const panel = document.getElementById("selList");
-  const cnt   = Object.keys(selected).length;
+  const cnt = Object.keys(selected).length;
   document.getElementById("selCount").textContent = `${cnt} subject${cnt !== 1 ? "s" : ""} selected`;
-  if (!cnt) { panel.innerHTML = `<div class="empty"><div class="empty-icon">🗂️</div>No selections yet</div>`; return; }
+  if (!cnt) {
+    panel.innerHTML = `<div class="empty"><div class="empty-icon">🗂️</div>No selections yet</div>`;
+    return;
+  }
   panel.innerHTML = Object.entries(selected).map(([s, f]) => `
     <div class="sel-item">
       <div><div class="si-sub">${s}</div><div class="si-fac">👨‍🏫 ${f.name}</div></div>
@@ -414,15 +442,19 @@ function updateProg() {
   if (totalSubjects > 0) {
     document.getElementById("progWrap").style.display = "block";
     const pct = Math.min(100, (cnt / totalSubjects) * 100);
-    document.getElementById("progFill").style.width     = pct + "%";
-    document.getElementById("progText").textContent     = `${cnt}/${totalSubjects}`;
+    document.getElementById("progFill").style.width = pct + "%";
+    document.getElementById("progText").textContent = `${cnt}/${totalSubjects}`;
   }
 }
 
 function saveLS() {
   localStorage.setItem("studentSelection", JSON.stringify({
-    selections: Object.entries(selected).map(([s, f]) => ({ subject: s, facultyName: f.name, facultyId: f.id })),
-    department: currentDept, year: currentYear, semester: currentSem,
+    selections: Object.entries(selected).map(([s, f]) => ({
+      subject: s, facultyName: f.name, facultyId: f.id
+    })),
+    department: currentDept,
+    year: currentYear,
+    semester: currentSem,
   }));
 }
 
@@ -435,7 +467,11 @@ async function submitSelection() {
   }));
 
   const { ok, data } = await api("POST", "/selection", {
-    studentId: userId, department: currentDept, year: currentYear, semester: currentSem, selections,
+    studentId: userId,
+    department: currentDept,
+    year: currentYear,
+    semester: currentSem,
+    selections,
   });
 
   if (!ok) { alert("Error: " + data.message); return; }

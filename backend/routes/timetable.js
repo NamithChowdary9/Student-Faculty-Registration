@@ -1,12 +1,16 @@
-const router       = require("express").Router();
-const Faculty      = require("../models/Faculty");
-const Selection    = require("../models/Selection");
+const router = require("express").Router();
+const Faculty = require("../models/Faculty");
+const Selection = require("../models/Selection");
 const { Room, TimetableSlot, RoomAllocation } = require("../models/Timetable");
 const { auth, adminOnly } = require("../middleware/authMiddleware");
 
 // nodemailer is optional — only used if SMTP is configured
 let nodemailer;
-try { nodemailer = require("nodemailer"); } catch { nodemailer = null; }
+try {
+  nodemailer = require("nodemailer");
+} catch {
+  nodemailer = null;
+}
 
 const DAYS = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"];
 const PERIODS = [
@@ -24,11 +28,14 @@ router.post("/generate", auth, adminOnly, async (req, res) => {
     if (!department || !year || !semester)
       return res.status(400).json({ message: "department, year, semester required" });
 
-    // Clear old data
-    await TimetableSlot.deleteMany({ department, year, semester });
-    await RoomAllocation.deleteMany({ department, year, semester });
+    const numYear = parseInt(year);
+    const numSem = parseInt(semester);
 
-    const faculties = await Faculty.find({ department, year, semester });
+    // Clear old data
+    await TimetableSlot.deleteMany({ department, year: numYear, semester: numSem });
+    await RoomAllocation.deleteMany({ department, year: numYear, semester: numSem });
+
+    const faculties = await Faculty.find({ department, year: numYear, semester: numSem });
     if (!faculties.length)
       return res.status(404).json({ message: "No faculty found for this combination" });
 
@@ -47,9 +54,16 @@ router.post("/generate", auth, adminOnly, async (req, res) => {
     }
 
     // Build faculty → [studentIds] map
-    const allSelections = await Selection.find({ department, year, semester });
-    const facStudents   = {};
-    faculties.forEach((f) => { facStudents[f._id.toString()] = []; });
+    const allSelections = await Selection.find({
+      department,
+      year: numYear,
+      semester: numSem,
+    });
+
+    const facStudents = {};
+    faculties.forEach((f) => {
+      facStudents[f._id.toString()] = [];
+    });
     allSelections.forEach((sel) =>
       sel.selections.forEach((s) => {
         const k = s.facultyId?.toString();
@@ -62,43 +76,48 @@ router.post("/generate", auth, adminOnly, async (req, res) => {
 
     for (const fac of faculties) {
       const totalPeriods = fac.periodsPerWeek || 4;
-      const studentIds   = facStudents[fac._id.toString()] || [];
+      const studentIds = facStudents[fac._id.toString()] || [];
       const studentCount = studentIds.length;
-      const room         = rooms[roomIdx % rooms.length];
+      const room = rooms[roomIdx % rooms.length];
       roomIdx++;
 
       const dayCount = {};
-      DAYS.forEach((d) => { dayCount[d] = 0; });
-      let scheduled = 0;
+      DAYS.forEach((d) => {
+        dayCount[d] = 0;
+      });
 
-      for (const day of DAYS) {
-        if (scheduled >= totalPeriods) break;
+      let scheduled = 0;
+      outer: for (const day of DAYS) {
         for (const p of PERIODS) {
-          if (scheduled >= totalPeriods) break;
+          if (scheduled >= totalPeriods) break outer;
           if (dayCount[day] >= 4) break; // max 4 classes/day per faculty
 
           slots.push({
-            department, year, semester,
-            facultyId:    fac._id,
-            facultyName:  fac.name,
-            subject:      fac.subject,
+            department,
+            year: numYear,
+            semester: numSem,
+            facultyId: fac._id,
+            facultyName: fac.name,
+            subject: fac.subject,
             day,
             periodNumber: p.num,
-            startTime:    p.start,
-            endTime:      p.end,
-            roomNumber:   room.roomNumber,
+            startTime: p.start,
+            endTime: p.end,
+            roomNumber: room.roomNumber,
             studentIds,
             studentCount,
           });
 
           allocs.push({
-            department, year, semester,
-            subject:      fac.subject,
-            facultyId:    fac._id,
-            facultyName:  fac.name,
-            roomNumber:   room.roomNumber,
+            department,
+            year: numYear,
+            semester: numSem,
+            subject: fac.subject,
+            facultyId: fac._id,
+            facultyName: fac.name,
+            roomNumber: room.roomNumber,
             day,
-            period:       p.num,
+            period: p.num,
             studentCount,
           });
 
@@ -112,9 +131,9 @@ router.post("/generate", auth, adminOnly, async (req, res) => {
     await RoomAllocation.insertMany(allocs);
 
     res.json({
-      message:      `Timetable generated: ${slots.length} slots for ${faculties.length} faculty`,
+      message: `Timetable generated: ${slots.length} slots for ${faculties.length} faculty`,
       slotsCreated: slots.length,
-      faculty:      faculties.length,
+      faculty: faculties.length,
     });
   } catch (e) {
     res.status(500).json({ message: e.message });
@@ -126,12 +145,14 @@ router.get("/student/:studentId", auth, async (req, res) => {
   try {
     const { department, year, semester } = req.query;
     if (!department || !year || !semester)
-      return res.status(400).json({ message: "department, year, semester query params required" });
+      return res
+        .status(400)
+        .json({ message: "department, year, semester query params required" });
 
     const slots = await TimetableSlot.find({
       department,
-      year,
-      semester,
+      year: parseInt(year),
+      semester: parseInt(semester),
       studentIds: req.params.studentId,
     }).sort({ day: 1, periodNumber: 1 });
 
@@ -144,8 +165,10 @@ router.get("/student/:studentId", auth, async (req, res) => {
 /* ── GET faculty timetable ── */
 router.get("/faculty/:facultyId", auth, async (req, res) => {
   try {
-    const slots = await TimetableSlot.find({ facultyId: req.params.facultyId })
-      .sort({ day: 1, periodNumber: 1 });
+    const slots = await TimetableSlot.find({ facultyId: req.params.facultyId }).sort({
+      day: 1,
+      periodNumber: 1,
+    });
     res.json(slots);
   } catch (e) {
     res.status(500).json({ message: e.message });
@@ -157,17 +180,21 @@ router.get("/all", auth, async (req, res) => {
   try {
     const filter = {};
     if (req.query.department) filter.department = req.query.department;
-    if (req.query.year)       filter.year       = req.query.year;
-    if (req.query.semester)   filter.semester   = req.query.semester;
+    if (req.query.year) filter.year = parseInt(req.query.year);
+    if (req.query.semester) filter.semester = parseInt(req.query.semester);
 
-    const slots = await TimetableSlot.find(filter).sort({ facultyName: 1, day: 1, periodNumber: 1 });
+    const slots = await TimetableSlot.find(filter).sort({
+      facultyName: 1,
+      day: 1,
+      periodNumber: 1,
+    });
     res.json(slots);
   } catch (e) {
     res.status(500).json({ message: e.message });
   }
 });
 
-/* ── LIST rooms — MUST be before /rooms route to avoid :id collision ── */
+/* ── LIST rooms — MUST be before /rooms/:id to avoid collision ── */
 router.get("/rooms/list", auth, async (req, res) => {
   try {
     const rooms = await Room.find().sort({ roomNumber: 1 });
@@ -181,17 +208,20 @@ router.get("/rooms/list", auth, async (req, res) => {
 router.post("/rooms/add", auth, adminOnly, async (req, res) => {
   try {
     const { roomNumber, capacity, block, floor } = req.body;
-    if (!roomNumber) return res.status(400).json({ message: "roomNumber required" });
+    if (!roomNumber)
+      return res.status(400).json({ message: "roomNumber required" });
 
     const room = await Room.create({
       roomNumber,
       capacity: capacity ? parseInt(capacity) : 60,
-      block:    block    || "A",
-      floor:    floor    ? parseInt(floor)    : 1,
+      block: block || "A",
+      floor: floor ? parseInt(floor) : 1,
     });
+
     res.status(201).json(room);
   } catch (e) {
-    if (e.code === 11000) return res.status(409).json({ message: "Room already exists" });
+    if (e.code === 11000)
+      return res.status(409).json({ message: "Room already exists" });
     res.status(500).json({ message: e.message });
   }
 });
@@ -201,10 +231,14 @@ router.get("/rooms", auth, async (req, res) => {
   try {
     const filter = {};
     if (req.query.department) filter.department = req.query.department;
-    if (req.query.year)       filter.year       = req.query.year;
-    if (req.query.semester)   filter.semester   = req.query.semester;
+    if (req.query.year) filter.year = parseInt(req.query.year);
+    if (req.query.semester) filter.semester = parseInt(req.query.semester);
 
-    const allocs = await RoomAllocation.find(filter).sort({ day: 1, period: 1, roomNumber: 1 });
+    const allocs = await RoomAllocation.find(filter).sort({
+      day: 1,
+      period: 1,
+      roomNumber: 1,
+    });
     res.json(allocs);
   } catch (e) {
     res.status(500).json({ message: e.message });
@@ -215,44 +249,62 @@ router.get("/rooms", auth, async (req, res) => {
 router.post("/mail-faculty", auth, adminOnly, async (req, res) => {
   try {
     if (!nodemailer)
-      return res.status(500).json({ message: "nodemailer is not installed. Run: npm install nodemailer" });
+      return res
+        .status(500)
+        .json({ message: "nodemailer is not installed. Run: npm install nodemailer" });
 
     if (!process.env.SMTP_USER || !process.env.SMTP_PASS)
-      return res.status(400).json({ message: "SMTP not configured in .env file" });
+      return res
+        .status(400)
+        .json({ message: "SMTP not configured in .env file" });
 
     const { department, year, semester } = req.body;
     if (!department || !year || !semester)
-      return res.status(400).json({ message: "department, year, semester required" });
+      return res
+        .status(400)
+        .json({ message: "department, year, semester required" });
 
-    const faculties = await Faculty.find({ department, year, semester, email: { $ne: "" } });
+    const faculties = await Faculty.find({
+      department,
+      year: parseInt(year),
+      semester: parseInt(semester),
+      email: { $ne: "" },
+    });
+
     if (!faculties.length)
       return res.status(404).json({ message: "No faculty with email found" });
 
     const transporter = nodemailer.createTransport({
-      host:   process.env.SMTP_HOST || "smtp.gmail.com",
-      port:   parseInt(process.env.SMTP_PORT || "587"),
+      host: process.env.SMTP_HOST || "smtp.gmail.com",
+      port: parseInt(process.env.SMTP_PORT || "587"),
       secure: false,
-      auth:   { user: process.env.SMTP_USER, pass: process.env.SMTP_PASS },
+      auth: { user: process.env.SMTP_USER, pass: process.env.SMTP_PASS },
     });
 
     let sent = 0;
     for (const fac of faculties) {
-      const slots = await TimetableSlot.find({ facultyId: fac._id }).sort({ day: 1, periodNumber: 1 });
+      const slots = await TimetableSlot.find({ facultyId: fac._id }).sort({
+        day: 1,
+        periodNumber: 1,
+      });
       if (!slots.length) continue;
 
-      const rows = slots.map((s) =>
-        `<tr style="border-bottom:1px solid #eee">
-          <td style="padding:8px 12px">${s.day}</td>
-          <td style="padding:8px 12px">Period ${s.periodNumber} (${s.startTime}–${s.endTime})</td>
-          <td style="padding:8px 12px">${s.subject}</td>
-          <td style="padding:8px 12px;font-weight:bold">${s.roomNumber}</td>
-          <td style="padding:8px 12px">${s.studentCount} students</td>
-        </tr>`
-      ).join("");
+      const rows = slots
+        .map(
+          (s) =>
+            `<tr style="border-bottom:1px solid #eee">
+              <td style="padding:8px 12px">${s.day}</td>
+              <td style="padding:8px 12px">Period ${s.periodNumber} (${s.startTime}–${s.endTime})</td>
+              <td style="padding:8px 12px">${s.subject}</td>
+              <td style="padding:8px 12px;font-weight:bold">${s.roomNumber}</td>
+              <td style="padding:8px 12px">${s.studentCount} students</td>
+            </tr>`
+        )
+        .join("");
 
       await transporter.sendMail({
-        from:    `FacultySync <${process.env.SMTP_USER}>`,
-        to:      fac.email,
+        from: `FacultySync <${process.env.SMTP_USER}>`,
+        to: fac.email,
         subject: `Your Timetable — ${department} Sem ${semester}`,
         html: `
           <div style="font-family:sans-serif;max-width:600px">
@@ -275,7 +327,9 @@ router.post("/mail-faculty", auth, adminOnly, async (req, res) => {
       sent++;
     }
 
-    res.json({ message: `Timetable emailed to ${sent} faculty member${sent !== 1 ? "s" : ""}` });
+    res.json({
+      message: `Timetable emailed to ${sent} faculty member${sent !== 1 ? "s" : ""}`,
+    });
   } catch (e) {
     res.status(500).json({ message: e.message });
   }

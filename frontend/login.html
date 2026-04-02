@@ -46,7 +46,7 @@ body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(
 .err{display:flex;align-items:center;gap:8px;background:rgba(255,107,157,0.1);border:1px solid rgba(255,107,157,0.3);border-radius:10px;padding:11px 14px;color:var(--error);font-size:13px;margin-top:14px;opacity:0;transform:translateY(-4px);transition:all 0.3s;}
 .err.show{opacity:1;transform:translateY(0);}
 .info-box{background:rgba(79,142,247,0.05);border:1px solid rgba(79,142,247,0.15);border-radius:10px;padding:12px 14px;color:var(--muted);font-size:12px;margin-top:18px;line-height:1.7;display:none;}
-.yr-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin-top:14px;display:none;}
+.yr-grid{display:none;grid-template-columns:repeat(4,1fr);gap:6px;margin-top:14px;}
 .yr-card{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:8px;text-align:center;}
 .yr-pref{font-size:16px;font-weight:700;color:var(--accent);}
 .yr-lbl{font-size:10px;color:var(--muted);margin-top:2px;}
@@ -70,7 +70,7 @@ body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(
     <div class="sub">Sign in to continue to your portal</div>
     <div class="rlabel">Select Role</div>
     <div class="rtabs">
-      <button class="rtab" id="adminTab"   onclick="selectRole('admin')">🛡️ Admin</button>
+      <button class="rtab" id="adminTab" onclick="selectRole('admin')">🛡️ Admin</button>
       <button class="rtab" id="studentTab" onclick="selectRole('student')">🎒 Student</button>
     </div>
     <div class="field">
@@ -78,7 +78,7 @@ body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(
       <div class="iw">
         <span class="ic">🪪</span>
         <input type="text" id="userId" placeholder="e.g. 231FA04812" autocomplete="off"
-               oninput="onId(this)" style="text-transform:uppercase">
+          oninput="onId(this)" style="text-transform:uppercase">
       </div>
       <div class="hint" id="idHint" style="display:none"></div>
     </div>
@@ -110,11 +110,12 @@ let role = "";
 
 function selectRole(r) {
   role = r;
-  document.getElementById("adminTab").classList.toggle("active",   r === "admin");
+  document.getElementById("adminTab").classList.toggle("active", r === "admin");
   document.getElementById("studentTab").classList.toggle("active", r === "student");
   document.getElementById("studentInfo").style.display = r === "student" ? "block" : "none";
-  document.getElementById("yrGrid").style.display      = r === "student" ? "grid"  : "none";
-  document.getElementById("userId").placeholder = r === "admin" ? "Enter Admin ID" : "e.g. 231FA04812";
+  document.getElementById("yrGrid").style.display = r === "student" ? "grid" : "none";
+  document.getElementById("userId").placeholder =
+    r === "admin" ? "Enter Admin ID" : "e.g. 231FA04812";
   hideErr();
 }
 
@@ -125,13 +126,12 @@ function onId(el) {
     return;
   }
   const prefix = parseInt(el.value.substring(0, 2));
-  const cur    = new Date().getFullYear() % 100;
-  const yr     = Math.max(1, Math.min(4, cur - prefix + 1));
+  const cur = new Date().getFullYear() % 100;
+  const yr = Math.max(1, Math.min(4, cur - prefix + 1));
   const labels = ["", "1st Year", "2nd Year", "3rd Year", "4th Year"];
-  const hint   = document.getElementById("idHint");
+  const hint = document.getElementById("idHint");
   hint.style.display = "block";
   hint.innerHTML = `Detected: <strong>${labels[yr]}</strong>`;
-
   if (el.value.length >= 10) {
     const last3 = el.value.slice(-3);
     document.getElementById("pass").value = last3;
@@ -150,39 +150,34 @@ function hideErr() {
 }
 
 async function login() {
-  const userId   = document.getElementById("userId").value.trim().toUpperCase();
+  const userId = document.getElementById("userId").value.trim().toUpperCase();
   const password = document.getElementById("pass").value.trim();
-  const btn      = document.getElementById("loginBtn");
-
-  if (!role)     { showErr("Please select a role first.");     return; }
-  if (!userId)   { showErr("Please enter your User ID.");      return; }
-  if (!password) { showErr("Please enter your password.");     return; }
+  const btn = document.getElementById("loginBtn");
+  if (!role) { showErr("Please select a role first."); return; }
+  if (!userId) { showErr("Please enter your User ID."); return; }
+  if (!password) { showErr("Please enter your password."); return; }
 
   btn.disabled = true;
   btn.textContent = "Signing in...";
-
   try {
-    const res  = await fetch("/api/auth/login", {
+    const res = await fetch("/api/auth/login", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ userId, password, role }),
     });
     const data = await res.json();
-
     if (!res.ok) {
       showErr(data.message || "Invalid credentials.");
       btn.disabled = false;
       btn.textContent = "Sign In →";
       return;
     }
-
-    localStorage.setItem("token",      data.token);
-    localStorage.setItem("role",       data.role);
-    localStorage.setItem("userId",     data.userId);
+    localStorage.setItem("token", data.token);
+    localStorage.setItem("role", data.role);
+    localStorage.setItem("userId", data.userId);
     localStorage.setItem("department", data.department || "");
-    localStorage.setItem("year",       data.year       != null ? String(data.year) : "");
-    localStorage.setItem("sgpa",       data.sgpa       != null ? String(data.sgpa) : "");
-
+    localStorage.setItem("year", data.year != null ? String(data.year) : "");
+    localStorage.setItem("sgpa", data.sgpa != null ? String(data.sgpa) : "");
     window.location.href = data.role === "admin" ? "admin.html" : "student.html";
   } catch {
     showErr("Cannot reach server. Make sure backend is running on port 3000.");

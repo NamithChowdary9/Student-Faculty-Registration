@@ -1,7 +1,7 @@
 const router = require("express").Router();
-const bcrypt  = require("bcryptjs");
-const jwt     = require("jsonwebtoken");
-const User    = require("../models/User");
+const bcrypt = require("bcryptjs");
+const jwt = require("jsonwebtoken");
+const User = require("../models/User");
 const { auth, adminOnly } = require("../middleware/authMiddleware");
 
 const SECRET = process.env.JWT_SECRET || "facultysync_secret_2025";
@@ -40,10 +40,10 @@ router.post("/login", async (req, res) => {
 
     const token = jwt.sign(
       {
-        userId:     user.userId,
-        role:       user.role,
+        userId: user.userId,
+        role: user.role,
         department: user.department,
-        year:       user.yearOfStudy,
+        year: user.yearOfStudy,
       },
       SECRET,
       { expiresIn: "12h" }
@@ -51,12 +51,12 @@ router.post("/login", async (req, res) => {
 
     res.json({
       token,
-      role:       user.role,
-      userId:     user.userId,
+      role: user.role,
+      userId: user.userId,
       department: user.department,
-      year:       user.yearOfStudy,
-      name:       user.name,
-      sgpa:       user.sgpa,
+      year: user.yearOfStudy,
+      name: user.name,
+      sgpa: user.sgpa,
     });
   } catch (e) {
     res.status(500).json({ message: e.message });
@@ -71,17 +71,18 @@ router.post("/user", auth, adminOnly, async (req, res) => {
       return res.status(400).json({ message: "userId, password and role are required" });
 
     const year = parseYear(userId);
-    const stored = role === "admin" ? await bcrypt.hash(password, 10) : password;
+    // Always hash passwords for security
+    const stored = await bcrypt.hash(password, 10);
 
     const user = await User.create({
-      userId:      userId.toUpperCase(),
-      password:    stored,
+      userId: userId.toUpperCase(),
+      password: stored,
       role,
-      department:  department || "",
+      department: department || "",
       yearOfStudy: year,
-      sgpa:        sgpa  != null ? parseFloat(sgpa) : null,
-      name:        name  || "",
-      email:       email || "",
+      sgpa: sgpa != null ? parseFloat(sgpa) : null,
+      name: name || "",
+      email: email || "",
     });
 
     res.status(201).json({ message: "User created", userId: user.userId });
@@ -99,25 +100,25 @@ router.post("/seed-students", auth, adminOnly, async (req, res) => {
     if (!yearPrefix || !department)
       return res.status(400).json({ message: "yearPrefix and department required" });
 
-    const yr      = String(yearPrefix).padStart(2, "0");
-    const total   = Math.min(parseInt(count) || 300, 500);
+    const yr = String(yearPrefix).padStart(2, "0");
+    const total = Math.min(parseInt(count) || 300, 500);
     const currentSuffix = new Date().getFullYear() % 100;
-    const yearOfStudy   = Math.max(1, Math.min(4, currentSuffix - parseInt(yr) + 1));
+    const yearOfStudy = Math.max(1, Math.min(4, currentSuffix - parseInt(yr) + 1));
 
     let inserted = 0, skipped = 0;
-
     for (let i = 1; i <= total; i++) {
-      const last5    = String(4000 + i).padStart(5, "0");
-      const regNo    = `${yr}1FA${last5}`.toUpperCase();
-      const password = regNo.slice(-3);
+      const last5 = String(4000 + i).padStart(5, "0");
+      const regNo = `${yr}1FA${last5}`.toUpperCase();
+      const password = regNo.slice(-3); // plain — students use last 3 digits
+
       try {
         await User.create({
-          userId:      regNo,
-          password,
-          role:        "student",
+          userId: regNo,
+          password, // stored plain; compared plain on login
+          role: "student",
           department,
           yearOfStudy,
-          isActive:    true,
+          isActive: true,
         });
         inserted++;
       } catch {
@@ -126,10 +127,10 @@ router.post("/seed-students", auth, adminOnly, async (req, res) => {
     }
 
     res.json({
-      message:  `Seeded ${inserted} students (${skipped} skipped — already exist)`,
+      message: `Seeded ${inserted} students (${skipped} skipped — already exist)`,
       inserted,
       skipped,
-      sample:   `${yr}1FA04001 – ${yr}1FA0${4000 + total}`,
+      sample: `${yr}1FA04001 – ${yr}1FA0${4000 + total}`,
     });
   } catch (e) {
     res.status(500).json({ message: e.message });
@@ -140,9 +141,9 @@ router.post("/seed-students", auth, adminOnly, async (req, res) => {
 router.get("/users", auth, adminOnly, async (req, res) => {
   try {
     const filter = {};
-    if (req.query.role)       filter.role        = req.query.role;
-    if (req.query.department) filter.department  = req.query.department;
-    if (req.query.year)       filter.yearOfStudy = parseInt(req.query.year);
+    if (req.query.role) filter.role = req.query.role;
+    if (req.query.department) filter.department = req.query.department;
+    if (req.query.year) filter.yearOfStudy = parseInt(req.query.year);
 
     const users = await User.find(filter)
       .select("-password")

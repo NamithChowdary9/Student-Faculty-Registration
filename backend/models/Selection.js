@@ -2,16 +2,16 @@ const mongoose = require("mongoose");
 
 const selectionSchema = new mongoose.Schema(
   {
-    studentId:   { type: String, required: true },
-    department:  { type: String, required: true },
-    year:        { type: String, required: true },
-    semester:    { type: String, required: true },
+    studentId: { type: String, required: true },
+    department: { type: String, required: true },
+    year: { type: Number, required: true },      // Changed to Number to match Faculty model
+    semester: { type: Number, required: true },  // Changed to Number to match Faculty model
     selections: [
       {
-        subject:     String,
-        facultyId:   { type: mongoose.Schema.Types.ObjectId, ref: "Faculty" },
+        subject: String,
+        facultyId: { type: mongoose.Schema.Types.ObjectId, ref: "Faculty" },
         facultyName: String,
-        roomNumber:  { type: String, default: "" },
+        roomNumber: { type: String, default: "" },
       },
     ],
     isFinalized: { type: Boolean, default: false },
