@@ -18,29 +18,33 @@ const FRONTEND_PATH = path.resolve(__dirname, "../frontend");
 app.use(express.static(FRONTEND_PATH));
 
 // ── API Routes ──
-try {
-  app.use("/api/auth", require("./routes/auth"));
-  app.use("/api/faculty", require("./routes/faculty"));
-  app.use("/api/selection", require("./routes/selection"));
-
-  if (fs.existsSync(path.join(__dirname, "routes/semester.js"))) {
-    app.use("/api/semester", require("./routes/semester"));
-    console.log("✅ /api/semester routes loaded");
-  } else {
-    console.warn("⚠️ /api/semester routes skipped (file not found)");
+const loadRoute = (routePath, apiPath) => {
+  try {
+    const routeFile = path.join(__dirname, routePath);
+    if (fs.existsSync(routeFile)) {
+      app.use(apiPath, require(routeFile));
+      console.log(`✅ ${apiPath} routes loaded`);
+      return true;
+    } else {
+      console.warn(`⚠️ ${apiPath} routes skipped (file not found)`);
+      return false;
+    }
+  } catch (err) {
+    console.warn(`⚠️ Error loading ${apiPath} routes:`, err.message);
+    return false;
   }
+};
 
-  if (fs.existsSync(path.join(__dirname, "routes/timetable.js"))) {
-    app.use("/api/timetable", require("./routes/timetable"));
-    console.log("✅ /api/timetable routes loaded");
-  } else {
-    console.warn("⚠️ /api/timetable routes skipped (file not found)");
-  }
+// Load all routes
+loadRoute("routes/auth.js", "/api/auth");
+loadRoute("routes/faculty.js", "/api/faculty");
+loadRoute("routes/selection.js", "/api/selection");
+loadRoute("routes/semester.js", "/api/semester");
+loadRoute("routes/timetable.js", "/api/timetable");
+loadRoute("routes/studentTimetable.js", "/api/student-timetable");
+loadRoute("routes/adminTimetable.js", "/api/admin-timetable");
 
-  console.log("✅ All API routes loaded successfully");
-} catch (err) {
-  console.warn("⚠️ Some routes not loaded:", err.message);
-}
+console.log("✅ All API routes loaded successfully");
 
 // ── Health check ──
 app.get("/api/health", (req, res) => {
@@ -67,8 +71,7 @@ app.use((req, res) => {
 });
 
 // ── MongoDB & Server Start ──
-const MONGO_URI =
-  process.env.MONGO_URI || "mongodb://127.0.0.1:27017/facultysync";
+const MONGO_URI = process.env.MONGO_URI || "mongodb://127.0.0.1:27017/facultysync";
 const PORT = process.env.PORT || 3000;
 
 const mongoOptions = {
