@@ -1,0 +1,766 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>FacultySync — My Timetable</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=DM+Serif+Display&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<style>
+:root{--navy:#0a0f1e;--card:rgba(255,255,255,0.04);--card2:rgba(255,255,255,0.07);--border:rgba(255,255,255,0.08);--accent:#4f8ef7;--accent2:#7c5cfc;--text:#e8eaf6;--muted:#8892b0;--success:#43e97b;--error:#ff6b9d;--warn:#ffb347;}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:'Space Grotesk',sans-serif;min-height:100vh;background:var(--navy);color:var(--text);}
+body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(rgba(79,142,247,0.03) 1px,transparent 1px),linear-gradient(90deg,rgba(79,142,247,0.03) 1px,transparent 1px);background-size:50px 50px;pointer-events:none;z-index:0;}
+.orb{position:fixed;border-radius:50%;filter:blur(130px);opacity:0.1;pointer-events:none;z-index:0;}
+.orb1{width:600px;height:600px;background:var(--accent);top:-200px;right:-200px;}
+.orb2{width:400px;height:400px;background:var(--accent2);bottom:-100px;left:-100px;}
+
+/* NAV */
+.topnav{position:sticky;top:0;z-index:100;background:rgba(10,15,30,0.9);backdrop-filter:blur(20px);border-bottom:1px solid var(--border);padding:0 24px;height:64px;display:flex;align-items:center;justify-content:space-between;}
+.nav-brand{display:flex;align-items:center;gap:10px;font-family:'DM Serif Display',serif;font-size:20px;color:white;}
+.nav-logo{width:36px;height:36px;background:linear-gradient(135deg,var(--accent),var(--accent2));border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:18px;}
+.dot{color:var(--accent);}
+.nav-right{display:flex;align-items:center;gap:10px;}
+.badge-stu{background:rgba(67,233,123,0.12);border:1px solid rgba(67,233,123,0.25);color:var(--success);border-radius:20px;padding:5px 14px;font-size:12px;font-weight:600;}
+.user-chip{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:6px 12px;font-size:12px;color:var(--muted);}
+.user-chip strong{color:var(--text);}
+.btn-logout{background:rgba(255,107,157,0.1);border:1px solid rgba(255,107,157,0.25);color:#ff6b9d;border-radius:10px;padding:8px 16px;font-family:'Space Grotesk',sans-serif;font-size:13px;font-weight:600;cursor:pointer;}
+
+/* PAGE */
+.page{max-width:1200px;margin:0 auto;padding:24px 20px;position:relative;z-index:1;}
+.page-header{display:flex;align-items:flex-start;justify-content:space-between;flex-wrap:wrap;gap:12px;margin-bottom:22px;}
+.page-header h1{font-size:24px;font-weight:700;color:white;margin-bottom:3px;}
+.page-header p{color:var(--muted);font-size:13px;}
+.header-actions{display:flex;gap:9px;flex-wrap:wrap;}
+
+/* CARD */
+.card{background:var(--card);border:1px solid var(--border);border-radius:20px;padding:20px;backdrop-filter:blur(20px);}
+.card-head{display:flex;align-items:center;gap:9px;margin-bottom:16px;padding-bottom:12px;border-bottom:1px solid var(--border);}
+.ci{width:34px;height:34px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:15px;}
+.ci-t{background:rgba(79,142,247,0.15);}
+.ci-r{background:rgba(255,107,157,0.15);}
+.card-title{font-size:14px;font-weight:700;color:white;}
+.card-sub{font-size:11px;color:var(--muted);margin-top:1px;}
+
+/* LOCKED BANNER */
+.locked-banner{background:linear-gradient(135deg,rgba(67,233,123,0.08),rgba(79,142,247,0.08));border:1px solid rgba(67,233,123,0.25);border-radius:16px;padding:18px 22px;margin-bottom:18px;display:flex;align-items:center;gap:14px;flex-wrap:wrap;}
+.lb-icon{font-size:32px;}
+.lb-text h3{font-size:15px;font-weight:700;color:white;margin-bottom:3px;}
+.lb-text p{font-size:12px;color:var(--muted);}
+.lb-actions{margin-left:auto;display:flex;gap:9px;flex-wrap:wrap;}
+
+/* PROGRESS */
+.progress-card{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:16px 20px;margin-bottom:16px;}
+.prog-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;}
+.prog-title{font-size:13px;font-weight:700;color:white;}
+.prog-count{font-size:12px;color:var(--muted);}
+.prog-bar{background:rgba(255,255,255,0.06);border-radius:99px;height:6px;overflow:hidden;}
+.prog-fill{height:100%;border-radius:99px;background:linear-gradient(to right,var(--accent),var(--accent2));transition:width 0.4s ease;}
+.subjects-checklist{display:flex;flex-wrap:wrap;gap:7px;margin-top:12px;}
+.subj-chip{display:flex;align-items:center;gap:5px;padding:5px 11px;border-radius:20px;font-size:11px;font-weight:600;border:1.5px solid var(--border);background:rgba(255,255,255,0.03);}
+.subj-chip.done{border-color:rgba(67,233,123,0.4);background:rgba(67,233,123,0.08);color:var(--success);}
+.subj-chip.missing{border-color:rgba(255,107,157,0.3);background:rgba(255,107,157,0.06);color:var(--error);}
+
+/* TIMETABLE */
+.tt-wrap{overflow-x:auto;border-radius:14px;border:1px solid var(--border);}
+.tt-table{width:100%;border-collapse:collapse;min-width:700px;}
+.tt-table thead{background:rgba(79,142,247,0.06);}
+.tt-table th{padding:12px 10px;font-size:10px;font-weight:700;letter-spacing:0.8px;text-transform:uppercase;color:var(--muted);border-bottom:1px solid var(--border);text-align:center;white-space:nowrap;}
+.tt-table th:first-child{text-align:left;padding-left:16px;}
+.tt-table td{padding:8px;text-align:center;border-bottom:1px solid rgba(255,255,255,0.03);vertical-align:middle;}
+.tt-table td:first-child{text-align:left;padding-left:16px;font-weight:600;color:white;font-size:12px;white-space:nowrap;}
+.tt-table tr:last-child td{border-bottom:none;}
+.tt-table tr:hover td{background:rgba(255,255,255,0.015);}
+
+/* SLOT SELECT */
+.slot-select{width:100%;min-width:110px;padding:7px 26px 7px 9px;background:rgba(255,255,255,0.05);border:1.5px solid var(--border);border-radius:9px;color:var(--text);font-family:'Space Grotesk',sans-serif;font-size:11px;outline:none;cursor:pointer;transition:all 0.2s;appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='7' viewBox='0 0 10 7'%3E%3Cpath d='M1 1l4 4 4-4' stroke='%238892b0' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 8px center;background-color:rgba(255,255,255,0.05);}
+.slot-select:focus{border-color:var(--accent);background-color:rgba(79,142,247,0.07);}
+.slot-select.conflict{border-color:var(--error) !important;background-color:rgba(255,107,157,0.07);}
+.slot-select option{background:#1a2040;}
+.slot-filled{border-radius:8px;padding:7px 9px;font-size:10px;line-height:1.4;display:inline-block;min-width:90px;}
+.c1{background:rgba(79,142,247,0.08);border:1px solid rgba(79,142,247,0.2);}
+.c2{background:rgba(124,92,252,0.08);border:1px solid rgba(124,92,252,0.2);}
+.c3{background:rgba(67,233,123,0.06);border:1px solid rgba(67,233,123,0.2);}
+.c4{background:rgba(255,179,71,0.06);border:1px solid rgba(255,179,71,0.2);}
+.c5{background:rgba(0,212,255,0.06);border:1px solid rgba(0,212,255,0.2);}
+.slot-sub{font-weight:700;margin-bottom:1px;}
+.slot-fac{color:var(--muted);font-size:9px;}
+.err-cell{font-size:9px;color:var(--error);margin-top:3px;}
+
+/* VALIDATION */
+.val-box{border-radius:12px;padding:12px 15px;margin-bottom:14px;font-size:12px;display:none;}
+.val-box.show{display:block;}
+.val-box.error{background:rgba(255,107,157,0.07);border:1px solid rgba(255,107,157,0.25);color:var(--error);}
+.val-box.success{background:rgba(67,233,123,0.07);border:1px solid rgba(67,233,123,0.25);color:var(--success);}
+.val-list{margin-top:6px;padding-left:14px;}
+.val-list li{margin-bottom:3px;}
+
+/* BUTTONS */
+.btn{padding:10px 16px;border:none;border-radius:11px;font-family:'Space Grotesk',sans-serif;font-size:13px;font-weight:600;cursor:pointer;transition:all 0.25s;display:inline-flex;align-items:center;gap:6px;}
+.btn-primary{background:linear-gradient(135deg,var(--accent),var(--accent2));color:white;}
+.btn-primary:hover:not(:disabled){transform:translateY(-2px);box-shadow:0 10px 25px rgba(79,142,247,0.35);}
+.btn-primary:disabled{opacity:0.4;cursor:not-allowed;transform:none;}
+.btn-success{background:linear-gradient(135deg,var(--success),#38f9d7);color:#0a1a10;}
+.btn-success:hover:not(:disabled){transform:translateY(-2px);}
+.btn-warn{background:rgba(255,179,71,0.12);border:1px solid rgba(255,179,71,0.3);color:var(--warn);}
+.btn-warn:hover{background:rgba(255,179,71,0.2);}
+.btn-ghost{background:var(--card2);border:1px solid var(--border);color:var(--text);}
+.btn-ghost:hover{background:rgba(255,255,255,0.07);}
+.spin{display:inline-block;width:13px;height:13px;border:2px solid rgba(255,255,255,0.3);border-top-color:white;border-radius:50%;animation:spin 0.7s linear infinite;}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+/* INFO BAR */
+.info-bar{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:18px;}
+.ic{background:var(--card);border:1px solid var(--border);border-radius:11px;padding:11px 14px;}
+.ic-lbl{color:var(--muted);font-size:10px;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:2px;}
+.ic-val{color:white;font-weight:600;font-size:13px;}
+
+/* MODAL */
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.78);backdrop-filter:blur(6px);display:none;align-items:center;justify-content:center;z-index:300;padding:16px;}
+.modal-overlay.open{display:flex;}
+.modal{background:#0f1728;border:1px solid var(--border);border-radius:22px;padding:28px;width:100%;max-width:460px;animation:pop 0.3s ease;max-height:90vh;overflow-y:auto;}
+@keyframes pop{from{opacity:0;transform:scale(0.92)}to{opacity:1;transform:scale(1)}}
+.modal-icon{font-size:44px;text-align:center;margin-bottom:10px;}
+.modal h3{font-size:17px;font-weight:700;color:white;margin-bottom:8px;text-align:center;}
+.modal-msg{text-align:center;color:var(--muted);font-size:13px;margin-bottom:20px;line-height:1.6;}
+.modal-btns{display:flex;gap:9px;margin-top:4px;}
+.modal-btns button{flex:1;padding:12px;border-radius:12px;font-family:'Space Grotesk',sans-serif;font-size:13px;font-weight:600;cursor:pointer;border:none;}
+.mb-cancel{background:var(--card2);border:1px solid var(--border)!important;color:var(--text);}
+.mb-ok{background:linear-gradient(135deg,var(--accent),var(--accent2));color:white;}
+.mb-success{background:linear-gradient(135deg,var(--success),#38f9d7);color:#0a1a10;}
+.field{margin-bottom:13px;}
+.field label{display:block;font-size:10px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--muted);margin-bottom:6px;}
+.field input,.field textarea,.field select{width:100%;padding:10px 13px;background:rgba(255,255,255,0.05);border:1.5px solid var(--border);border-radius:10px;color:var(--text);font-family:'Space Grotesk',sans-serif;font-size:13px;outline:none;transition:all 0.2s;}
+.field input:focus,.field textarea:focus,.field select:focus{border-color:var(--accent);background:rgba(79,142,247,0.07);}
+.field textarea{resize:vertical;min-height:80px;}
+.field select option{background:#1a2040;}
+.cb-item{display:flex;align-items:center;gap:8px;padding:8px 11px;background:rgba(255,255,255,0.03);border:1.5px solid var(--border);border-radius:9px;cursor:pointer;font-size:12px;margin-bottom:6px;}
+.cb-item input[type=checkbox]{accent-color:var(--accent);width:14px;height:14px;}
+.cb-item.checked{border-color:rgba(79,142,247,0.4);background:rgba(79,142,247,0.07);}
+
+/* TOAST */
+.toast-container{position:fixed;bottom:22px;right:22px;z-index:999;display:flex;flex-direction:column;gap:8px;}
+.toast{padding:13px 18px;border-radius:13px;font-size:13px;font-weight:600;animation:slideUp 0.3s ease;display:flex;align-items:center;gap:7px;max-width:340px;box-shadow:0 10px 30px rgba(0,0,0,0.4);}
+.toast.success{background:#0f2a1a;border:1px solid rgba(67,233,123,0.3);color:var(--success);}
+.toast.error{background:#2a0f1a;border:1px solid rgba(255,107,157,0.3);color:var(--error);}
+.toast.info{background:#0f1a2a;border:1px solid rgba(79,142,247,0.3);color:var(--accent);}
+@keyframes slideUp{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
+
+/* LOADING */
+.loading-overlay{position:fixed;inset:0;background:rgba(10,15,30,0.88);backdrop-filter:blur(4px);display:none;align-items:center;justify-content:center;z-index:400;flex-direction:column;gap:14px;}
+.loading-overlay.show{display:flex;}
+.loader{width:44px;height:44px;border:3px solid rgba(79,142,247,0.2);border-top-color:var(--accent);border-radius:50%;animation:spin 0.8s linear infinite;}
+.loading-text{color:var(--text);font-size:14px;font-weight:600;}
+
+/* REQUESTS */
+.req-item{background:var(--card2);border:1px solid var(--border);border-radius:13px;padding:13px;margin-bottom:9px;}
+.req-status{display:inline-flex;align-items:center;gap:4px;padding:3px 9px;border-radius:20px;font-size:10px;font-weight:700;margin-bottom:8px;}
+.rs-pending{background:rgba(255,179,71,0.12);border:1px solid rgba(255,179,71,0.25);color:var(--warn);}
+.rs-approved{background:rgba(67,233,123,0.12);border:1px solid rgba(67,233,123,0.25);color:var(--success);}
+.rs-rejected{background:rgba(255,107,157,0.12);border:1px solid rgba(255,107,157,0.25);color:var(--error);}
+.req-remark{margin-top:7px;font-size:11px;background:rgba(79,142,247,0.06);border:1px solid rgba(79,142,247,0.15);border-radius:8px;padding:7px 10px;color:var(--accent);}
+
+.empty{text-align:center;padding:24px;color:var(--muted);}
+.empty-icon{font-size:28px;margin-bottom:7px;opacity:0.4;}
+.section-gap{margin-bottom:18px;}
+
+@media print{
+  .topnav,.header-actions,.progress-card,.val-box,.action-row,.lb-actions,#requestSection{display:none!important;}
+  body{background:white;color:black;}
+  .slot-filled{border:1px solid #ccc!important;background:#f9f9f9!important;}
+  .slot-sub{color:#111!important;}
+}
+</style>
+</head>
+<body>
+<div class="orb orb1"></div>
+<div class="orb orb2"></div>
+
+<!-- LOADING OVERLAY -->
+<div class="loading-overlay" id="loadingOverlay">
+  <div class="loader"></div>
+  <div class="loading-text" id="loadingText">Loading...</div>
+</div>
+
+<!-- TOASTS -->
+<div class="toast-container" id="toastContainer"></div>
+
+<!-- NAV -->
+<nav class="topnav">
+  <div class="nav-brand"><div class="nav-logo">🎓</div>Faculty<span class="dot">Sync</span></div>
+  <div class="nav-right">
+    <div class="badge-stu">🎒 Student</div>
+    <div class="user-chip" id="uChip">—</div>
+    <button class="btn-logout" onclick="logout()">Sign Out</button>
+  </div>
+</nav>
+
+<div class="page">
+  <div class="page-header">
+    <div>
+      <h1>My Timetable</h1>
+      <p id="pageSubtitle">Build and save your semester timetable</p>
+    </div>
+    <div class="header-actions" id="headerActions"></div>
+  </div>
+
+  <!-- INFO BAR -->
+  <div class="info-bar" id="infoBar"></div>
+
+  <!-- LOCKED BANNER -->
+  <div class="locked-banner" id="lockedBanner" style="display:none">
+    <div class="lb-icon">🔒</div>
+    <div class="lb-text">
+      <h3>Timetable Saved &amp; Locked</h3>
+      <p>Your timetable is finalized. Contact admin if you need changes.</p>
+    </div>
+    <div class="lb-actions">
+      <button class="btn btn-ghost" onclick="downloadPDF()">📥 Download PDF</button>
+      <button class="btn btn-warn" onclick="openRequestModal()">📝 Request Change</button>
+    </div>
+  </div>
+
+  <!-- PROGRESS (edit mode) -->
+  <div class="progress-card" id="progressCard" style="display:none">
+    <div class="prog-header">
+      <span class="prog-title">Subject Assignment Progress</span>
+      <span class="prog-count" id="progCount">0 / 0 subjects assigned</span>
+    </div>
+    <div class="prog-bar"><div class="prog-fill" id="progFill" style="width:0%"></div></div>
+    <div class="subjects-checklist" id="subjectChecklist"></div>
+  </div>
+
+  <!-- VALIDATION BOX -->
+  <div class="val-box" id="valBox"></div>
+
+  <!-- TIMETABLE GRID -->
+  <div class="section-gap">
+    <div class="card">
+      <div class="card-head">
+        <div class="ci ci-t">🗓️</div>
+        <div>
+          <div class="card-title" id="ttTitle">Timetable Grid</div>
+          <div class="card-sub" id="ttSub">Loading...</div>
+        </div>
+      </div>
+      <div id="ttWrap">
+        <div class="empty"><div class="empty-icon">⏳</div>Loading...</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ACTION ROW (edit mode) -->
+  <div id="actionRow" style="display:none;gap:10px;flex-wrap:wrap;margin-bottom:18px">
+    <button class="btn btn-ghost" onclick="window.location.href='summary.html'">← Back</button>
+    <button class="btn btn-ghost" onclick="resetGrid()">🔄 Reset Grid</button>
+    <button class="btn btn-primary" id="saveBtn" disabled onclick="openSaveModal()">
+      💾 Save Timetable
+    </button>
+  </div>
+
+  <!-- REQUESTS SECTION -->
+  <div id="requestSection" style="display:none">
+    <div class="card">
+      <div class="card-head">
+        <div class="ci ci-r">📋</div>
+        <div>
+          <div class="card-title">My Change Requests</div>
+          <div class="card-sub">Track your timetable edit requests</div>
+        </div>
+      </div>
+      <div id="requestList"><div class="empty"><div class="empty-icon">📬</div>No requests yet</div></div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ SAVE CONFIRMATION MODAL ══ -->
+<div class="modal-overlay" id="saveModal">
+  <div class="modal">
+    <div class="modal-icon">💾</div>
+    <h3>Save Timetable?</h3>
+    <div class="modal-msg">Are you sure you want to save this timetable?<br>
+      <strong style="color:var(--error)">You won't be able to edit it later.</strong></div>
+    <div class="modal-btns">
+      <button class="mb-cancel" onclick="closeModal('saveModal')">Cancel</button>
+      <button class="mb-ok" id="confirmSaveBtn" onclick="confirmSave()">✅ Confirm &amp; Save</button>
+    </div>
+  </div>
+</div>
+
+<!-- ══ SUCCESS MODAL ══ -->
+<div class="modal-overlay" id="successModal">
+  <div class="modal" style="text-align:center">
+    <div class="modal-icon">🎉</div>
+    <h3>Timetable Saved!</h3>
+    <div class="modal-msg">Your timetable has been saved and locked.<br>Download it for your records.</div>
+    <div class="modal-btns">
+      <button class="mb-cancel" onclick="closeModal('successModal')">Close</button>
+      <button class="mb-success" onclick="downloadPDF();closeModal('successModal')">📥 Download PDF</button>
+    </div>
+  </div>
+</div>
+
+<!-- ══ REQUEST CHANGE MODAL ══ -->
+<div class="modal-overlay" id="requestModal">
+  <div class="modal">
+    <div class="modal-icon">📝</div>
+    <h3>Request Timetable Change</h3>
+    <div class="field">
+      <label>Reason for Change *</label>
+      <textarea id="reqReason" placeholder="Explain why you need to change your timetable..."></textarea>
+    </div>
+    <div class="field">
+      <label>Select Period(s) to Edit *</label>
+      <div id="periodCheckboxes"></div>
+    </div>
+    <div class="modal-btns">
+      <button class="mb-cancel" onclick="closeModal('requestModal')">Cancel</button>
+      <button class="mb-ok" id="submitReqBtn" onclick="submitRequest()">📩 Submit Request</button>
+    </div>
+  </div>
+</div>
+
+<script>
+// ═══════════════════════════════════════
+// AUTH
+// ═══════════════════════════════════════
+const token  = localStorage.getItem("token");
+const role   = localStorage.getItem("role");
+const userId = localStorage.getItem("userId");
+const myDept = (localStorage.getItem("department") || "").toUpperCase();
+const myYear = parseInt(localStorage.getItem("year")) || 0;
+
+if (!token || role !== "student") window.location.href = "login.html";
+
+document.getElementById("uChip").innerHTML =
+  `<strong>${userId}</strong>${myDept ? " · " + myDept : ""}${myYear ? " Y" + myYear : ""}`;
+
+// ═══════════════════════════════════════
+// STATE
+// ═══════════════════════════════════════
+const raw        = JSON.parse(localStorage.getItem("studentSelection") || "{}");
+const selections = Array.isArray(raw.selections) ? raw.selections : [];
+
+// ✅ FIX: Read from multiple sources with strong fallbacks
+const dept = raw.department
+          || localStorage.getItem("department")
+          || myDept
+          || "";
+
+const year = raw.year
+          || localStorage.getItem("year")
+          || String(myYear)
+          || "";
+
+const sem  = raw.semester
+          || localStorage.getItem("semester")
+          || "";
+
+// Debug log — check what values we have
+console.log("📦 Student data → dept:", dept, "| year:", year, "| sem:", sem, "| userId:", userId);
+
+let requiredSubjects = [];
+let timetableGrid    = {};   // key: "Monday-1"  value: "subjectName"
+let isLocked         = false;
+let hasUnsaved       = false;
+let isSaving         = false;
+
+const DAYS    = ["Monday","Tuesday","Wednesday","Thursday","Friday"];
+const PERIODS = [1,2,3,4,5];
+const TIMES   = {1:"09:00–10:00",2:"10:00–11:00",3:"11:15–12:15",4:"01:00–02:00",5:"02:00–03:00"};
+const CC      = ["c1","c2","c3","c4","c5"];
+const subjectColors = {};
+
+// ═══════════════════════════════════════
+// HELPERS
+// ═══════════════════════════════════════
+async function api(method, path, body = null) {
+  const opts = {
+    method,
+    headers:{"Content-Type":"application/json","Authorization":"Bearer "+token}
+  };
+  if (body) opts.body = JSON.stringify(body);
+  const r = await fetch("/api" + path, opts);
+  const d = await r.json();
+  return { ok: r.ok, data: d };
+}
+function showLoading(msg="Loading..."){
+  document.getElementById("loadingText").textContent = msg;
+  document.getElementById("loadingOverlay").classList.add("show");
+}
+function hideLoading(){ document.getElementById("loadingOverlay").classList.remove("show"); }
+function toast(msg, type="success"){
+  const el = document.createElement("div");
+  el.className = "toast " + type;
+  el.innerHTML = (type==="success"?"✅":type==="error"?"❌":"ℹ️") + " " + msg;
+  document.getElementById("toastContainer").appendChild(el);
+  setTimeout(()=>el.remove(), 3800);
+}
+function openModal(id) { document.getElementById(id).classList.add("open"); }
+function closeModal(id){ document.getElementById(id).classList.remove("open"); }
+function logout(){ localStorage.clear(); window.location.href="login.html"; }
+
+// ═══════════════════════════════════════
+// UNSAVED CHANGES WARNING
+// ═══════════════════════════════════════
+window.addEventListener("beforeunload", e => {
+  if (hasUnsaved && !isLocked) {
+    e.preventDefault();
+    e.returnValue = "You have unsaved changes. Are you sure you want to leave?";
+  }
+});
+
+// ═══════════════════════════════════════
+// INIT
+// ═══════════════════════════════════════
+async function init() {
+  showLoading("Fetching your timetable...");
+
+  document.getElementById("infoBar").innerHTML = `
+    <div class="ic"><div class="ic-lbl">Department</div><div class="ic-val">${dept||"—"}</div></div>
+    <div class="ic"><div class="ic-lbl">Year</div><div class="ic-val">${year||"—"}</div></div>
+    <div class="ic"><div class="ic-lbl">Semester</div><div class="ic-val">${sem||"—"}</div></div>
+    <div class="ic"><div class="ic-lbl">Student ID</div><div class="ic-val">${userId||"—"}</div></div>`;
+
+  // Check if already saved & locked
+  const { ok: tOk, data: tData } = await api("GET", `/student-timetable/${userId}`);
+  if (tOk && tData && tData.locked) {
+    isLocked = true;
+    tData.slots.forEach(s => { timetableGrid[`${s.day}-${s.period}`] = s.subject; });
+    const subs = [...new Set(tData.slots.map(s => s.subject))];
+    subs.forEach((s,i)=>{ subjectColors[s]=CC[i%5]; });
+    requiredSubjects = subs;
+    renderLockedView();
+    hideLoading();
+    return;
+  }
+
+  // Fetch required subjects
+  const { ok: fOk, data: fData } = await api("GET",
+    `/faculty?department=${dept}&year=${year}&semester=${sem}`);
+  if (!fOk || !fData.length) {
+    document.getElementById("ttWrap").innerHTML =
+      `<div class="empty"><div class="empty-icon">📭</div>No subjects found. Contact admin.</div>`;
+    hideLoading(); return;
+  }
+
+  const subMap = {};
+  fData.forEach(f => { if(!subMap[f.subject]) subMap[f.subject]=f; });
+  requiredSubjects = Object.keys(subMap);
+  requiredSubjects.forEach((s,i)=>{ subjectColors[s]=CC[i%5]; });
+
+  // Pre-fill from selections
+  selections.forEach((sel,i) => {
+    const day = DAYS[i % DAYS.length];
+    const per = PERIODS[Math.floor(i / DAYS.length) % PERIODS.length];
+    const key = `${day}-${per}`;
+    if (!timetableGrid[key]) timetableGrid[key] = sel.subject;
+  });
+
+  renderEditMode();
+  hideLoading();
+}
+
+// ═══════════════════════════════════════
+// RENDER EDIT MODE
+// ═══════════════════════════════════════
+function renderEditMode() {
+  document.getElementById("progressCard").style.display = "block";
+  document.getElementById("actionRow").style.display    = "flex";
+  document.getElementById("lockedBanner").style.display = "none";
+  document.getElementById("ttTitle").textContent = "Build Your Timetable";
+  document.getElementById("ttSub").textContent   = "Assign each subject to a time slot. All subjects must be assigned once.";
+  document.getElementById("pageSubtitle").textContent = `${dept} · Year ${year} · Semester ${sem}`;
+  renderGrid(false);
+  updateProgress();
+  validateAndUpdateBtn();
+}
+
+// ═══════════════════════════════════════
+// RENDER LOCKED VIEW
+// ═══════════════════════════════════════
+function renderLockedView() {
+  document.getElementById("progressCard").style.display  = "none";
+  document.getElementById("actionRow").style.display     = "none";
+  document.getElementById("lockedBanner").style.display  = "flex";
+  document.getElementById("requestSection").style.display= "block";
+  document.getElementById("ttTitle").textContent  = "My Timetable (Read Only)";
+  document.getElementById("ttSub").textContent    = "Saved & locked. Use 'Request Change' for edits.";
+  document.getElementById("pageSubtitle").textContent = `${dept} · Year ${year} · Semester ${sem}`;
+  document.getElementById("headerActions").innerHTML = `
+    <button class="btn btn-ghost" onclick="downloadPDF()">📥 Download PDF</button>
+    <button class="btn btn-warn" onclick="openRequestModal()">📝 Request Change</button>`;
+  renderGrid(true);
+  loadRequests();
+}
+
+// ═══════════════════════════════════════
+// RENDER GRID
+// ═══════════════════════════════════════
+function renderGrid(readOnly) {
+  let html = `<table class="tt-table"><thead><tr><th>Day / Period</th>`;
+  PERIODS.forEach(p => {
+    html += `<th>P${p}<br><span style="font-size:9px;color:rgba(136,146,176,0.5);font-weight:400">${TIMES[p]}</span></th>`;
+  });
+  html += `</tr></thead><tbody>`;
+
+  DAYS.forEach(day => {
+    html += `<tr><td>${day}</td>`;
+    PERIODS.forEach(per => {
+      const key = `${day}-${per}`;
+      const val = timetableGrid[key] || "";
+      if (readOnly) {
+        html += `<td>${val
+          ? `<div class="slot-filled ${subjectColors[val]||"c1"}"><div class="slot-sub">${val}</div></div>`
+          : `<span style="color:rgba(136,146,176,0.25)">–</span>`
+        }</td>`;
+      } else {
+        const conflict = checkConflict(key, val);
+        html += `<td>
+          <select class="slot-select ${conflict?"conflict":""}" data-key="${key}" onchange="onSlotChange(this)">
+            <option value="">— Empty —</option>
+            ${requiredSubjects.map(s=>`<option value="${s}" ${val===s?"selected":""}>${s}</option>`).join("")}
+          </select>
+          ${conflict?`<div class="err-cell">⚠️ Duplicate in same day</div>`:""}
+        </td>`;
+      }
+    });
+    html += `</tr>`;
+  });
+
+  html += `</tbody></table>`;
+  document.getElementById("ttWrap").innerHTML = `<div style="overflow-x:auto">${html}</div>`;
+}
+
+// ═══════════════════════════════════════
+// SLOT CHANGE
+// ═══════════════════════════════════════
+function onSlotChange(sel) {
+  const key = sel.dataset.key;
+  const val = sel.value;
+  if (val) timetableGrid[key] = val; else delete timetableGrid[key];
+  hasUnsaved = true;
+  renderGrid(false);
+  updateProgress();
+  validateAndUpdateBtn();
+}
+
+// ═══════════════════════════════════════
+// CONFLICT CHECK (same subject same day)
+// ═══════════════════════════════════════
+function checkConflict(key, val) {
+  if (!val) return false;
+  const [day] = key.split("-");
+  return PERIODS.some(p => {
+    const k = `${day}-${p}`;
+    return k !== key && timetableGrid[k] === val;
+  });
+}
+function hasAnyConflict() {
+  return Object.entries(timetableGrid).some(([k,v]) => checkConflict(k,v));
+}
+
+// ═══════════════════════════════════════
+// PROGRESS
+// ═══════════════════════════════════════
+function updateProgress() {
+  const assigned = new Set(Object.values(timetableGrid).filter(Boolean));
+  const total    = requiredSubjects.length;
+  const done     = requiredSubjects.filter(s => assigned.has(s)).length;
+  const pct      = total > 0 ? (done/total)*100 : 0;
+  document.getElementById("progFill").style.width  = pct + "%";
+  document.getElementById("progCount").textContent = `${done} / ${total} subjects assigned`;
+  document.getElementById("subjectChecklist").innerHTML = requiredSubjects.map(s => {
+    const ok = assigned.has(s);
+    return `<div class="subj-chip ${ok?"done":"missing"}">${ok?"✅":"❌"} ${s}</div>`;
+  }).join("");
+}
+
+// ═══════════════════════════════════════
+// VALIDATE + SAVE BUTTON
+// ═══════════════════════════════════════
+function validateAndUpdateBtn() {
+  const assigned   = new Set(Object.values(timetableGrid).filter(Boolean));
+  const allDone    = requiredSubjects.every(s => assigned.has(s));
+  const noConflict = !hasAnyConflict();
+  const errors     = [];
+  if (!allDone) {
+    const missing = requiredSubjects.filter(s => !assigned.has(s));
+    errors.push(`Missing: ${missing.join(", ")}`);
+  }
+  if (!noConflict) errors.push("Duplicate subject detected in the same day.");
+  const box = document.getElementById("valBox");
+  if (errors.length) {
+    box.className = "val-box error show";
+    box.innerHTML = `⚠️ Fix before saving:<ul class="val-list">${errors.map(e=>`<li>${e}</li>`).join("")}</ul>`;
+    document.getElementById("saveBtn").disabled = true;
+  } else {
+    box.className = "val-box success show";
+    box.innerHTML  = "✅ All subjects assigned, no conflicts. Ready to save!";
+    document.getElementById("saveBtn").disabled = false;
+  }
+}
+
+function resetGrid() {
+  if (!confirm("Reset all slot assignments?")) return;
+  timetableGrid = {}; hasUnsaved = false;
+  renderGrid(false); updateProgress();
+  document.getElementById("valBox").className = "val-box";
+  document.getElementById("saveBtn").disabled = true;
+}
+
+// ═══════════════════════════════════════
+// SAVE FLOW
+// ═══════════════════════════════════════
+function openSaveModal() {
+  if (document.getElementById("saveBtn").disabled) return;
+  openModal("saveModal");
+}
+
+async function confirmSave() {
+  if (isSaving) return;
+
+  // ✅ FIX: resolve with all possible fallbacks
+  const finalDept = dept || localStorage.getItem("department") || myDept || "";
+  const finalYear = year || localStorage.getItem("year") || String(myYear) || "";
+  const finalSem  = sem  || raw.semester || localStorage.getItem("semester") || "";
+
+  console.log("💾 Saving →", { studentId:userId, department:finalDept, year:finalYear, semester:finalSem });
+
+  if (!finalDept || !finalYear || !finalSem) {
+    toast("Missing department / year / semester. Please go back and re-select.", "error");
+    return;
+  }
+
+  isSaving = true;
+  const btn = document.getElementById("confirmSaveBtn");
+  btn.disabled = true;
+  btn.innerHTML = `<span class="spin"></span> Saving...`;
+  closeModal("saveModal");
+  showLoading("Saving your timetable...");
+
+  const slots = Object.entries(timetableGrid).map(([key, subject]) => {
+    const [day, period] = key.split("-");
+    return { day, period: parseInt(period), subject };
+  });
+
+  const { ok, data } = await api("POST", "/student-timetable/save", {
+    studentId:  userId,
+    department: finalDept,
+    year:       finalYear,
+    semester:   finalSem,
+    slots,
+  });
+
+  hideLoading();
+  btn.disabled = false; btn.textContent = "✅ Confirm & Save";
+  isSaving = false;
+
+  if (!ok) { toast(data.message || "Save failed. Try again.", "error"); return; }
+
+  hasUnsaved = false; isLocked = true;
+  toast("✅ Timetable saved successfully!");
+  openModal("successModal");
+  renderLockedView();
+}
+
+// ═══════════════════════════════════════
+// DOWNLOAD PDF
+// ═══════════════════════════════════════
+async function downloadPDF() {
+  toast("Generating PDF...", "info");
+  try {
+    const el = document.getElementById("ttWrap");
+    const canvas = await html2canvas(el, { backgroundColor:"#0a0f1e", scale:2 });
+    const { jsPDF } = window.jspdf;
+    const pdf  = new jsPDF({ orientation:"landscape", unit:"mm", format:"a4" });
+    const imgW = 297;
+    const imgH = (canvas.height * imgW) / canvas.width;
+    pdf.setFillColor(10,15,30);
+    pdf.rect(0,0,297,210,"F");
+    pdf.addImage(canvas.toDataURL("image/png"),"PNG",0,10,imgW,Math.min(imgH,185));
+    pdf.setTextColor(200,200,200);
+    pdf.setFontSize(9);
+    pdf.text(`FacultySync — ${userId} — ${dept} Year ${year} Sem ${sem}`, 10, 205);
+    pdf.save(`timetable_${userId}_sem${sem}.pdf`);
+    toast("PDF downloaded!", "success");
+  } catch(err) {
+    toast("PDF failed. Try printing (Ctrl+P).", "error");
+  }
+}
+
+// ═══════════════════════════════════════
+// CHANGE REQUEST
+// ═══════════════════════════════════════
+function openRequestModal() {
+  const slots = Object.entries(timetableGrid);
+  document.getElementById("periodCheckboxes").innerHTML = slots.length
+    ? slots.map(([key, subj]) => {
+        const [day, per] = key.split("-");
+        return `<label class="cb-item" id="cb_${key}">
+          <input type="checkbox" value="${key}" onchange="this.closest('.cb-item').classList.toggle('checked',this.checked)">
+          <span>${day} — Period ${per}: <strong>${subj}</strong></span>
+        </label>`;
+      }).join("")
+    : `<div style="color:var(--muted);font-size:12px">No slots available.</div>`;
+  document.getElementById("reqReason").value = "";
+  openModal("requestModal");
+}
+
+async function submitRequest() {
+  const reason  = document.getElementById("reqReason").value.trim();
+  const checked = [...document.querySelectorAll("#periodCheckboxes input:checked")].map(i=>i.value);
+  if (!reason)         { toast("Enter a reason.", "error"); return; }
+  if (!checked.length) { toast("Select at least one period.", "error"); return; }
+
+  const btn = document.getElementById("submitReqBtn");
+  btn.disabled = true; btn.innerHTML = `<span class="spin"></span> Submitting...`;
+
+  const periods = checked.map(key => {
+    const [day, period] = key.split("-");
+    return { day, period: parseInt(period), subject: timetableGrid[key] };
+  });
+
+  const { ok, data } = await api("POST", "/student-timetable/request",
+    { studentId: userId, reason, periods });
+
+  btn.disabled = false; btn.textContent = "📩 Submit Request";
+  if (!ok) { toast(data.message || "Submit failed.", "error"); return; }
+  closeModal("requestModal");
+  toast("📩 Request sent to admin!", "info");
+  loadRequests();
+}
+
+// ═══════════════════════════════════════
+// LOAD REQUESTS
+// ═══════════════════════════════════════
+async function loadRequests() {
+  const { ok, data } = await api("GET", `/student-timetable/requests/${userId}`);
+  const el = document.getElementById("requestList");
+  if (!ok || !data.length) {
+    el.innerHTML = `<div class="empty"><div class="empty-icon">📬</div>No requests yet</div>`;
+    return;
+  }
+  el.innerHTML = data.map(req => {
+    const sc = req.status==="approved"?"rs-approved":req.status==="rejected"?"rs-rejected":"rs-pending";
+    const sl = req.status==="approved"?"✅ Approved":req.status==="rejected"?"❌ Rejected":"⏳ Pending";
+    return `<div class="req-item">
+      <div class="req-status ${sc}">${sl}</div>
+      <div style="font-size:12px;color:var(--text);margin-bottom:5px"><strong>Reason:</strong> ${req.reason}</div>
+      <div style="font-size:11px;color:var(--muted)">
+        Periods: ${req.periods.map(p=>`${p.day} P${p.period}`).join(", ")}
+        &nbsp;·&nbsp; ${new Date(req.createdAt).toLocaleDateString()}
+      </div>
+      ${req.adminRemark?`<div class="req-remark">💬 Admin: ${req.adminRemark}</div>`:""}
+    </div>`;
+  }).join("");
+}
+
+// ═══════════════════════════════════════
+// BOOT
+// ═══════════════════════════════════════
+init();
+</script>
+</body>
+</html>

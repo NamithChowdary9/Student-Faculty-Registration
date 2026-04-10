@@ -64,12 +64,12 @@ body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(
 <div class="page">
   <div class="page-header">
     <h1>Selection Summary</h1>
-    <p>Review your faculty selections before generating your timetable</p>
+    <p>Review your faculty selections before building your timetable</p>
   </div>
   <div id="content"></div>
   <div class="act-bar">
     <button class="btn btn-back" onclick="window.location.href='student.html'">← Back</button>
-    <button class="btn btn-go" onclick="goTT()">View Timetable 🗓️</button>
+    <button class="btn btn-go" onclick="goTT()">Build My Timetable 🗓️</button>
     <button class="btn btn-clr" onclick="clearSel()">🗑️ Clear</button>
   </div>
 </div>
@@ -120,9 +120,10 @@ if (!sels.length) {
     </div>`;
 }
 
+// ✅ CHANGED: now goes to student-timetable.html
 function goTT() {
   if (!sels.length) { alert("No selections."); return; }
-  window.location.href = "timetable.html";
+  window.location.href = "student-timetable.html";
 }
 
 function clearSel() {

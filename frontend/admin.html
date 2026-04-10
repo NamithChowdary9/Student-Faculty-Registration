@@ -107,6 +107,9 @@ body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(
 .c3{background:rgba(67,233,123,0.07);border:1px solid rgba(67,233,123,0.2);}
 .c4{background:rgba(255,179,71,0.07);border:1px solid rgba(255,179,71,0.2);}
 .c5{background:rgba(0,212,255,0.07);border:1px solid rgba(0,212,255,0.2);}
+.slot-select{width:100%;padding:6px 8px;background:rgba(255,255,255,0.05);border:1.5px solid var(--border);border-radius:8px;color:var(--text);font-family:'Space Grotesk',sans-serif;font-size:11px;outline:none;cursor:pointer;}
+.slot-select:focus{border-color:var(--accent);}
+.slot-select option{background:#1a2040;}
 .sec-title{font-size:18px;font-weight:700;color:white;margin-bottom:3px;}
 .sec-sub{font-size:13px;color:var(--muted);margin-bottom:18px;}
 .modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.75);backdrop-filter:blur(6px);display:none;align-items:center;justify-content:center;z-index:200;padding:16px;}
@@ -121,8 +124,9 @@ body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(
 .mb-cancel{background:var(--card2);border:1px solid var(--border)!important;color:var(--text);}
 .mb-del{background:linear-gradient(135deg,#ff4e7a,#ff6b9d);color:white;}
 .mb-ok{background:linear-gradient(135deg,var(--accent),var(--accent2));color:white;}
-.modal .field input,.modal .field select{background:rgba(255,255,255,0.05);border:1.5px solid var(--border);border-radius:10px;color:var(--text);font-family:'Space Grotesk',sans-serif;font-size:13px;outline:none;}
-.modal .field input:focus,.modal .field select:focus{border-color:var(--accent);}
+.modal .field input,.modal .field select,.modal .field textarea{background:rgba(255,255,255,0.05);border:1.5px solid var(--border);border-radius:10px;color:var(--text);font-family:'Space Grotesk',sans-serif;font-size:13px;outline:none;}
+.modal .field input:focus,.modal .field select:focus,.modal .field textarea:focus{border-color:var(--accent);}
+.modal .field textarea{resize:vertical;min-height:80px;}
 .toast{position:fixed;bottom:22px;right:22px;z-index:999;padding:13px 18px;border-radius:13px;font-size:13px;font-weight:600;animation:slideUp 0.3s ease;display:flex;align-items:center;gap:7px;max-width:340px;box-shadow:0 10px 30px rgba(0,0,0,0.4);}
 .toast.success{background:#0f2a1a;border:1px solid rgba(67,233,123,0.3);color:var(--success);}
 .toast.error{background:#2a0f1a;border:1px solid rgba(255,107,157,0.3);color:var(--error);}
@@ -132,671 +136,920 @@ body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(
 .empty-icon{font-size:32px;margin-bottom:8px;opacity:0.4;}
 .info-tip{background:rgba(79,142,247,0.05);border:1px solid rgba(79,142,247,0.15);border-radius:10px;padding:10px 13px;font-size:12px;color:var(--muted);margin-bottom:11px;}
 .warn-tip{background:rgba(255,179,71,0.06);border:1px solid rgba(255,179,71,0.2);border-radius:10px;padding:10px 13px;font-size:12px;color:var(--warn);margin-bottom:11px;}
+.spin{display:inline-block;width:12px;height:12px;border:2px solid rgba(255,255,255,0.3);border-top-color:white;border-radius:50%;animation:spn 0.7s linear infinite;}
+@keyframes spn{to{transform:rotate(360deg)}}
+/* Request cards */
+.req-status-badge{display:inline-flex;align-items:center;gap:4px;padding:3px 9px;border-radius:20px;font-size:10px;font-weight:700;}
+.rsb-pending{background:rgba(255,179,71,0.12);border:1px solid rgba(255,179,71,0.25);color:var(--warn);}
+.rsb-approved{background:rgba(67,233,123,0.12);border:1px solid rgba(67,233,123,0.25);color:var(--success);}
+.rsb-rejected{background:rgba(255,107,157,0.12);border:1px solid rgba(255,107,157,0.25);color:var(--error);}
+/* Audit log */
+.audit-action{display:inline-block;padding:2px 8px;border-radius:6px;font-size:10px;font-weight:700;}
+.aa-edit{background:rgba(255,179,71,0.1);color:var(--warn);}
+.aa-approved{background:rgba(67,233,123,0.1);color:var(--success);}
+.aa-rejected{background:rgba(255,107,157,0.1);color:var(--error);}
+.aa-unlock{background:rgba(79,142,247,0.1);color:var(--accent);}
 </style>
 </head>
 <body>
 <div class="orb orb1"></div>
 <div class="orb orb2"></div>
 <nav class="topnav">
-<div class="nav-brand"><div class="nav-logo">🎓</div>Faculty<span class="dot">Sync</span></div>
-<div class="nav-right">
-<div class="badge-admin">🛡️ Admin</div>
-<span style="color:var(--muted);font-size:12px" id="uid"></span>
-<button class="btn-logout" onclick="logout()">Sign Out</button>
-</div>
+  <div class="nav-brand"><div class="nav-logo">🎓</div>Faculty<span class="dot">Sync</span></div>
+  <div class="nav-right">
+    <div class="badge-admin">🛡️ Admin</div>
+    <span style="color:var(--muted);font-size:12px" id="uid"></span>
+    <button class="btn-logout" onclick="logout()">Sign Out</button>
+  </div>
 </nav>
 <div class="tab-bar">
-<button class="tab-btn active" onclick="tab('faculty',this)">📋 Faculty</button>
-<button class="tab-btn" onclick="tab('semester',this)">🔒 Semester Lock</button>
-<button class="tab-btn" onclick="tab('rooms',this)">🏫 Rooms &amp; Allocation</button>
-<button class="tab-btn" onclick="tab('students',this)">👥 Students</button>
-<button class="tab-btn" onclick="tab('timetable',this)">🗓️ Timetable</button>
+  <button class="tab-btn active" onclick="tab('faculty',this)">📋 Faculty</button>
+  <button class="tab-btn" onclick="tab('semester',this)">🔒 Semester Lock</button>
+  <button class="tab-btn" onclick="tab('rooms',this)">🏫 Rooms &amp; Allocation</button>
+  <button class="tab-btn" onclick="tab('students',this)">👥 Students</button>
+  <button class="tab-btn" onclick="tab('timetable',this)">🗓️ Timetable</button>
+  <!-- ✅ NEW TABS -->
+  <button class="tab-btn" onclick="tab('stutt',this)">📝 Student TT</button>
+  <button class="tab-btn" onclick="tab('auditlog',this)">🔍 Audit Log</button>
 </div>
 <div class="page">
-<!-- FACULTY TAB -->
+
+<!-- ══ FACULTY TAB ══ -->
 <div class="tab-pane active" id="tab-faculty">
-<div class="stat-bar">
-<div class="stat"><div class="stat-num" id="sTotal">0</div><div class="stat-label">Total Faculty</div></div>
-<div class="stat"><div class="stat-num" id="sCSE">0</div><div class="stat-label">CSE</div></div>
-<div class="stat"><div class="stat-num" id="sECE">0</div><div class="stat-label">ECE</div></div>
-<div class="stat"><div class="stat-num" id="sMBA">0</div><div class="stat-label">MBA</div></div>
-<div class="stat"><div class="stat-num" id="sStu">0</div><div class="stat-label">Students</div></div>
+  <div class="stat-bar">
+    <div class="stat"><div class="stat-num" id="sTotal">0</div><div class="stat-label">Total Faculty</div></div>
+    <div class="stat"><div class="stat-num" id="sCSE">0</div><div class="stat-label">CSE</div></div>
+    <div class="stat"><div class="stat-num" id="sECE">0</div><div class="stat-label">ECE</div></div>
+    <div class="stat"><div class="stat-num" id="sMBA">0</div><div class="stat-label">MBA</div></div>
+    <div class="stat"><div class="stat-num" id="sStu">0</div><div class="stat-label">Students</div></div>
+  </div>
+  <div class="grid-2">
+    <div class="card">
+      <div class="card-header"><div class="card-icon ia">➕</div><div><div class="card-title">Add Faculty</div><div class="card-sub">* = required</div></div></div>
+      <div class="form-row">
+        <div class="field"><label>Department *</label><select id="aDept"><option value="">Select</option><option>CSE</option><option>ECE</option><option>MBA</option></select></div>
+        <div class="field"><label>Year *</label><select id="aYear"><option value="">Select</option><option>1</option><option>2</option><option>3</option><option>4</option></select></div>
+      </div>
+      <div class="form-row">
+        <div class="field"><label>Semester *</label><select id="aSem"><option value="">Select</option><option>1</option><option>2</option></select></div>
+        <div class="field"><label>Periods / Week</label><input id="aPeriods" type="number" min="1" max="10" placeholder="4"></div>
+      </div>
+      <div class="field"><label>Subject *</label><input id="aSubject" placeholder="e.g. Data Structures"></div>
+      <div class="field"><label>Faculty Name *</label><input id="aName" placeholder="e.g. Dr. Ramesh Kumar"></div>
+      <div class="form-row">
+        <div class="field"><label>Experience</label><input id="aExp" placeholder="e.g. 8 years"></div>
+        <div class="field"><label>Rating (1–5)</label><input id="aRating" type="number" min="1" max="5" step="0.1" placeholder="4.5"></div>
+      </div>
+      <div class="form-row">
+        <div class="field"><label>Email</label><input id="aEmail" type="email" placeholder="faculty@college.edu"></div>
+        <div class="field"><label>Student Limit</label><input id="aLimit" type="number" min="1" max="240" placeholder="60"></div>
+      </div>
+      <button class="btn btn-primary" id="addFacBtn" onclick="addFaculty()">➕ Add Faculty</button>
+    </div>
+    <div class="card">
+      <div class="card-header"><div class="card-icon il">📋</div><div><div class="card-title">Faculty Database</div><div class="card-sub">Filter to view records</div></div></div>
+      <div class="filter-row">
+        <div class="field" style="margin:0"><label>Dept</label><select id="fDept" onchange="loadFac()"><option value="">All</option><option>CSE</option><option>ECE</option><option>MBA</option></select></div>
+        <div class="field" style="margin:0"><label>Year</label><select id="fYear" onchange="loadFac()"><option value="">All</option><option>1</option><option>2</option><option>3</option><option>4</option></select></div>
+        <div class="field" style="margin:0"><label>Semester</label><select id="fSem" onchange="loadFac()"><option value="">All</option><option>1</option><option>2</option></select></div>
+      </div>
+      <div id="facList"><div class="empty"><div class="empty-icon">🔍</div>Select filters above</div></div>
+    </div>
+  </div>
 </div>
-<div class="grid-2">
-<div class="card">
-<div class="card-header"><div class="card-icon ia">➕</div><div><div class="card-title">Add Faculty</div><div class="card-sub">* = required</div></div></div>
-<div class="form-row">
-<div class="field"><label>Department *</label>
-<select id="aDept"><option value="">Select</option><option>CSE</option><option>ECE</option><option>MBA</option></select>
-</div>
-<div class="field"><label>Year *</label>
-<select id="aYear"><option value="">Select</option><option>1</option><option>2</option><option>3</option><option>4</option></select>
-</div>
-</div>
-<div class="form-row">
-<div class="field"><label>Semester *</label>
-<select id="aSem"><option value="">Select</option><option>1</option><option>2</option></select>
-</div>
-<div class="field"><label>Periods / Week</label>
-<input id="aPeriods" type="number" min="1" max="10" placeholder="4">
-</div>
-</div>
-<div class="field"><label>Subject *</label><input id="aSubject" placeholder="e.g. Data Structures"></div>
-<div class="field"><label>Faculty Name *</label><input id="aName" placeholder="e.g. Dr. Ramesh Kumar"></div>
-<div class="form-row">
-<div class="field"><label>Experience</label><input id="aExp" placeholder="e.g. 8 years"></div>
-<div class="field"><label>Rating (1–5)</label><input id="aRating" type="number" min="1" max="5" step="0.1" placeholder="4.5"></div>
-</div>
-<div class="form-row">
-<div class="field"><label>Email</label><input id="aEmail" type="email" placeholder="faculty@college.edu"></div>
-<div class="field"><label>Student Limit</label><input id="aLimit" type="number" min="1" max="240" placeholder="60"></div>
-</div>
-<button class="btn btn-primary" id="addFacBtn" onclick="addFaculty()">➕ Add Faculty</button>
-</div>
-<div class="card">
-<div class="card-header"><div class="card-icon il">📋</div><div><div class="card-title">Faculty Database</div><div class="card-sub">Filter to view records</div></div></div>
-<div class="filter-row">
-<div class="field" style="margin:0"><label>Dept</label>
-<select id="fDept" onchange="loadFac()"><option value="">All</option><option>CSE</option><option>ECE</option><option>MBA</option></select>
-</div>
-<div class="field" style="margin:0"><label>Year</label>
-<select id="fYear" onchange="loadFac()"><option value="">All</option><option>1</option><option>2</option><option>3</option><option>4</option></select>
-</div>
-<div class="field" style="margin:0"><label>Semester</label>
-<select id="fSem" onchange="loadFac()"><option value="">All</option><option>1</option><option>2</option></select>
-</div>
-</div>
-<div id="facList"><div class="empty"><div class="empty-icon">🔍</div>Select filters above</div></div>
-</div>
-</div>
-</div>
-<!-- SEMESTER TAB -->
+
+<!-- ══ SEMESTER TAB ══ -->
 <div class="tab-pane" id="tab-semester">
-<div class="sec-title">Semester Lock Control</div>
-<div class="sec-sub">Lock / unlock semesters for student registration.</div>
-<div class="card" style="margin-bottom:18px">
-<div class="card-header"><div class="card-icon ik">🔐</div><div><div class="card-title">Add / Update Semester Status</div><div class="card-sub">Set lock state and minimum SGPA requirement</div></div></div>
-<div class="grid-3">
-<div class="field"><label>Department</label>
-<select id="smDept"><option value="">Select</option><option>CSE</option><option>ECE</option><option>MBA</option></select>
+  <div class="sec-title">Semester Lock Control</div>
+  <div class="sec-sub">Lock / unlock semesters for student registration.</div>
+  <div class="card" style="margin-bottom:18px">
+    <div class="card-header"><div class="card-icon ik">🔐</div><div><div class="card-title">Add / Update Semester Status</div><div class="card-sub">Set lock state and minimum SGPA requirement</div></div></div>
+    <div class="grid-3">
+      <div class="field"><label>Department</label><select id="smDept"><option value="">Select</option><option>CSE</option><option>ECE</option><option>MBA</option></select></div>
+      <div class="field"><label>Year</label><select id="smYear"><option value="">Select</option><option>1</option><option>2</option><option>3</option><option>4</option></select></div>
+      <div class="field"><label>Semester</label><select id="smSem"><option value="">Select</option><option>1</option><option>2</option></select></div>
+    </div>
+    <div class="form-row">
+      <div class="field"><label>Status</label><select id="smStatus"><option value="locked">🔒 Locked</option><option value="unlocked">🔓 Unlocked</option></select></div>
+      <div class="field"><label>Min SGPA (0 = no requirement)</label><input id="smSgpa" type="number" min="0" max="10" step="0.1" placeholder="e.g. 6.5"></div>
+    </div>
+    <button class="btn btn-primary" onclick="saveSemStatus()">💾 Save Semester Status</button>
+  </div>
+  <div class="card">
+    <div class="card-header"><div class="card-icon ik">📊</div><div><div class="card-title">All Semester Statuses</div><div class="card-sub">Click toggle to change lock state instantly</div></div></div>
+    <div id="semGrid"><div class="empty"><div class="empty-icon">⏳</div>Loading...</div></div>
+  </div>
 </div>
-<div class="field"><label>Year</label>
-<select id="smYear"><option value="">Select</option><option>1</option><option>2</option><option>3</option><option>4</option></select>
-</div>
-<div class="field"><label>Semester</label>
-<select id="smSem"><option value="">Select</option><option>1</option><option>2</option></select>
-</div>
-</div>
-<div class="form-row">
-<div class="field"><label>Status</label>
-<select id="smStatus"><option value="locked">🔒 Locked</option><option value="unlocked">🔓 Unlocked</option></select>
-</div>
-<div class="field"><label>Min SGPA (0 = no requirement)</label>
-<input id="smSgpa" type="number" min="0" max="10" step="0.1" placeholder="e.g. 6.5">
-</div>
-</div>
-<button class="btn btn-primary" onclick="saveSemStatus()">💾 Save Semester Status</button>
-</div>
-<div class="card">
-<div class="card-header"><div class="card-icon ik">📊</div><div><div class="card-title">All Semester Statuses</div><div class="card-sub">Click toggle to change lock state instantly</div></div></div>
-<div id="semGrid"><div class="empty"><div class="empty-icon">⏳</div>Loading...</div></div>
-</div>
-</div>
-<!-- ROOMS TAB -->
+
+<!-- ══ ROOMS TAB ══ -->
 <div class="tab-pane" id="tab-rooms">
-<div class="sec-title">Room Management &amp; Allocation</div>
-<div class="sec-sub">Add classrooms and view room allocation after timetable generation.</div>
-<div class="grid-2">
-<div class="card">
-<div class="card-header"><div class="card-icon ir">🏫</div><div><div class="card-title">Add Classroom</div><div class="card-sub">Rooms are auto-created if none exist</div></div></div>
-<div class="form-row">
-<div class="field"><label>Room Number *</label><input id="rNo" placeholder="e.g. R101"></div>
-<div class="field"><label>Capacity</label><input id="rCap" type="number" min="1" max="120" placeholder="60"></div>
+  <div class="sec-title">Room Management &amp; Allocation</div>
+  <div class="sec-sub">Add classrooms and view room allocation after timetable generation.</div>
+  <div class="grid-2">
+    <div class="card">
+      <div class="card-header"><div class="card-icon ir">🏫</div><div><div class="card-title">Add Classroom</div></div></div>
+      <div class="form-row">
+        <div class="field"><label>Room Number *</label><input id="rNo" placeholder="e.g. R101"></div>
+        <div class="field"><label>Capacity</label><input id="rCap" type="number" min="1" max="120" placeholder="60"></div>
+      </div>
+      <div class="form-row">
+        <div class="field"><label>Block</label><input id="rBlock" placeholder="A"></div>
+        <div class="field"><label>Floor</label><input id="rFloor" type="number" min="0" max="15" placeholder="1"></div>
+      </div>
+      <button class="btn btn-primary" onclick="addRoom()">🏫 Add Room</button>
+      <div style="margin-top:18px;padding-top:14px;border-top:1px solid var(--border)">
+        <div style="font-size:10px;font-weight:700;color:var(--muted);margin-bottom:10px;letter-spacing:0.5px;text-transform:uppercase">Room List</div>
+        <div id="roomList"><div class="empty"><div class="empty-icon">🏫</div>No rooms added yet</div></div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-header"><div class="card-icon ir">📍</div><div><div class="card-title">Room Allocation Report</div></div></div>
+      <div class="filter-row">
+        <div class="field" style="margin:0"><label>Dept</label><select id="alDept"><option value="">Select</option><option>CSE</option><option>ECE</option><option>MBA</option></select></div>
+        <div class="field" style="margin:0"><label>Year</label><select id="alYear"><option value="">Select</option><option>1</option><option>2</option><option>3</option><option>4</option></select></div>
+        <div class="field" style="margin:0"><label>Semester</label><select id="alSem"><option value="">Select</option><option>1</option><option>2</option></select></div>
+      </div>
+      <button class="btn btn-primary" onclick="loadAlloc()">📍 Load Allocation</button>
+      <div id="allocTable" style="margin-top:14px"><div class="empty"><div class="empty-icon">📍</div>Generate timetable first</div></div>
+    </div>
+  </div>
 </div>
-<div class="form-row">
-<div class="field"><label>Block</label><input id="rBlock" placeholder="A"></div>
-<div class="field"><label>Floor</label><input id="rFloor" type="number" min="0" max="15" placeholder="1"></div>
-</div>
-<button class="btn btn-primary" onclick="addRoom()">🏫 Add Room</button>
-<div style="margin-top:18px;padding-top:14px;border-top:1px solid var(--border)">
-<div style="font-size:10px;font-weight:700;color:var(--muted);margin-bottom:10px;letter-spacing:0.5px;text-transform:uppercase">Room List</div>
-<div id="roomList"><div class="empty"><div class="empty-icon">🏫</div>No rooms added yet</div></div>
-</div>
-</div>
-<div class="card">
-<div class="card-header"><div class="card-icon ir">📍</div><div><div class="card-title">Room Allocation Report</div><div class="card-sub">Which room is allocated to whom</div></div></div>
-<div class="filter-row">
-<div class="field" style="margin:0"><label>Dept</label>
-<select id="alDept"><option value="">Select</option><option>CSE</option><option>ECE</option><option>MBA</option></select>
-</div>
-<div class="field" style="margin:0"><label>Year</label>
-<select id="alYear"><option value="">Select</option><option>1</option><option>2</option><option>3</option><option>4</option></select>
-</div>
-<div class="field" style="margin:0"><label>Semester</label>
-<select id="alSem"><option value="">Select</option><option>1</option><option>2</option></select>
-</div>
-</div>
-<button class="btn btn-primary" onclick="loadAlloc()">📍 Load Allocation</button>
-<div id="allocTable" style="margin-top:14px"><div class="empty"><div class="empty-icon">📍</div>Generate timetable first, then load</div></div>
-</div>
-</div>
-</div>
-<!-- STUDENTS TAB -->
+
+<!-- ══ STUDENTS TAB ══ -->
 <div class="tab-pane" id="tab-students">
-<div class="sec-title">Student Management</div>
-<div class="sec-sub">Add students individually, seed batch datasets, upload SGPA records.</div>
-<div class="grid-2">
-<div>
-<div class="card" style="margin-bottom:14px">
-<div class="card-header"><div class="card-icon is">👤</div><div><div class="card-title">Add Single User</div><div class="card-sub">Student or Admin account</div></div></div>
-<div class="form-row">
-<div class="field"><label>User ID (Reg No.)</label><input id="nId" placeholder="231FA04812" oninput="this.value=this.value.toUpperCase()"></div>
-<div class="field"><label>Role</label>
-<select id="nRole"><option value="student">Student</option><option value="admin">Admin</option></select>
+  <div class="sec-title">Student Management</div>
+  <div class="sec-sub">Add students individually, seed batch datasets, upload SGPA records.</div>
+  <div class="grid-2">
+    <div>
+      <div class="card" style="margin-bottom:14px">
+        <div class="card-header"><div class="card-icon is">👤</div><div><div class="card-title">Add Single User</div></div></div>
+        <div class="form-row">
+          <div class="field"><label>User ID (Reg No.)</label><input id="nId" placeholder="231FA04812" oninput="this.value=this.value.toUpperCase()"></div>
+          <div class="field"><label>Role</label><select id="nRole"><option value="student">Student</option><option value="admin">Admin</option></select></div>
+        </div>
+        <div class="form-row">
+          <div class="field"><label>Password (blank = last 3)</label><input id="nPass" placeholder="auto from reg no." autocomplete="new-password"></div>
+          <div class="field"><label>Department</label><select id="nDept"><option value="">Select</option><option>CSE</option><option>ECE</option><option>MBA</option></select></div>
+        </div>
+        <div class="form-row">
+          <div class="field"><label>Name</label><input id="nName" placeholder="Full name"></div>
+          <div class="field"><label>Email</label><input id="nEmail" type="email" placeholder="email@college.edu"></div>
+        </div>
+        <div class="field"><label>Previous Semester SGPA</label><input id="nSgpa" type="number" min="0" max="10" step="0.1" placeholder="e.g. 7.5"></div>
+        <button class="btn btn-primary" onclick="addUser()">➕ Add User</button>
+      </div>
+      <div class="card">
+        <div class="card-header"><div class="card-icon is">📊</div><div><div class="card-title">Bulk SGPA Upload</div><div class="card-sub">CSV format: RegNo,SGPA (one per line)</div></div></div>
+        <div class="field"><textarea id="sgpaData" placeholder="231FA04001,7.5&#10;231FA04002,8.2"></textarea></div>
+        <button class="btn btn-primary" onclick="bulkSgpa()">📥 Update SGPA Records</button>
+      </div>
+    </div>
+    <div>
+      <div class="card" style="margin-bottom:14px">
+        <div class="card-header"><div class="card-icon is">🌱</div><div><div class="card-title">Seed Student Dataset</div></div></div>
+        <div class="form-row">
+          <div class="field"><label>Year Prefix</label>
+            <select id="sdYear" onchange="updateSeedPreview()">
+              <option value="26">26 — 1st Year (2026 batch)</option>
+              <option value="25">25 — 2nd Year (2025 batch)</option>
+              <option value="24">24 — 3rd Year (2024 batch)</option>
+              <option value="23">23 — 4th Year (2023 batch)</option>
+            </select>
+          </div>
+          <div class="field"><label>Department</label><select id="sdDept" onchange="updateSeedPreview()"><option value="">Select</option><option>CSE</option><option>ECE</option><option>MBA</option></select></div>
+        </div>
+        <div class="field"><label>Count (max 300)</label><input id="sdCount" type="number" min="1" max="300" placeholder="300"></div>
+        <div class="warn-tip">⚠️ Creates accounts like <strong id="seedExample">261FA04001 – 261FA04300</strong>. Default password = last 3 digits.</div>
+        <button class="btn btn-warn" id="seedBtn" onclick="seedStudents()">🌱 Seed Students</button>
+      </div>
+      <div class="card">
+        <div class="card-header"><div class="card-icon is">👥</div><div><div class="card-title">View Students</div></div></div>
+        <div class="filter-row">
+          <div class="field" style="margin:0"><label>Dept</label><select id="vsDept"><option value="">All</option><option>CSE</option><option>ECE</option><option>MBA</option></select></div>
+          <div class="field" style="margin:0"><label>Year</label><select id="vsYear"><option value="">All</option><option>1</option><option>2</option><option>3</option><option>4</option></select></div>
+          <div class="field" style="margin:0"><label>&nbsp;</label><button class="btn btn-ok btn-sm" style="width:100%;padding:9px" onclick="loadStudents()">🔍 Search</button></div>
+        </div>
+        <div id="stuList"><div class="empty"><div class="empty-icon">👥</div>Select filters and search</div></div>
+      </div>
+    </div>
+  </div>
 </div>
-</div>
-<div class="form-row">
-<div class="field"><label>Password (blank = last 3)</label><input id="nPass" placeholder="auto from reg no."></div>
-<div class="field"><label>Department</label>
-<select id="nDept"><option value="">Select</option><option>CSE</option><option>ECE</option><option>MBA</option></select>
-</div>
-</div>
-<div class="form-row">
-<div class="field"><label>Name</label><input id="nName" placeholder="Full name"></div>
-<div class="field"><label>Email</label><input id="nEmail" type="email" placeholder="email@college.edu"></div>
-</div>
-<div class="field"><label>Previous Semester SGPA</label><input id="nSgpa" type="number" min="0" max="10" step="0.1" placeholder="e.g. 7.5"></div>
-<button class="btn btn-primary" onclick="addUser()">➕ Add User</button>
-</div>
-<div class="card">
-<div class="card-header"><div class="card-icon is">📊</div><div><div class="card-title">Bulk SGPA Upload</div><div class="card-sub">CSV format: RegNo,SGPA (one per line)</div></div></div>
-<div class="field"><textarea id="sgpaData" placeholder="231FA04001,7.5&#10;231FA04002,8.2&#10;241FA04003,6.9"></textarea></div>
-<button class="btn btn-primary" onclick="bulkSgpa()">📥 Update SGPA Records</button>
-</div>
-</div>
-<div>
-<div class="card" style="margin-bottom:14px">
-<div class="card-header"><div class="card-icon is">🌱</div><div><div class="card-title">Seed Student Dataset</div><div class="card-sub">Generate reg numbers 04001–04300</div></div></div>
-<div class="form-row">
-<div class="field"><label>Year Prefix</label>
-<!-- ✅ UPDATED: 26 = 1st Year (2026 batch), years shifted forward -->
-<select id="sdYear" onchange="updateSeedPreview()">
-<option value="26">26 — 1st Year (2026 batch)</option>
-<option value="25">25 — 2nd Year (2025 batch)</option>
-<option value="24">24 — 3rd Year (2024 batch)</option>
-<option value="23">23 — 4th Year (2023 batch)</option>
-</select>
-</div>
-<div class="field"><label>Department</label>
-<select id="sdDept" onchange="updateSeedPreview()"><option value="">Select</option><option>CSE</option><option>ECE</option><option>MBA</option></select>
-</div>
-</div>
-<div class="field"><label>Count (max 300)</label><input id="sdCount" type="number" min="1" max="300" placeholder="300"></div>
-<div class="warn-tip">⚠️ Creates accounts like <strong id="seedExample">261FA04001 – 261FA04300</strong>. Default password = last 3 digits.</div>
-<button class="btn btn-warn" id="seedBtn" onclick="seedStudents()">🌱 Seed Students</button>
-</div>
-<div class="card">
-<div class="card-header"><div class="card-icon is">👥</div><div><div class="card-title">View Students</div><div class="card-sub">Browse registered student accounts</div></div></div>
-<div class="filter-row">
-<div class="field" style="margin:0"><label>Dept</label>
-<select id="vsDept"><option value="">All</option><option>CSE</option><option>ECE</option><option>MBA</option></select>
-</div>
-<div class="field" style="margin:0"><label>Year</label>
-<select id="vsYear"><option value="">All</option><option>1</option><option>2</option><option>3</option><option>4</option></select>
-</div>
-<div class="field" style="margin:0"><label>&nbsp;</label>
-<button class="btn btn-ok btn-sm" style="width:100%;padding:9px" onclick="loadStudents()">🔍 Search</button>
-</div>
-</div>
-<div id="stuList"><div class="empty"><div class="empty-icon">👥</div>Select filters and search</div></div>
-</div>
-</div>
-</div>
-</div>
-<!-- TIMETABLE TAB -->
+
+<!-- ══ TIMETABLE TAB ══ -->
 <div class="tab-pane" id="tab-timetable">
-<div class="sec-title">Timetable Generation</div>
-<div class="sec-sub">Generate after registration closes. Auto-assigns rooms, periods and enforces faculty daily limits.</div>
-<div class="grid-2" style="margin-bottom:18px">
-<div class="card">
-<div class="card-header"><div class="card-icon it">🗓️</div><div><div class="card-title">Generate Timetable</div><div class="card-sub">Auto-assigns rooms &amp; periods per faculty</div></div></div>
-<div class="form-row">
-<div class="field"><label>Department</label>
-<select id="ttDept"><option value="">Select</option><option>CSE</option><option>ECE</option><option>MBA</option></select>
+  <div class="sec-title">Timetable Generation</div>
+  <div class="sec-sub">Generate after registration closes. Auto-assigns rooms, periods and enforces faculty daily limits.</div>
+  <div class="grid-2" style="margin-bottom:18px">
+    <div class="card">
+      <div class="card-header"><div class="card-icon it">🗓️</div><div><div class="card-title">Generate Timetable</div></div></div>
+      <div class="form-row">
+        <div class="field"><label>Department</label><select id="ttDept"><option value="">Select</option><option>CSE</option><option>ECE</option><option>MBA</option></select></div>
+        <div class="field"><label>Year</label><select id="ttYear"><option value="">Select</option><option>1</option><option>2</option><option>3</option><option>4</option></select></div>
+      </div>
+      <div class="field"><label>Semester</label><select id="ttSem"><option value="">Select</option><option>1</option><option>2</option></select></div>
+      <div class="info-tip">ℹ️ Faculty: max 4 classes/day. All students of the same faculty share one room.</div>
+      <button class="btn btn-primary" id="genBtn" onclick="genTT()">⚡ Generate Timetable</button>
+      <button class="btn btn-warn" style="margin-top:9px" onclick="mailFac()">📧 Email Timetables to Faculty</button>
+    </div>
+    <div class="card">
+      <div class="card-header"><div class="card-icon it">👁️</div><div><div class="card-title">View Timetable</div></div></div>
+      <div class="filter-row">
+        <div class="field" style="margin:0"><label>Dept</label><select id="vttDept"><option value="">Select</option><option>CSE</option><option>ECE</option><option>MBA</option></select></div>
+        <div class="field" style="margin:0"><label>Year</label><select id="vttYear"><option value="">Select</option><option>1</option><option>2</option><option>3</option><option>4</option></select></div>
+        <div class="field" style="margin:0"><label>Semester</label><select id="vttSem"><option value="">Select</option><option>1</option><option>2</option></select></div>
+      </div>
+      <button class="btn btn-primary" onclick="viewTT()">📋 View Grid</button>
+    </div>
+  </div>
+  <div id="ttDisplay"></div>
 </div>
-<div class="field"><label>Year</label>
-<select id="ttYear"><option value="">Select</option><option>1</option><option>2</option><option>3</option><option>4</option></select>
+
+<!-- ══ STUDENT TIMETABLE TAB (NEW) ══ -->
+<div class="tab-pane" id="tab-stutt">
+  <div class="sec-title">Student Timetable Management</div>
+  <div class="sec-sub">Search by registration number, view/edit student timetable, manage change requests.</div>
+
+  <!-- Search -->
+  <div class="card" style="margin-bottom:18px">
+    <div class="card-header"><div class="card-icon is">🔍</div><div><div class="card-title">Search Student Timetable</div><div class="card-sub">Enter registration number</div></div></div>
+    <div style="display:flex;gap:10px;align-items:flex-end">
+      <div class="field" style="margin:0;flex:1">
+        <label>Registration Number</label>
+        <input id="stRegNo" placeholder="e.g. 231FA04001" oninput="this.value=this.value.toUpperCase()" autocomplete="off">
+      </div>
+      <button class="btn btn-ok btn-sm" style="padding:10px 18px" onclick="searchStudentTT()">🔍 Search</button>
+    </div>
+  </div>
+
+  <!-- Student TT Result -->
+  <div id="stuTTResult" style="display:none">
+    <div class="grid-2" style="margin-bottom:18px">
+      <div class="card">
+        <div class="card-header">
+          <div class="card-icon it">🗓️</div>
+          <div>
+            <div class="card-title" id="stuTTTitle">Timetable</div>
+            <div class="card-sub" id="stuTTSub">—</div>
+          </div>
+        </div>
+        <div id="stuTTStatus" style="margin-bottom:12px"></div>
+        <div id="stuTTGrid" style="overflow-x:auto"></div>
+        <div style="margin-top:12px;display:flex;gap:8px;flex-wrap:wrap" id="stuTTActions"></div>
+        <!-- Edit reason field (shown in edit mode) -->
+        <div id="adminEditReasonWrap" style="display:none;margin-top:12px">
+          <div class="field" style="margin:0">
+            <label>Reason for Edit *</label>
+            <input id="adminEditReason" placeholder="Why are you editing this timetable...">
+          </div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-header"><div class="card-icon ik">📋</div><div><div class="card-title">Change Requests</div><div class="card-sub">From this student</div></div></div>
+        <div id="stuRequests"><div class="empty"><div class="empty-icon">📬</div>No requests</div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- All Pending Requests -->
+  <div class="card">
+    <div class="card-header"><div class="card-icon ik">⏳</div><div><div class="card-title">All Change Requests</div><div class="card-sub">From all students</div></div></div>
+    <div style="display:flex;gap:8px;margin-bottom:12px;flex-wrap:wrap">
+      <button class="btn btn-sm btn-ok"   onclick="loadAllRequests('pending')">⏳ Pending</button>
+      <button class="btn btn-sm btn-edit" onclick="loadAllRequests('approved')">✅ Approved</button>
+      <button class="btn btn-sm btn-del"  onclick="loadAllRequests('rejected')">❌ Rejected</button>
+      <button class="btn btn-sm"          style="background:var(--card2);border:1px solid var(--border);color:var(--text)" onclick="loadAllRequests('')">📋 All</button>
+    </div>
+    <div id="allRequestsList"><div class="empty"><div class="empty-icon">📬</div>Click a filter above</div></div>
+  </div>
 </div>
+
+<!-- ══ AUDIT LOG TAB (NEW) ══ -->
+<div class="tab-pane" id="tab-auditlog">
+  <div class="sec-title">Audit Log</div>
+  <div class="sec-sub">Every admin action on student timetables is recorded here.</div>
+  <div class="card" style="margin-bottom:18px">
+    <div class="card-header"><div class="card-icon ir">🔍</div><div><div class="card-title">Filter Logs</div></div></div>
+    <div class="form-row">
+      <div class="field"><label>Student Reg No.</label><input id="auStudentId" placeholder="e.g. 231FA04001"></div>
+      <div class="field"><label>Admin ID</label><input id="auAdminId" placeholder="e.g. ADMIN001"></div>
+    </div>
+    <button class="btn btn-primary" style="width:auto;padding:10px 20px" onclick="loadAuditLogs()">📋 Load Logs</button>
+  </div>
+  <div class="card">
+    <div class="card-header"><div class="card-icon ir">📜</div><div><div class="card-title">Audit Trail</div><div class="card-sub">Latest 200 entries</div></div></div>
+    <div id="auditTable" style="overflow-x:auto"><div class="empty"><div class="empty-icon">📋</div>Apply filters above</div></div>
+  </div>
 </div>
-<div class="field"><label>Semester</label>
-<select id="ttSem"><option value="">Select</option><option>1</option><option>2</option></select>
-</div>
-<div class="info-tip">ℹ️ Faculty: max 4 classes/day. All students of the same faculty share one room.</div>
-<button class="btn btn-primary" id="genBtn" onclick="genTT()">⚡ Generate Timetable</button>
-<button class="btn" style="width:100%;margin-top:9px;background:rgba(255,179,71,0.1);border:1px solid rgba(255,179,71,0.25);color:var(--warn)" onclick="mailFac()">📧 Email Timetables to Faculty</button>
-</div>
-<div class="card">
-<div class="card-header"><div class="card-icon it">👁️</div><div><div class="card-title">View Timetable</div><div class="card-sub">Master grid for selected semester</div></div></div>
-<div class="filter-row">
-<div class="field" style="margin:0"><label>Dept</label>
-<select id="vttDept"><option value="">Select</option><option>CSE</option><option>ECE</option><option>MBA</option></select>
-</div>
-<div class="field" style="margin:0"><label>Year</label>
-<select id="vttYear"><option value="">Select</option><option>1</option><option>2</option><option>3</option><option>4</option></select>
-</div>
-<div class="field" style="margin:0"><label>Semester</label>
-<select id="vttSem"><option value="">Select</option><option>1</option><option>2</option></select>
-</div>
-</div>
-<button class="btn btn-primary" onclick="viewTT()">📋 View Grid</button>
-</div>
-</div>
-<div id="ttDisplay"></div>
-</div>
-</div>
-<!-- MODALS -->
+
+</div><!-- end .page -->
+
+<!-- ══ MODALS ══ -->
 <div class="modal-overlay" id="delModal">
-<div class="modal" style="text-align:center">
-<div class="modal-icon">🗑️</div>
-<h3>Delete Faculty?</h3>
-<div class="modal-msg" id="delMsg">Cannot be undone.</div>
-<div class="modal-btns">
-<button class="mb-cancel" onclick="closeM('delModal')">Cancel</button>
-<button class="mb-del" id="delConfBtn">Delete</button>
+  <div class="modal" style="text-align:center">
+    <div class="modal-icon">🗑️</div>
+    <h3>Delete Faculty?</h3>
+    <div class="modal-msg" id="delMsg">Cannot be undone.</div>
+    <div class="modal-btns">
+      <button class="mb-cancel" onclick="closeM('delModal')">Cancel</button>
+      <button class="mb-del" id="delConfBtn">Delete</button>
+    </div>
+  </div>
 </div>
-</div>
-</div>
+
 <div class="modal-overlay" id="editModal">
-<div class="modal">
-<h3>✏️ Edit Faculty</h3>
-<input type="hidden" id="eId">
-<div class="field"><label>Name *</label><input id="eName"></div>
-<div class="form-row">
-<div class="field"><label>Experience</label><input id="eExp"></div>
-<div class="field"><label>Rating</label><input id="eRating" type="number" min="1" max="5" step="0.1"></div>
+  <div class="modal">
+    <h3>✏️ Edit Faculty</h3>
+    <input type="hidden" id="eId">
+    <div class="field"><label>Name *</label><input id="eName"></div>
+    <div class="form-row">
+      <div class="field"><label>Experience</label><input id="eExp"></div>
+      <div class="field"><label>Rating</label><input id="eRating" type="number" min="1" max="5" step="0.1"></div>
+    </div>
+    <div class="form-row">
+      <div class="field"><label>Email</label><input id="eEmail" type="email"></div>
+      <div class="field"><label>Periods/Week</label><input id="ePeriods" type="number" min="1" max="10"></div>
+    </div>
+    <div class="field"><label>Student Limit</label><input id="eLimit" type="number" min="1" max="240"></div>
+    <div class="modal-btns">
+      <button class="mb-cancel" onclick="closeM('editModal')">Cancel</button>
+      <button class="mb-ok" onclick="saveEdit()">Save Changes</button>
+    </div>
+  </div>
 </div>
-<div class="form-row">
-<div class="field"><label>Email</label><input id="eEmail" type="email"></div>
-<div class="field"><label>Periods/Week</label><input id="ePeriods" type="number" min="1" max="10"></div>
+
+<!-- Handle Request Modal -->
+<div class="modal-overlay" id="handleReqModal">
+  <div class="modal">
+    <div class="modal-icon">📋</div>
+    <h3>Handle Change Request</h3>
+    <input type="hidden" id="handleReqId">
+    <input type="hidden" id="handleStudentId">
+    <div id="handleReqDetails" style="background:rgba(79,142,247,0.05);border:1px solid rgba(79,142,247,0.15);border-radius:10px;padding:12px;margin-bottom:14px;font-size:12px;color:var(--muted)"></div>
+    <div class="field">
+      <label>Admin Remark (optional)</label>
+      <textarea id="handleRemark" placeholder="Comment for the student..."></textarea>
+    </div>
+    <div class="modal-btns">
+      <button class="mb-cancel" onclick="closeM('handleReqModal')">Cancel</button>
+      <button class="mb-del" onclick="handleRequest('rejected')">❌ Reject</button>
+      <button class="mb-ok" onclick="handleRequest('approved')">✅ Approve</button>
+    </div>
+  </div>
 </div>
-<div class="field"><label>Student Limit</label><input id="eLimit" type="number" min="1" max="240"></div>
-<div class="modal-btns">
-<button class="mb-cancel" onclick="closeM('editModal')">Cancel</button>
-<button class="mb-ok" onclick="saveEdit()">Save Changes</button>
-</div>
-</div>
-</div>
+
 <script>
-const token = localStorage.getItem("token");
-const role  = localStorage.getItem("role");
+// ════════════════════════════════════════════════════
+// AUTH
+// ════════════════════════════════════════════════════
+const token  = localStorage.getItem("token");
+const role   = localStorage.getItem("role");
 const userId = localStorage.getItem("userId");
 if (!token || role !== "admin") window.location.href = "login.html";
 document.getElementById("uid").textContent = userId || "";
 
-// ── Live preview: updates the warn-tip example when year/dept changes ──
-function updateSeedPreview() {
-  const yr = document.getElementById("sdYear").value;
-  const dept = document.getElementById("sdDept").value;
-  // Maps dept to the code segment used in reg numbers (adjust to match your actual format)
-  const codeMap = { CSE: "1FA", ECE: "1EC", MBA: "1MB" };
-  const code = dept ? codeMap[dept] || "1FA" : "1FA";
-  const ex = document.getElementById("seedExample");
-  if (ex) ex.textContent = `${yr}${code}04001 – ${yr}${code}04300`;
-}
-// Run once on load so the tip shows correct default (261FA...)
-updateSeedPreview();
-
+// ════════════════════════════════════════════════════
+// HELPERS
+// ════════════════════════════════════════════════════
 async function api(m, p, b = null) {
-  const o = {
-    method: m,
-    headers: { "Content-Type": "application/json", "Authorization": "Bearer " + token }
-  };
+  const o = { method:m, headers:{"Content-Type":"application/json","Authorization":"Bearer "+token} };
   if (b) o.body = JSON.stringify(b);
   const r = await fetch("/api" + p, o);
   const d = await r.json();
   return { ok: r.ok, data: d };
 }
-function logout() { localStorage.clear(); window.location.href = "login.html"; }
-function v(id) { return document.getElementById(id).value.trim(); }
-function openM(id) { document.getElementById(id).classList.add("open"); }
+function logout(){ localStorage.clear(); window.location.href="login.html"; }
+function v(id){ return document.getElementById(id).value.trim(); }
+function openM(id){ document.getElementById(id).classList.add("open"); }
 function closeM(id){ document.getElementById(id).classList.remove("open"); }
-function toast(msg, type = "success") {
-  const el = document.createElement("div");
-  el.className = "toast " + type;
-  const icon = type === "success" ? "✅" : type === "error" ? "❌" : "ℹ️";
-  el.innerHTML = icon + " " + msg;
+function toast(msg, type="success"){
+  const el=document.createElement("div");
+  el.className="toast "+type;
+  el.innerHTML=(type==="success"?"✅":type==="error"?"❌":"ℹ️")+" "+msg;
   document.body.appendChild(el);
-  setTimeout(() => el.remove(), 3500);
+  setTimeout(()=>el.remove(),3500);
 }
-function tab(name, btn) {
-  document.querySelectorAll(".tab-pane").forEach(t => t.classList.remove("active"));
-  document.querySelectorAll(".tab-btn").forEach(b => b.classList.remove("active"));
-  document.getElementById("tab-" + name).classList.add("active");
+function tab(name, btn){
+  document.querySelectorAll(".tab-pane").forEach(t=>t.classList.remove("active"));
+  document.querySelectorAll(".tab-btn").forEach(b=>b.classList.remove("active"));
+  document.getElementById("tab-"+name).classList.add("active");
   btn.classList.add("active");
-  if (name === "semester") loadSemGrid();
-  if (name === "rooms") loadRooms();
+  if(name==="semester") loadSemGrid();
+  if(name==="rooms")    loadRooms();
+  if(name==="stutt")    loadAllRequests("pending");
 }
-// ═══ FACULTY ═══
-async function addFaculty() {
-  const d = v("aDept"), yr = v("aYear"), sm = v("aSem"), sub = v("aSubject"), nm = v("aName");
-  if (!d || !yr || !sm || !sub || !nm) { toast("Fill all required fields", "error"); return; }
-  const em = v("aEmail");
-  if (em && !/^[^\s]+@[^\s]+\.[a-z]{2,}$/i.test(em)) { toast("Invalid email", "error"); return; }
-  const rt = v("aRating");
-  if (rt && (parseFloat(rt) < 1 || parseFloat(rt) > 5)) { toast("Rating must be 1–5", "error"); return; }
-  const btn = document.getElementById("addFacBtn");
-  btn.disabled = true; btn.textContent = "Adding...";
-  const { ok, data } = await api("POST", "/faculty", {
-    name: nm, department: d, year: yr, semester: sm, subject: sub,
-    experience: v("aExp"), rating: rt ? parseFloat(rt) : null, email: em,
-    periodsPerWeek: parseInt(v("aPeriods")) || 4,
-    studentLimit: parseInt(v("aLimit")) || 60,
+
+// ════════════════════════════════════════════════════
+// FACULTY
+// ════════════════════════════════════════════════════
+function updateSeedPreview(){
+  const yr=document.getElementById("sdYear").value;
+  const dept=document.getElementById("sdDept").value;
+  const codeMap={CSE:"1FA",ECE:"1EC",MBA:"1MB"};
+  const code=dept?codeMap[dept]||"1FA":"1FA";
+  const ex=document.getElementById("seedExample");
+  if(ex) ex.textContent=`${yr}${code}04001 – ${yr}${code}04300`;
+}
+updateSeedPreview();
+
+async function addFaculty(){
+  const d=v("aDept"),yr=v("aYear"),sm=v("aSem"),sub=v("aSubject"),nm=v("aName");
+  if(!d||!yr||!sm||!sub||!nm){toast("Fill all required fields","error");return;}
+  const em=v("aEmail");
+  if(em&&!/^[^\s]+@[^\s]+\.[a-z]{2,}$/i.test(em)){toast("Invalid email","error");return;}
+  const rt=v("aRating");
+  if(rt&&(parseFloat(rt)<1||parseFloat(rt)>5)){toast("Rating must be 1–5","error");return;}
+  const btn=document.getElementById("addFacBtn");
+  btn.disabled=true;btn.textContent="Adding...";
+  const{ok,data}=await api("POST","/faculty",{
+    name:nm,department:d,year:yr,semester:sm,subject:sub,
+    experience:v("aExp"),rating:rt?parseFloat(rt):null,email:em,
+    periodsPerWeek:parseInt(v("aPeriods"))||4,studentLimit:parseInt(v("aLimit"))||60,
   });
-  btn.disabled = false; btn.textContent = "➕ Add Faculty";
-  if (!ok) { toast(data.message || "Error", "error"); return; }
+  btn.disabled=false;btn.textContent="➕ Add Faculty";
+  if(!ok){toast(data.message||"Error","error");return;}
   toast(`${nm} added`);
-  ["aSubject","aName","aExp","aRating","aEmail","aPeriods","aLimit"].forEach(i => document.getElementById(i).value = "");
-  loadFac(); loadStats();
+  ["aSubject","aName","aExp","aRating","aEmail","aPeriods","aLimit"].forEach(i=>document.getElementById(i).value="");
+  loadFac();loadStats();
 }
-async function loadFac() {
-  const d = v("fDept"), yr = v("fYear"), sm = v("fSem");
-  const el = document.getElementById("facList");
-  if (!d || !yr || !sm) {
-    el.innerHTML = `<div class="empty"><div class="empty-icon">🔍</div>Select dept, year &amp; semester</div>`;
-    return;
-  }
-  el.innerHTML = `<div class="empty"><div class="empty-icon">⏳</div>Loading...</div>`;
-  const { ok, data } = await api("GET", `/faculty?department=${d}&year=${yr}&semester=${sm}`);
-  if (!ok || !data.length) {
-    el.innerHTML = `<div class="empty"><div class="empty-icon">📭</div>No faculty found</div>`;
-    return;
-  }
-  el.innerHTML = data.map(f => {
-    const pct = Math.min(100, (f.enrolledCount || 0) / (f.studentLimit || 60) * 100);
-    const full = pct >= 100;
-    const fc = full ? "#ff6b9d" : pct > 80 ? "#ffb347" : "#43e97b";
+async function loadFac(){
+  const d=v("fDept"),yr=v("fYear"),sm=v("fSem");
+  const el=document.getElementById("facList");
+  if(!d||!yr||!sm){el.innerHTML=`<div class="empty"><div class="empty-icon">🔍</div>Select dept, year &amp; semester</div>`;return;}
+  el.innerHTML=`<div class="empty"><div class="empty-icon">⏳</div>Loading...</div>`;
+  const{ok,data}=await api("GET",`/faculty?department=${d}&year=${yr}&semester=${sm}`);
+  if(!ok||!data.length){el.innerHTML=`<div class="empty"><div class="empty-icon">📭</div>No faculty found</div>`;return;}
+  el.innerHTML=data.map(f=>{
+    const pct=Math.min(100,(f.enrolledCount||0)/(f.studentLimit||60)*100);
+    const full=pct>=100;
+    const fc=full?"#ff6b9d":pct>80?"#ffb347":"#43e97b";
     return `<div class="fac-item">
       <div style="display:flex;justify-content:space-between;align-items:flex-start">
         <div><div class="fac-name">${f.name}</div><div class="fac-subj">${f.subject}</div></div>
-        <span class="pill ${full ? "pill-full" : "pill-open"}">${full ? "🔴 Full" : "🟢 Open"}</span>
+        <span class="pill ${full?"pill-full":"pill-open"}">${full?"🔴 Full":"🟢 Open"}</span>
       </div>
       <div class="fac-meta">
-        ${f.experience ? `<div class="meta-i">🏆 ${f.experience}</div>` : ""}
-        ${f.rating ? `<div class="meta-i">⭐ ${f.rating}/5</div>` : ""}
-        ${f.email ? `<div class="meta-i">📧 ${f.email}</div>` : ""}
-        <div class="meta-i">📅 ${f.periodsPerWeek || 4}/wk</div>
-        <div class="meta-i">👥 ${f.enrolledCount || 0}/${f.studentLimit || 60}</div>
+        ${f.experience?`<div class="meta-i">🏆 ${f.experience}</div>`:""}
+        ${f.rating?`<div class="meta-i">⭐ ${f.rating}/5</div>`:""}
+        ${f.email?`<div class="meta-i">📧 ${f.email}</div>`:""}
+        <div class="meta-i">📅 ${f.periodsPerWeek||4}/wk</div>
+        <div class="meta-i">👥 ${f.enrolledCount||0}/${f.studentLimit||60}</div>
       </div>
       <div class="enroll-bar"><div class="enroll-fill" style="width:${pct}%;background:${fc}"></div></div>
-      <div class="enroll-lbl"><span style="color:${fc}">${Math.round(pct)}% enrolled</span><span>${f.enrolledCount || 0}/${f.studentLimit || 60}</span></div>
+      <div class="enroll-lbl"><span style="color:${fc}">${Math.round(pct)}% enrolled</span><span>${f.enrolledCount||0}/${f.studentLimit||60}</span></div>
       <div class="fac-acts">
         <button class="btn btn-sm btn-edit"
-          data-id="${f._id}" data-name="${f.name}" data-exp="${f.experience || ""}"
-          data-rating="${f.rating || ""}" data-email="${f.email || ""}"
-          data-periods="${f.periodsPerWeek || 4}" data-limit="${f.studentLimit || 60}"
+          data-id="${f._id}" data-name="${f.name}" data-exp="${f.experience||""}"
+          data-rating="${f.rating||""}" data-email="${f.email||""}"
+          data-periods="${f.periodsPerWeek||4}" data-limit="${f.studentLimit||60}"
           onclick="openEditFromBtn(this)">✏️ Edit</button>
         <button class="btn btn-sm btn-del" onclick="confirmDel('${f._id}','${encodeURIComponent(f.name)}')">🗑️ Delete</button>
       </div>
     </div>`;
   }).join("");
 }
-async function loadStats() {
-  let total = 0, cse = 0, ece = 0, mba = 0;
-  for (const d of ["CSE","ECE","MBA"]) {
-    const { ok, data } = await api("GET", `/faculty?department=${d}`);
-    if (ok) {
-      total += data.length;
-      if (d === "CSE") cse = data.length;
-      if (d === "ECE") ece = data.length;
-      if (d === "MBA") mba = data.length;
-    }
+async function loadStats(){
+  let total=0,cse=0,ece=0,mba=0;
+  for(const d of["CSE","ECE","MBA"]){
+    const{ok,data}=await api("GET",`/faculty?department=${d}`);
+    if(ok){total+=data.length;if(d==="CSE")cse=data.length;if(d==="ECE")ece=data.length;if(d==="MBA")mba=data.length;}
   }
-  document.getElementById("sTotal").textContent = total;
-  document.getElementById("sCSE").textContent = cse;
-  document.getElementById("sECE").textContent = ece;
-  document.getElementById("sMBA").textContent = mba;
-  const { ok, data } = await api("GET", "/auth/users?role=student");
-  if (ok) document.getElementById("sStu").textContent = data.length;
+  document.getElementById("sTotal").textContent=total;
+  document.getElementById("sCSE").textContent=cse;
+  document.getElementById("sECE").textContent=ece;
+  document.getElementById("sMBA").textContent=mba;
+  const{ok,data}=await api("GET","/auth/users?role=student");
+  if(ok) document.getElementById("sStu").textContent=data.length;
 }
-function confirmDel(id, name) {
-  const decoded = decodeURIComponent(name);
-  document.getElementById("delMsg").textContent = `Remove "${decoded}"? Cannot be undone.`;
-  document.getElementById("delConfBtn").onclick = async () => {
-    const { ok, data } = await api("DELETE", `/faculty/${id}`);
+function confirmDel(id,name){
+  const decoded=decodeURIComponent(name);
+  document.getElementById("delMsg").textContent=`Remove "${decoded}"? Cannot be undone.`;
+  document.getElementById("delConfBtn").onclick=async()=>{
+    const{ok,data}=await api("DELETE",`/faculty/${id}`);
     closeM("delModal");
-    if (!ok) { toast(data.message, "error"); return; }
-    toast(`${decoded} deleted`);
-    loadFac(); loadStats();
+    if(!ok){toast(data.message,"error");return;}
+    toast(`${decoded} deleted`);loadFac();loadStats();
   };
   openM("delModal");
 }
-function openEditFromBtn(btn) {
-  document.getElementById("eId").value = btn.dataset.id;
-  document.getElementById("eName").value = btn.dataset.name;
-  document.getElementById("eExp").value = btn.dataset.exp;
-  document.getElementById("eRating").value = btn.dataset.rating;
-  document.getElementById("eEmail").value = btn.dataset.email;
-  document.getElementById("ePeriods").value = btn.dataset.periods;
-  document.getElementById("eLimit").value = btn.dataset.limit;
+function openEditFromBtn(btn){
+  document.getElementById("eId").value=btn.dataset.id;
+  document.getElementById("eName").value=btn.dataset.name;
+  document.getElementById("eExp").value=btn.dataset.exp;
+  document.getElementById("eRating").value=btn.dataset.rating;
+  document.getElementById("eEmail").value=btn.dataset.email;
+  document.getElementById("ePeriods").value=btn.dataset.periods;
+  document.getElementById("eLimit").value=btn.dataset.limit;
   openM("editModal");
 }
-async function saveEdit() {
-  const id = document.getElementById("eId").value;
-  const nm = v("eName");
-  if (!nm) { toast("Name required", "error"); return; }
-  const { ok, data } = await api("PUT", `/faculty/${id}`, {
-    name: nm,
-    experience: v("eExp"),
-    rating: v("eRating") ? parseFloat(v("eRating")) : null,
-    email: v("eEmail"),
-    periodsPerWeek: parseInt(v("ePeriods")) || 4,
-    studentLimit: parseInt(v("eLimit")) || 60,
+async function saveEdit(){
+  const id=document.getElementById("eId").value;
+  const nm=v("eName");
+  if(!nm){toast("Name required","error");return;}
+  const{ok,data}=await api("PUT",`/faculty/${id}`,{
+    name:nm,experience:v("eExp"),rating:v("eRating")?parseFloat(v("eRating")):null,
+    email:v("eEmail"),periodsPerWeek:parseInt(v("ePeriods"))||4,studentLimit:parseInt(v("eLimit"))||60,
   });
   closeM("editModal");
-  if (!ok) { toast(data.message, "error"); return; }
-  toast("Faculty updated"); loadFac();
+  if(!ok){toast(data.message,"error");return;}
+  toast("Faculty updated");loadFac();
 }
-// ═══ SEMESTER ═══
-async function loadSemGrid() {
-  const grid = document.getElementById("semGrid");
-  const { ok, data } = await api("GET", "/semester");
-  if (!ok || !data.length) {
-    grid.innerHTML = `<div class="empty"><div class="empty-icon">🔒</div>No semester statuses yet.</div>`;
-    return;
-  }
-  grid.innerHTML = `<div class="sem-grid">` + data.map(s => `
-    <div class="sem-card ${s.isLocked ? "locked" : "open"}">
+
+// ════════════════════════════════════════════════════
+// SEMESTER
+// ════════════════════════════════════════════════════
+async function loadSemGrid(){
+  const grid=document.getElementById("semGrid");
+  const{ok,data}=await api("GET","/semester");
+  if(!ok||!data.length){grid.innerHTML=`<div class="empty"><div class="empty-icon">🔒</div>No semester statuses yet.</div>`;return;}
+  grid.innerHTML=`<div class="sem-grid">`+data.map(s=>`
+    <div class="sem-card ${s.isLocked?"locked":"open"}">
       <div class="sem-card-title">${s.department} — Year ${s.year}</div>
-      <div class="sem-card-sub">Semester ${s.semester}${s.minSgpa > 0 ? ` · Min SGPA: ${s.minSgpa}` : ""}</div>
-      <div class="lock-badge ${s.isLocked ? "lb-locked" : "lb-open"}">${s.isLocked ? "🔒 Locked" : "🔓 Open"}</div>
-      ${s.lockedBy ? `<div style="font-size:10px;color:var(--muted);margin-top:5px">by ${s.lockedBy}</div>` : ""}
-      <button class="tog-btn ${s.isLocked ? "tb-unlock" : "tb-lock"}" onclick="toggleSem('${s._id}')">
-        ${s.isLocked ? "🔓 Unlock for Registration" : "🔒 Lock Semester"}
+      <div class="sem-card-sub">Semester ${s.semester}${s.minSgpa>0?` · Min SGPA: ${s.minSgpa}`:""}</div>
+      <div class="lock-badge ${s.isLocked?"lb-locked":"lb-open"}">${s.isLocked?"🔒 Locked":"🔓 Open"}</div>
+      ${s.lockedBy?`<div style="font-size:10px;color:var(--muted);margin-top:5px">by ${s.lockedBy}</div>`:""}
+      <button class="tog-btn ${s.isLocked?"tb-unlock":"tb-lock"}" onclick="toggleSem('${s._id}')">
+        ${s.isLocked?"🔓 Unlock for Registration":"🔒 Lock Semester"}
       </button>
-    </div>`).join("") + `</div>`;
+    </div>`).join("")+`</div>`;
 }
-async function saveSemStatus() {
-  const d = v("smDept"), yr = v("smYear"), sm = v("smSem"), st = v("smStatus");
-  if (!d || !yr || !sm) { toast("Select dept, year, semester", "error"); return; }
-  const { ok, data } = await api("POST", "/semester", {
-    department: d, year: yr, semester: sm,
-    isLocked: st === "locked",
-    minSgpa: parseFloat(v("smSgpa")) || 0,
-  });
-  if (!ok) { toast(data.message, "error"); return; }
-  toast(`${d} Y${yr} S${sm} — ${st}`); loadSemGrid();
+async function saveSemStatus(){
+  const d=v("smDept"),yr=v("smYear"),sm=v("smSem"),st=v("smStatus");
+  if(!d||!yr||!sm){toast("Select dept, year, semester","error");return;}
+  const{ok,data}=await api("POST","/semester",{department:d,year:yr,semester:sm,isLocked:st==="locked",minSgpa:parseFloat(v("smSgpa"))||0});
+  if(!ok){toast(data.message,"error");return;}
+  toast(`${d} Y${yr} S${sm} — ${st}`);loadSemGrid();
 }
-async function toggleSem(id) {
-  const { ok, data } = await api("PATCH", `/semester/${id}/toggle`);
-  if (!ok) { toast(data.message, "error"); return; }
-  toast(`Semester ${data.isLocked ? "locked" : "unlocked"}`); loadSemGrid();
+async function toggleSem(id){
+  const{ok,data}=await api("PATCH",`/semester/${id}/toggle`);
+  if(!ok){toast(data.message,"error");return;}
+  toast(`Semester ${data.isLocked?"locked":"unlocked"}`);loadSemGrid();
 }
-// ═══ ROOMS ═══
-async function addRoom() {
-  const no = v("rNo");
-  if (!no) { toast("Room number required", "error"); return; }
-  const { ok, data } = await api("POST", "/timetable/rooms/add", {
-    roomNumber: no, capacity: parseInt(v("rCap")) || 60,
-    block: v("rBlock") || "A", floor: parseInt(v("rFloor")) || 1,
-  });
-  if (!ok) { toast(data.message, "error"); return; }
+
+// ════════════════════════════════════════════════════
+// ROOMS
+// ════════════════════════════════════════════════════
+async function addRoom(){
+  const no=v("rNo");
+  if(!no){toast("Room number required","error");return;}
+  const{ok,data}=await api("POST","/timetable/rooms/add",{roomNumber:no,capacity:parseInt(v("rCap"))||60,block:v("rBlock")||"A",floor:parseInt(v("rFloor"))||1});
+  if(!ok){toast(data.message,"error");return;}
   toast(`Room ${no} added`);
-  ["rNo","rCap","rBlock","rFloor"].forEach(i => document.getElementById(i).value = "");
+  ["rNo","rCap","rBlock","rFloor"].forEach(i=>document.getElementById(i).value="");
   loadRooms();
 }
-async function loadRooms() {
-  const { ok, data } = await api("GET", "/timetable/rooms/list");
-  const el = document.getElementById("roomList");
-  if (!ok || !data.length) {
-    el.innerHTML = `<div class="empty"><div class="empty-icon">🏫</div>No rooms added yet</div>`;
-    return;
-  }
-  el.innerHTML = `<table class="dtable"><thead><tr><th>Room</th><th>Block</th><th>Floor</th><th>Cap.</th></tr></thead><tbody>
-    ${data.map(r => `<tr><td><strong>${r.roomNumber}</strong></td><td>${r.block || "A"}</td><td>${r.floor || 1}</td><td>${r.capacity}</td></tr>`).join("")}
+async function loadRooms(){
+  const{ok,data}=await api("GET","/timetable/rooms/list");
+  const el=document.getElementById("roomList");
+  if(!ok||!data.length){el.innerHTML=`<div class="empty"><div class="empty-icon">🏫</div>No rooms added yet</div>`;return;}
+  el.innerHTML=`<table class="dtable"><thead><tr><th>Room</th><th>Block</th><th>Floor</th><th>Cap.</th></tr></thead><tbody>
+    ${data.map(r=>`<tr><td><strong>${r.roomNumber}</strong></td><td>${r.block||"A"}</td><td>${r.floor||1}</td><td>${r.capacity}</td></tr>`).join("")}
   </tbody></table>`;
 }
-async function loadAlloc() {
-  const d = v("alDept"), yr = v("alYear"), sm = v("alSem");
-  if (!d || !yr || !sm) { toast("Select dept, year &amp; semester", "error"); return; }
-  const { ok, data } = await api("GET", `/timetable/rooms?department=${d}&year=${yr}&semester=${sm}`);
-  const el = document.getElementById("allocTable");
-  if (!ok || !data.length) {
-    el.innerHTML = `<div class="empty"><div class="empty-icon">📍</div>No allocations found. Generate timetable first.</div>`;
-    return;
-  }
-  el.innerHTML = `<table class="dtable"><thead><tr><th>Room</th><th>Subject</th><th>Faculty</th><th>Day</th><th>Period</th><th>Students</th></tr></thead><tbody>
-    ${data.map(a => `<tr>
-      <td><strong style="color:var(--accent)">${a.roomNumber}</strong></td>
-      <td>${a.subject}</td><td>${a.facultyName}</td><td>${a.day}</td>
-      <td>P${a.period}</td>
-      <td><span style="color:var(--success);font-weight:700">${a.studentCount}</span></td>
-    </tr>`).join("")}
+async function loadAlloc(){
+  const d=v("alDept"),yr=v("alYear"),sm=v("alSem");
+  if(!d||!yr||!sm){toast("Select dept, year &amp; semester","error");return;}
+  const{ok,data}=await api("GET",`/timetable/rooms?department=${d}&year=${yr}&semester=${sm}`);
+  const el=document.getElementById("allocTable");
+  if(!ok||!data.length){el.innerHTML=`<div class="empty"><div class="empty-icon">📍</div>No allocations found.</div>`;return;}
+  el.innerHTML=`<table class="dtable"><thead><tr><th>Room</th><th>Subject</th><th>Faculty</th><th>Day</th><th>Period</th><th>Students</th></tr></thead><tbody>
+    ${data.map(a=>`<tr><td><strong style="color:var(--accent)">${a.roomNumber}</strong></td><td>${a.subject}</td><td>${a.facultyName}</td><td>${a.day}</td><td>P${a.period}</td><td><span style="color:var(--success);font-weight:700">${a.studentCount}</span></td></tr>`).join("")}
   </tbody></table>`;
 }
-// ═══ STUDENTS ═══
-async function addUser() {
-  const id = v("nId"), rl = v("nRole"), d = v("nDept");
-  if (!id) { toast("User ID required", "error"); return; }
-  const pass = v("nPass") || id.slice(-3);
-  const sgpaVal = v("nSgpa");
-  const { ok, data } = await api("POST", "/auth/user", {
-    userId: id, password: pass, role: rl, department: d,
-    name: v("nName"), email: v("nEmail"),
-    sgpa: sgpaVal ? parseFloat(sgpaVal) : null,
-  });
-  if (!ok) { toast(data.message, "error"); return; }
+
+// ════════════════════════════════════════════════════
+// STUDENTS
+// ════════════════════════════════════════════════════
+async function addUser(){
+  const id=v("nId"),rl=v("nRole"),d=v("nDept");
+  if(!id){toast("User ID required","error");return;}
+  const pass=v("nPass")||id.slice(-3);
+  const sgpaVal=v("nSgpa");
+  const{ok,data}=await api("POST","/auth/user",{userId:id,password:pass,role:rl,department:d,name:v("nName"),email:v("nEmail"),sgpa:sgpaVal?parseFloat(sgpaVal):null});
+  if(!ok){toast(data.message,"error");return;}
   toast(`User ${id} created`);
-  ["nId","nPass","nName","nEmail","nSgpa"].forEach(i => document.getElementById(i).value = "");
+  ["nId","nPass","nName","nEmail","nSgpa"].forEach(i=>document.getElementById(i).value="");
   loadStats();
 }
-async function seedStudents() {
-  const yr = v("sdYear"), d = v("sdDept"), cnt = parseInt(v("sdCount")) || 300;
-  if (!d) { toast("Select department", "error"); return; }
-  const btn = document.getElementById("seedBtn");
-  btn.disabled = true; btn.textContent = "Seeding...";
-  const { ok, data } = await api("POST", "/auth/seed-students", {
-    yearPrefix: parseInt(yr), department: d, count: cnt
-  });
-  btn.disabled = false; btn.textContent = "🌱 Seed Students";
-  if (!ok) { toast(data.message, "error"); return; }
-  toast(`${data.inserted} students seeded (${data.skipped} skipped)`);
-  loadStats();
+async function seedStudents(){
+  const yr=v("sdYear"),d=v("sdDept"),cnt=parseInt(v("sdCount"))||300;
+  if(!d){toast("Select department","error");return;}
+  const btn=document.getElementById("seedBtn");
+  btn.disabled=true;btn.textContent="Seeding...";
+  const{ok,data}=await api("POST","/auth/seed-students",{yearPrefix:parseInt(yr),department:d,count:cnt});
+  btn.disabled=false;btn.textContent="🌱 Seed Students";
+  if(!ok){toast(data.message,"error");return;}
+  toast(`${data.inserted} students seeded (${data.skipped} skipped)`);loadStats();
 }
-async function bulkSgpa() {
-  const raw = document.getElementById("sgpaData").value.trim();
-  if (!raw) { toast("Paste SGPA data first", "error"); return; }
-  const records = raw.split("\n").filter(Boolean).map(l => {
-    const [uid, sgpa] = l.split(",");
-    return { userId: uid?.trim(), sgpa: parseFloat(sgpa) };
-  }).filter(r => r.userId && !isNaN(r.sgpa));
-  if (!records.length) { toast("No valid records. Format: RegNo,SGPA", "error"); return; }
-  const { ok, data } = await api("POST", "/auth/bulk-sgpa", { records });
-  if (!ok) { toast(data.message, "error"); return; }
-  toast(data.message); document.getElementById("sgpaData").value = "";
+async function bulkSgpa(){
+  const raw=document.getElementById("sgpaData").value.trim();
+  if(!raw){toast("Paste SGPA data first","error");return;}
+  const records=raw.split("\n").filter(Boolean).map(l=>{const[uid,sgpa]=l.split(",");return{userId:uid?.trim(),sgpa:parseFloat(sgpa)};}).filter(r=>r.userId&&!isNaN(r.sgpa));
+  if(!records.length){toast("No valid records. Format: RegNo,SGPA","error");return;}
+  const{ok,data}=await api("POST","/auth/bulk-sgpa",{records});
+  if(!ok){toast(data.message,"error");return;}
+  toast(data.message);document.getElementById("sgpaData").value="";
 }
-async function loadStudents() {
-  const d = v("vsDept"), yr = v("vsYear");
-  let url = "/auth/users?role=student";
-  if (d) url += `&department=${d}`;
-  if (yr) url += `&year=${yr}`;
-  const el = document.getElementById("stuList");
-  el.innerHTML = `<div class="empty"><div class="empty-icon">⏳</div>Loading...</div>`;
-  const { ok, data } = await api("GET", url);
-  if (!ok || !data.length) {
-    el.innerHTML = `<div class="empty"><div class="empty-icon">👥</div>No students found</div>`;
-    return;
-  }
-  el.innerHTML = `<div style="font-size:11px;color:var(--muted);margin-bottom:8px">${data.length} students found</div>
+async function loadStudents(){
+  const d=v("vsDept"),yr=v("vsYear");
+  let url="/auth/users?role=student";
+  if(d) url+=`&department=${d}`;
+  if(yr) url+=`&year=${yr}`;
+  const el=document.getElementById("stuList");
+  el.innerHTML=`<div class="empty"><div class="empty-icon">⏳</div>Loading...</div>`;
+  const{ok,data}=await api("GET",url);
+  if(!ok||!data.length){el.innerHTML=`<div class="empty"><div class="empty-icon">👥</div>No students found</div>`;return;}
+  el.innerHTML=`<div style="font-size:11px;color:var(--muted);margin-bottom:8px">${data.length} students found</div>
     <table class="dtable"><thead><tr><th>Reg No.</th><th>Dept</th><th>Year</th><th>SGPA</th></tr></thead><tbody>
-    ${data.slice(0, 100).map(s => `<tr>
-      <td><strong>${s.userId}</strong></td>
-      <td>${s.department || "—"}</td>
-      <td>${s.yearOfStudy || "—"}</td>
-      <td style="color:${(s.sgpa || 0) >= 6 ? "var(--success)" : "var(--warn)"}">${s.sgpa ?? ""}</td>
+    ${data.slice(0,100).map(s=>`<tr>
+      <td><strong>${s.userId}</strong></td><td>${s.department||"—"}</td><td>${s.yearOfStudy||"—"}</td>
+      <td style="color:${(s.sgpa||0)>=6?"var(--success)":"var(--warn)"}">${s.sgpa??""}</td>
     </tr>`).join("")}
-    </tbody></table>${data.length > 100 ? `<div style="font-size:11px;color:var(--muted);margin-top:7px">Showing first 100 of ${data.length}</div>` : ""}`;
+    </tbody></table>${data.length>100?`<div style="font-size:11px;color:var(--muted);margin-top:7px">Showing first 100 of ${data.length}</div>`:""}`;
 }
-// ═══ TIMETABLE ═══
-async function genTT() {
-  const d = v("ttDept"), yr = v("ttYear"), sm = v("ttSem");
-  if (!d || !yr || !sm) { toast("Select dept, year &amp; semester", "error"); return; }
-  const btn = document.getElementById("genBtn");
-  btn.disabled = true; btn.textContent = "Generating...";
-  const { ok, data } = await api("POST", "/timetable/generate", { department: d, year: yr, semester: sm });
-  btn.disabled = false; btn.textContent = "⚡ Generate Timetable";
-  if (!ok) { toast(data.message, "error"); return; }
+
+// ════════════════════════════════════════════════════
+// MASTER TIMETABLE
+// ════════════════════════════════════════════════════
+async function genTT(){
+  const d=v("ttDept"),yr=v("ttYear"),sm=v("ttSem");
+  if(!d||!yr||!sm){toast("Select dept, year &amp; semester","error");return;}
+  const btn=document.getElementById("genBtn");
+  btn.disabled=true;btn.textContent="Generating...";
+  const{ok,data}=await api("POST","/timetable/generate",{department:d,year:yr,semester:sm});
+  btn.disabled=false;btn.textContent="⚡ Generate Timetable";
+  if(!ok){toast(data.message,"error");return;}
   toast(data.message);
-  document.getElementById("vttDept").value = d;
-  document.getElementById("vttYear").value = yr;
-  document.getElementById("vttSem").value = sm;
+  document.getElementById("vttDept").value=d;
+  document.getElementById("vttYear").value=yr;
+  document.getElementById("vttSem").value=sm;
   viewTT();
 }
-async function mailFac() {
-  const d = v("ttDept"), yr = v("ttYear"), sm = v("ttSem");
-  if (!d || !yr || !sm) { toast("Select dept, year &amp; semester", "error"); return; }
-  const { ok, data } = await api("POST", "/timetable/mail-faculty", { department: d, year: yr, semester: sm });
-  if (!ok) { toast(data.message, "error"); return; }
-  toast(data.message, "info");
+async function mailFac(){
+  const d=v("ttDept"),yr=v("ttYear"),sm=v("ttSem");
+  if(!d||!yr||!sm){toast("Select dept, year &amp; semester","error");return;}
+  const{ok,data}=await api("POST","/timetable/mail-faculty",{department:d,year:yr,semester:sm});
+  if(!ok){toast(data.message,"error");return;}
+  toast(data.message,"info");
 }
-async function viewTT() {
-  const d = v("vttDept"), yr = v("vttYear"), sm = v("vttSem");
-  if (!d || !yr || !sm) { toast("Select dept, year &amp; semester", "error"); return; }
-  const area = document.getElementById("ttDisplay");
-  area.innerHTML = `<div class="empty"><div class="empty-icon">⏳</div>Loading...</div>`;
-  const { ok, data } = await api("GET", `/timetable/all?department=${d}&year=${yr}&semester=${sm}`);
-  if (!ok || !data.length) {
-    area.innerHTML = `<div class="empty"><div class="empty-icon">📭</div>No timetable yet. Generate one first.</div>`;
-    return;
-  }
-  const DAYS = ["Monday","Tuesday","Wednesday","Thursday","Friday"];
-  const CC = ["c1","c2","c3","c4","c5"];
-  const byFac = {};
-  data.forEach(s => {
-    if (!byFac[s.facultyName]) byFac[s.facultyName] = { sub: s.subject, slots: [] };
-    byFac[s.facultyName].slots.push(s);
-  });
-  const fNames = Object.keys(byFac);
-  let html = `<div class="card"><div class="card-header"><div class="card-icon it">🗓️</div><div>
+async function viewTT(){
+  const d=v("vttDept"),yr=v("vttYear"),sm=v("vttSem");
+  if(!d||!yr||!sm){toast("Select dept, year &amp; semester","error");return;}
+  const area=document.getElementById("ttDisplay");
+  area.innerHTML=`<div class="empty"><div class="empty-icon">⏳</div>Loading...</div>`;
+  const{ok,data}=await api("GET",`/timetable/all?department=${d}&year=${yr}&semester=${sm}`);
+  if(!ok||!data.length){area.innerHTML=`<div class="empty"><div class="empty-icon">📭</div>No timetable yet.</div>`;return;}
+  const DAYS=["Monday","Tuesday","Wednesday","Thursday","Friday"];
+  const CC=["c1","c2","c3","c4","c5"];
+  const byFac={};
+  data.forEach(s=>{if(!byFac[s.facultyName])byFac[s.facultyName]={sub:s.subject,slots:[]};byFac[s.facultyName].slots.push(s);});
+  const fNames=Object.keys(byFac);
+  let html=`<div class="card"><div class="card-header"><div class="card-icon it">🗓️</div><div>
     <div class="card-title">${d} Year ${yr} Sem ${sm} — Master Timetable</div>
     <div class="card-sub">${fNames.length} faculty · ${data.length} total slots</div>
   </div></div><div class="tt-wrap"><table class="tt-table"><thead><tr><th>Faculty / Subject</th>`;
-  DAYS.forEach(dy => html += `<th>${dy.slice(0, 3)}</th>`);
-  html += `</tr></thead><tbody>`;
-  fNames.forEach((nm, fi) => {
-    const info = byFac[nm];
-    const cc = CC[fi % 5];
-    html += `<tr><td><div style="font-weight:700;color:white">${nm}</div><div style="font-size:10px;color:var(--muted)">${info.sub}</div></td>`;
-    DAYS.forEach(dy => {
-      const sl = info.slots.find(s => s.day === dy);
-      if (sl) html += `<td><div class="tt-slot ${cc}"><div style="font-weight:700">P${sl.periodNumber}</div><div style="color:var(--muted)">${sl.roomNumber}</div><div style="font-size:9px">${sl.studentCount} stu.</div></div></td>`;
-      else html += `<td><span style="color:rgba(136,146,176,0.25)">–</span></td>`;
+  DAYS.forEach(dy=>html+=`<th>${dy.slice(0,3)}</th>`);
+  html+=`</tr></thead><tbody>`;
+  fNames.forEach((nm,fi)=>{
+    const info=byFac[nm];const cc=CC[fi%5];
+    html+=`<tr><td><div style="font-weight:700;color:white">${nm}</div><div style="font-size:10px;color:var(--muted)">${info.sub}</div></td>`;
+    DAYS.forEach(dy=>{
+      const sl=info.slots.find(s=>s.day===dy);
+      if(sl) html+=`<td><div class="tt-slot ${cc}"><div style="font-weight:700">P${sl.periodNumber}</div><div style="color:var(--muted)">${sl.roomNumber}</div><div style="font-size:9px">${sl.studentCount} stu.</div></div></td>`;
+      else html+=`<td><span style="color:rgba(136,146,176,0.25)">–</span></td>`;
     });
-    html += `</tr>`;
+    html+=`</tr>`;
   });
-  html += `</tbody></table></div></div>`;
-  area.innerHTML = html;
+  html+=`</tbody></table></div></div>`;
+  area.innerHTML=html;
 }
-// ═══ INIT ═══
+
+// ════════════════════════════════════════════════════
+// ✅ STUDENT TIMETABLE ADMIN MANAGEMENT
+// ════════════════════════════════════════════════════
+let adminCurrentTT        = null;
+let adminEditSlots        = {};
+let adminCurrentStudentId = "";
+let adminEditMode         = false;
+
+const ADM_DAYS    = ["Monday","Tuesday","Wednesday","Thursday","Friday"];
+const ADM_PERIODS = [1,2,3,4,5];
+const ADM_CC      = ["c1","c2","c3","c4","c5"];
+
+async function searchStudentTT(){
+  const regNo = document.getElementById("stRegNo").value.trim().toUpperCase();
+  if(!regNo){ toast("Enter a registration number","error"); return; }
+  adminCurrentStudentId = regNo;
+  document.getElementById("stuTTResult").style.display = "none";
+
+  const{ok,data} = await api("GET", `/admin-timetable/student/${regNo}`);
+  if(!ok){ toast(data.message||"Student timetable not found","error"); return; }
+
+  adminCurrentTT = data;
+  document.getElementById("stuTTResult").style.display = "block";
+  document.getElementById("stuTTTitle").textContent = `${regNo} — ${data.department} Y${data.year} S${data.semester}`;
+  document.getElementById("stuTTSub").textContent   = `${data.slots.length} slots · ${data.locked?"Locked":"Unlocked"}`;
+
+  renderAdminGrid(false);
+  loadStudentRequests(regNo);
+}
+
+function renderAdminGrid(editMode){
+  adminEditMode = editMode;
+  const tt = adminCurrentTT;
+  const subs = [...new Set(tt.slots.map(s=>s.subject))];
+  const colorMap = {};
+  subs.forEach((s,i)=>{ colorMap[s]=ADM_CC[i%5]; });
+
+  // Status badge
+  document.getElementById("stuTTStatus").innerHTML = tt.locked
+    ? `<div style="display:inline-flex;align-items:center;gap:6px;background:rgba(255,107,157,0.1);border:1px solid rgba(255,107,157,0.25);color:var(--error);border-radius:8px;padding:5px 12px;font-size:11px;font-weight:700">🔒 Locked</div>`
+    : `<div style="display:inline-flex;align-items:center;gap:6px;background:rgba(67,233,123,0.1);border:1px solid rgba(67,233,123,0.25);color:var(--success);border-radius:8px;padding:5px 12px;font-size:11px;font-weight:700">🔓 Unlocked — Editable</div>`;
+
+  // Build slot map
+  const slotMap = {};
+  tt.slots.forEach(s=>{ slotMap[`${s.day}-${s.period}`]=s.subject; });
+  if(editMode) adminEditSlots = {...slotMap};
+
+  let html = `<table class="tt-table"><thead><tr><th>Day</th>`;
+  ADM_PERIODS.forEach(p=>{ html+=`<th>P${p}</th>`; });
+  html += `</tr></thead><tbody>`;
+
+  ADM_DAYS.forEach(day=>{
+    html += `<tr><td style="font-weight:600;color:white;font-size:11px;white-space:nowrap">${day.slice(0,3)}</td>`;
+    ADM_PERIODS.forEach(per=>{
+      const key = `${day}-${per}`;
+      const val = slotMap[key]||"";
+      if(editMode){
+        html+=`<td><select class="slot-select" data-key="${key}" onchange="adminSlotChange(this)">
+          <option value="">—</option>
+          ${subs.map(s=>`<option value="${s}" ${val===s?"selected":""}>${s}</option>`).join("")}
+        </select></td>`;
+      } else {
+        html+=`<td>${val
+          ?`<div class="tt-slot ${colorMap[val]||"c1"}" style="font-size:9px;padding:5px 7px;min-width:70px">${val}</div>`
+          :`<span style="color:rgba(136,146,176,0.25)">–</span>`}</td>`;
+      }
+    });
+    html+=`</tr>`;
+  });
+  html+=`</tbody></table>`;
+  document.getElementById("stuTTGrid").innerHTML = html;
+
+  // Edit reason field
+  document.getElementById("adminEditReasonWrap").style.display = editMode?"block":"none";
+
+  // Action buttons
+  const actEl = document.getElementById("stuTTActions");
+  if(!editMode){
+    actEl.innerHTML=`<button class="btn btn-sm btn-edit" onclick="startAdminEdit()">✏️ Edit Timetable</button>`;
+  } else {
+    actEl.innerHTML=`
+      <button class="btn btn-sm btn-ok" onclick="adminSaveTT()">💾 Save &amp; Re-lock</button>
+      <button class="btn btn-sm btn-del" onclick="renderAdminGrid(false)">✕ Cancel Edit</button>`;
+  }
+}
+
+function adminSlotChange(sel){
+  adminEditSlots[sel.dataset.key] = sel.value;
+}
+
+function startAdminEdit(){
+  if(adminCurrentTT && adminCurrentTT.locked){
+    if(!confirm("⚠️ This timetable is locked. Are you sure you want to edit it?\nThis action will be audit-logged.")) return;
+  }
+  document.getElementById("adminEditReason").value = "";
+  renderAdminGrid(true);
+}
+
+async function adminSaveTT(){
+  const reason = document.getElementById("adminEditReason").value.trim();
+  if(!reason){ toast("Reason is required for editing","error"); return; }
+
+  const slots = Object.entries(adminEditSlots)
+    .filter(([,v])=>v)
+    .map(([key,subject])=>{
+      const[day,period]=key.split("-");
+      return{day,period:parseInt(period),subject};
+    });
+
+  const{ok,data} = await api("PUT",`/admin-timetable/edit/${adminCurrentStudentId}`,{
+    slots, reason, adminOverride:true
+  });
+
+  if(!ok){ toast(data.message,"error"); return; }
+  toast("Timetable updated and re-locked ✅");
+  adminCurrentTT = data.timetable;
+  renderAdminGrid(false);
+  document.getElementById("stuTTSub").textContent =
+    `${data.timetable.slots.length} slots · Locked`;
+}
+
+async function loadStudentRequests(studentId){
+  const{ok,data} = await api("GET",`/admin-timetable/requests?studentId=${studentId}`);
+  const el = document.getElementById("stuRequests");
+  if(!ok||!data.length){
+    el.innerHTML=`<div class="empty"><div class="empty-icon">📬</div>No requests from this student</div>`;
+    return;
+  }
+  el.innerHTML = data.map(req=>renderReqCard(req,false)).join("");
+}
+
+async function loadAllRequests(status){
+  const url = status ? `/admin-timetable/requests?status=${status}` : "/admin-timetable/requests";
+  const{ok,data} = await api("GET",url);
+  const el = document.getElementById("allRequestsList");
+  if(!ok||!data.length){
+    el.innerHTML=`<div class="empty"><div class="empty-icon">📬</div>No requests found</div>`;
+    return;
+  }
+  el.innerHTML = data.map(req=>renderReqCard(req,true)).join("");
+}
+
+function renderReqCard(req, showStudent){
+  const sc = req.status==="approved"?"rsb-approved":req.status==="rejected"?"rsb-rejected":"rsb-pending";
+  const sl = req.status==="approved"?"✅ Approved":req.status==="rejected"?"❌ Rejected":"⏳ Pending";
+  const periodsStr = req.periods.map(p=>`${p.day} P${p.period} (${p.subject||""})`).join(", ");
+  return `<div class="fac-item">
+    <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:7px;flex-wrap:wrap;gap:6px">
+      ${showStudent?`<div style="font-size:12px;font-weight:700;color:white">${req.studentId}</div>`:""}
+      <div class="req-status-badge ${sc}">${sl}</div>
+    </div>
+    <div style="font-size:12px;color:var(--text);margin-bottom:5px"><strong>Reason:</strong> ${req.reason}</div>
+    <div style="font-size:11px;color:var(--muted)">Periods: ${periodsStr}</div>
+    <div style="font-size:11px;color:var(--muted);margin-top:3px">${new Date(req.createdAt).toLocaleDateString()}</div>
+    ${req.adminRemark?`<div style="margin-top:7px;font-size:11px;background:rgba(79,142,247,0.06);border:1px solid rgba(79,142,247,0.15);border-radius:8px;padding:7px 10px;color:var(--accent)">💬 ${req.adminRemark}</div>`:""}
+    ${req.status==="pending"?`
+      <div class="fac-acts">
+        <button class="btn btn-sm btn-ok" onclick="openHandleReq('${req._id}','${req.studentId}',\`${req.reason}\`,\`${periodsStr}\`)">📋 Handle Request</button>
+      </div>`:""}
+  </div>`;
+}
+
+function openHandleReq(reqId, studentId, reason, periods){
+  document.getElementById("handleReqId").value = reqId;
+  document.getElementById("handleStudentId").value = studentId;
+  document.getElementById("handleReqDetails").innerHTML =
+    `<strong style="color:var(--text)">${studentId}</strong><br>
+     <strong>Reason:</strong> ${reason}<br>
+     <strong>Periods:</strong> ${periods}`;
+  document.getElementById("handleRemark").value = "";
+  openM("handleReqModal");
+}
+
+async function handleRequest(status){
+  const reqId  = document.getElementById("handleReqId").value;
+  const remark = document.getElementById("handleRemark").value.trim();
+
+  const{ok,data} = await api("PATCH",`/admin-timetable/requests/${reqId}/handle`,{
+    status, adminRemark:remark
+  });
+  closeM("handleReqModal");
+  if(!ok){ toast(data.message,"error"); return; }
+  toast(`Request ${status} ✅`);
+  loadAllRequests("");
+  if(adminCurrentStudentId) loadStudentRequests(adminCurrentStudentId);
+  if(status==="approved" && adminCurrentStudentId) searchStudentTT();
+}
+
+// ════════════════════════════════════════════════════
+// ✅ AUDIT LOGS
+// ════════════════════════════════════════════════════
+async function loadAuditLogs(){
+  const sId = document.getElementById("auStudentId").value.trim();
+  const aId = document.getElementById("auAdminId").value.trim();
+  let url = "/admin-timetable/audit-logs?dummy=1";
+  if(sId) url += `&studentId=${sId}`;
+  if(aId) url += `&adminId=${aId}`;
+
+  const{ok,data} = await api("GET",url);
+  const el = document.getElementById("auditTable");
+  if(!ok||!data.length){
+    el.innerHTML=`<div class="empty"><div class="empty-icon">📋</div>No logs found</div>`;
+    return;
+  }
+
+  const actionLabel = a =>
+    a==="TIMETABLE_EDIT"?"<span class='audit-action aa-edit'>✏️ Edit</span>":
+    a==="REQUEST_APPROVED"?"<span class='audit-action aa-approved'>✅ Approved</span>":
+    a==="REQUEST_REJECTED"?"<span class='audit-action aa-rejected'>❌ Rejected</span>":
+    a==="TIMETABLE_UNLOCK"?"<span class='audit-action aa-unlock'>🔓 Unlock</span>":
+    `<span class='audit-action'>${a}</span>`;
+
+  el.innerHTML=`<table class="dtable">
+    <thead><tr><th>Timestamp</th><th>Admin</th><th>Student</th><th>Action</th><th>Note</th></tr></thead>
+    <tbody>${data.map(log=>`<tr>
+      <td style="color:var(--muted);white-space:nowrap">${new Date(log.timestamp).toLocaleString()}</td>
+      <td><strong>${log.adminId}</strong></td>
+      <td>${log.studentId}</td>
+      <td>${actionLabel(log.action)}</td>
+      <td style="font-size:11px;color:var(--muted)">${log.details?.note||""}${log.details?.requestId?`<br><span style="opacity:0.6">ReqID: ${log.details.requestId}</span>`:""}</td>
+    </tr>`).join("")}
+    </tbody></table>`;
+}
+
+// ════════════════════════════════════════════════════
+// INIT
+// ════════════════════════════════════════════════════
 loadStats();
 </script>
 </body>
