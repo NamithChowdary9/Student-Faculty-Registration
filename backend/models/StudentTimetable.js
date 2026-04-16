@@ -1,6 +1,3 @@
-// ════════════════════════════════════════════════════
-// backend/models/StudentTimetable.js   — NEW FILE
-// ════════════════════════════════════════════════════
 const mongoose = require("mongoose");
 
 const SlotSchema = new mongoose.Schema({

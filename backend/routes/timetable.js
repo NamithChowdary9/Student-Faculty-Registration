@@ -4,13 +4,8 @@ const Selection = require("../models/Selection");
 const { Room, TimetableSlot, RoomAllocation } = require("../models/Timetable");
 const { auth, adminOnly } = require("../middleware/authMiddleware");
 
-// nodemailer is optional — only used if SMTP is configured
 let nodemailer;
-try {
-  nodemailer = require("nodemailer");
-} catch {
-  nodemailer = null;
-}
+try { nodemailer = require("nodemailer"); } catch { nodemailer = null; }
 
 const DAYS = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"];
 const PERIODS = [
@@ -29,9 +24,8 @@ router.post("/generate", auth, adminOnly, async (req, res) => {
       return res.status(400).json({ message: "department, year, semester required" });
 
     const numYear = parseInt(year);
-    const numSem = parseInt(semester);
+    const numSem  = parseInt(semester);
 
-    // Clear old data
     await TimetableSlot.deleteMany({ department, year: numYear, semester: numSem });
     await RoomAllocation.deleteMany({ department, year: numYear, semester: numSem });
 
@@ -39,31 +33,20 @@ router.post("/generate", auth, adminOnly, async (req, res) => {
     if (!faculties.length)
       return res.status(404).json({ message: "No faculty found for this combination" });
 
-    // Load rooms — auto-create defaults if none exist
     let rooms = await Room.find({ isActive: true }).sort({ roomNumber: 1 });
     if (!rooms.length) {
       const defaults = [];
       for (let i = 1; i <= 20; i++)
         defaults.push({
           roomNumber: `R${String(i).padStart(3, "0")}`,
-          capacity: 60,
-          block: "A",
-          floor: Math.ceil(i / 5),
+          capacity: 60, block: "A", floor: Math.ceil(i / 5),
         });
       rooms = await Room.insertMany(defaults);
     }
 
-    // Build faculty → [studentIds] map
-    const allSelections = await Selection.find({
-      department,
-      year: numYear,
-      semester: numSem,
-    });
-
+    const allSelections = await Selection.find({ department, year: numYear, semester: numSem });
     const facStudents = {};
-    faculties.forEach((f) => {
-      facStudents[f._id.toString()] = [];
-    });
+    faculties.forEach((f) => { facStudents[f._id.toString()] = []; });
     allSelections.forEach((sel) =>
       sel.selections.forEach((s) => {
         const k = s.facultyId?.toString();
@@ -76,34 +59,44 @@ router.post("/generate", auth, adminOnly, async (req, res) => {
 
     for (const fac of faculties) {
       const totalPeriods = fac.periodsPerWeek || 4;
-      const studentIds = facStudents[fac._id.toString()] || [];
+      const studentIds   = facStudents[fac._id.toString()] || [];
       const studentCount = studentIds.length;
-      const room = rooms[roomIdx % rooms.length];
+      const room         = rooms[roomIdx % rooms.length];
       roomIdx++;
 
-      const dayCount = {};
-      DAYS.forEach((d) => {
-        dayCount[d] = 0;
-      });
+      // ── FIX: track used periods per day to spread across all days ──
+      const dayCount  = {};
+      const periodUsed = {};
+      DAYS.forEach((d) => { dayCount[d] = 0; periodUsed[d] = new Set(); });
 
       let scheduled = 0;
-      outer: for (const day of DAYS) {
-        for (const p of PERIODS) {
-          if (scheduled >= totalPeriods) break outer;
-          if (dayCount[day] >= 4) break; // max 4 classes/day per faculty
+      const maxPerDay = Math.ceil(totalPeriods / DAYS.length) + 1; // e.g. 4 periods → max 1-2/day
+
+      while (scheduled < totalPeriods) {
+        let slottedThisPass = false;
+
+        for (const day of DAYS) {
+          if (scheduled >= totalPeriods) break;
+          if (dayCount[day] >= maxPerDay) continue;
+
+          // Find first free period on this day
+          const freePeriod = PERIODS.find((p) => !periodUsed[day].has(p.num));
+          if (!freePeriod) continue;
+
+          periodUsed[day].add(freePeriod.num);
 
           slots.push({
             department,
             year: numYear,
             semester: numSem,
-            facultyId: fac._id,
-            facultyName: fac.name,
-            subject: fac.subject,
+            facultyId:    fac._id,
+            facultyName:  fac.name,
+            subject:      fac.subject,
             day,
-            periodNumber: p.num,
-            startTime: p.start,
-            endTime: p.end,
-            roomNumber: room.roomNumber,
+            periodNumber: freePeriod.num,
+            startTime:    freePeriod.start,
+            endTime:      freePeriod.end,
+            roomNumber:   room.roomNumber,
             studentIds,
             studentCount,
           });
@@ -112,18 +105,22 @@ router.post("/generate", auth, adminOnly, async (req, res) => {
             department,
             year: numYear,
             semester: numSem,
-            subject: fac.subject,
-            facultyId: fac._id,
+            subject:     fac.subject,
+            facultyId:   fac._id,
             facultyName: fac.name,
-            roomNumber: room.roomNumber,
+            roomNumber:  room.roomNumber,
             day,
-            period: p.num,
+            period:      freePeriod.num,
             studentCount,
           });
 
           dayCount[day]++;
           scheduled++;
+          slottedThisPass = true;
         }
+
+        // Safety: avoid infinite loop if no slots could be assigned
+        if (!slottedThisPass) break;
       }
     }
 
@@ -145,13 +142,11 @@ router.get("/student/:studentId", auth, async (req, res) => {
   try {
     const { department, year, semester } = req.query;
     if (!department || !year || !semester)
-      return res
-        .status(400)
-        .json({ message: "department, year, semester query params required" });
+      return res.status(400).json({ message: "department, year, semester query params required" });
 
     const slots = await TimetableSlot.find({
       department,
-      year: parseInt(year),
+      year:     parseInt(year),
       semester: parseInt(semester),
       studentIds: req.params.studentId,
     }).sort({ day: 1, periodNumber: 1 });
@@ -165,10 +160,8 @@ router.get("/student/:studentId", auth, async (req, res) => {
 /* ── GET faculty timetable ── */
 router.get("/faculty/:facultyId", auth, async (req, res) => {
   try {
-    const slots = await TimetableSlot.find({ facultyId: req.params.facultyId }).sort({
-      day: 1,
-      periodNumber: 1,
-    });
+    const slots = await TimetableSlot.find({ facultyId: req.params.facultyId })
+      .sort({ day: 1, periodNumber: 1 });
     res.json(slots);
   } catch (e) {
     res.status(500).json({ message: e.message });
@@ -180,21 +173,18 @@ router.get("/all", auth, async (req, res) => {
   try {
     const filter = {};
     if (req.query.department) filter.department = req.query.department;
-    if (req.query.year) filter.year = parseInt(req.query.year);
-    if (req.query.semester) filter.semester = parseInt(req.query.semester);
+    if (req.query.year)       filter.year       = parseInt(req.query.year);
+    if (req.query.semester)   filter.semester   = parseInt(req.query.semester);
 
-    const slots = await TimetableSlot.find(filter).sort({
-      facultyName: 1,
-      day: 1,
-      periodNumber: 1,
-    });
+    const slots = await TimetableSlot.find(filter)
+      .sort({ facultyName: 1, day: 1, periodNumber: 1 });
     res.json(slots);
   } catch (e) {
     res.status(500).json({ message: e.message });
   }
 });
 
-/* ── LIST rooms — MUST be before /rooms/:id to avoid collision ── */
+/* ── LIST rooms ── */
 router.get("/rooms/list", auth, async (req, res) => {
   try {
     const rooms = await Room.find().sort({ roomNumber: 1 });
@@ -208,8 +198,7 @@ router.get("/rooms/list", auth, async (req, res) => {
 router.post("/rooms/add", auth, adminOnly, async (req, res) => {
   try {
     const { roomNumber, capacity, block, floor } = req.body;
-    if (!roomNumber)
-      return res.status(400).json({ message: "roomNumber required" });
+    if (!roomNumber) return res.status(400).json({ message: "roomNumber required" });
 
     const room = await Room.create({
       roomNumber,
@@ -217,11 +206,9 @@ router.post("/rooms/add", auth, adminOnly, async (req, res) => {
       block: block || "A",
       floor: floor ? parseInt(floor) : 1,
     });
-
     res.status(201).json(room);
   } catch (e) {
-    if (e.code === 11000)
-      return res.status(409).json({ message: "Room already exists" });
+    if (e.code === 11000) return res.status(409).json({ message: "Room already exists" });
     res.status(500).json({ message: e.message });
   }
 });
@@ -231,14 +218,11 @@ router.get("/rooms", auth, async (req, res) => {
   try {
     const filter = {};
     if (req.query.department) filter.department = req.query.department;
-    if (req.query.year) filter.year = parseInt(req.query.year);
-    if (req.query.semester) filter.semester = parseInt(req.query.semester);
+    if (req.query.year)       filter.year       = parseInt(req.query.year);
+    if (req.query.semester)   filter.semester   = parseInt(req.query.semester);
 
-    const allocs = await RoomAllocation.find(filter).sort({
-      day: 1,
-      period: 1,
-      roomNumber: 1,
-    });
+    const allocs = await RoomAllocation.find(filter)
+      .sort({ day: 1, period: 1, roomNumber: 1 });
     res.json(allocs);
   } catch (e) {
     res.status(500).json({ message: e.message });
@@ -249,28 +233,18 @@ router.get("/rooms", auth, async (req, res) => {
 router.post("/mail-faculty", auth, adminOnly, async (req, res) => {
   try {
     if (!nodemailer)
-      return res
-        .status(500)
-        .json({ message: "nodemailer is not installed. Run: npm install nodemailer" });
-
+      return res.status(500).json({ message: "nodemailer not installed. Run: npm install nodemailer" });
     if (!process.env.SMTP_USER || !process.env.SMTP_PASS)
-      return res
-        .status(400)
-        .json({ message: "SMTP not configured in .env file" });
+      return res.status(400).json({ message: "SMTP not configured in .env" });
 
     const { department, year, semester } = req.body;
     if (!department || !year || !semester)
-      return res
-        .status(400)
-        .json({ message: "department, year, semester required" });
+      return res.status(400).json({ message: "department, year, semester required" });
 
     const faculties = await Faculty.find({
-      department,
-      year: parseInt(year),
-      semester: parseInt(semester),
+      department, year: parseInt(year), semester: parseInt(semester),
       email: { $ne: "" },
     });
-
     if (!faculties.length)
       return res.status(404).json({ message: "No faculty with email found" });
 
@@ -283,53 +257,45 @@ router.post("/mail-faculty", auth, adminOnly, async (req, res) => {
 
     let sent = 0;
     for (const fac of faculties) {
-      const slots = await TimetableSlot.find({ facultyId: fac._id }).sort({
-        day: 1,
-        periodNumber: 1,
-      });
+      const slots = await TimetableSlot.find({ facultyId: fac._id })
+        .sort({ day: 1, periodNumber: 1 });
       if (!slots.length) continue;
 
-      const rows = slots
-        .map(
-          (s) =>
-            `<tr style="border-bottom:1px solid #eee">
-              <td style="padding:8px 12px">${s.day}</td>
-              <td style="padding:8px 12px">Period ${s.periodNumber} (${s.startTime}–${s.endTime})</td>
-              <td style="padding:8px 12px">${s.subject}</td>
-              <td style="padding:8px 12px;font-weight:bold">${s.roomNumber}</td>
-              <td style="padding:8px 12px">${s.studentCount} students</td>
-            </tr>`
-        )
-        .join("");
+      const rows = slots.map((s) =>
+        `<tr style="border-bottom:1px solid #eee">
+          <td style="padding:8px 12px">${s.day}</td>
+          <td style="padding:8px 12px">Period ${s.periodNumber} (${s.startTime}–${s.endTime})</td>
+          <td style="padding:8px 12px">${s.subject}</td>
+          <td style="padding:8px 12px;font-weight:bold">${s.roomNumber}</td>
+          <td style="padding:8px 12px">${s.studentCount} students</td>
+        </tr>`
+      ).join("");
 
       await transporter.sendMail({
         from: `FacultySync <${process.env.SMTP_USER}>`,
         to: fac.email,
         subject: `Your Timetable — ${department} Sem ${semester}`,
-        html: `
-          <div style="font-family:sans-serif;max-width:600px">
-            <h2 style="color:#4f8ef7">FacultySync — Your Timetable</h2>
-            <p>Dear <strong>${fac.name}</strong>,</p>
-            <p>Your timetable for <strong>${department} Year ${year} Semester ${semester}</strong> is ready.</p>
-            <table style="width:100%;border-collapse:collapse;margin-top:16px">
-              <thead><tr style="background:#f0f4ff">
-                <th style="padding:10px 12px;text-align:left">Day</th>
-                <th style="padding:10px 12px;text-align:left">Period / Time</th>
-                <th style="padding:10px 12px;text-align:left">Subject</th>
-                <th style="padding:10px 12px;text-align:left">Room</th>
-                <th style="padding:10px 12px;text-align:left">Students</th>
-              </tr></thead>
-              <tbody>${rows}</tbody>
-            </table>
-            <p style="margin-top:24px;color:#888">— FacultySync System</p>
-          </div>`,
+        html: `<div style="font-family:sans-serif;max-width:600px">
+          <h2 style="color:#4f8ef7">FacultySync — Your Timetable</h2>
+          <p>Dear <strong>${fac.name}</strong>,</p>
+          <p>Your timetable for <strong>${department} Year ${year} Semester ${semester}</strong> is ready.</p>
+          <table style="width:100%;border-collapse:collapse;margin-top:16px">
+            <thead><tr style="background:#f0f4ff">
+              <th style="padding:10px 12px;text-align:left">Day</th>
+              <th style="padding:10px 12px;text-align:left">Period / Time</th>
+              <th style="padding:10px 12px;text-align:left">Subject</th>
+              <th style="padding:10px 12px;text-align:left">Room</th>
+              <th style="padding:10px 12px;text-align:left">Students</th>
+            </tr></thead>
+            <tbody>${rows}</tbody>
+          </table>
+          <p style="margin-top:24px;color:#888">— FacultySync System</p>
+        </div>`,
       });
       sent++;
     }
 
-    res.json({
-      message: `Timetable emailed to ${sent} faculty member${sent !== 1 ? "s" : ""}`,
-    });
+    res.json({ message: `Timetable emailed to ${sent} faculty member${sent !== 1 ? "s" : ""}` });
   } catch (e) {
     res.status(500).json({ message: e.message });
   }
