@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>FacultySync — Student Portal</title>
+<title>FacultySync — Student Dashboard</title>
 <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=DM+Serif+Display&display=swap" rel="stylesheet">
 <style>
 :root{--navy:#0a0f1e;--card:rgba(255,255,255,0.04);--card2:rgba(255,255,255,0.07);--border:rgba(255,255,255,0.08);--accent:#4f8ef7;--accent2:#7c5cfc;--text:#e8eaf6;--muted:#8892b0;--success:#43e97b;--error:#ff6b9d;--warn:#ffb347;}
@@ -13,25 +13,63 @@ body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(
 .orb{position:fixed;border-radius:50%;filter:blur(130px);opacity:0.1;pointer-events:none;z-index:0;}
 .orb1{width:500px;height:500px;background:#7c5cfc;top:-100px;right:-100px;}
 .orb2{width:400px;height:400px;background:#00d4ff;bottom:-50px;left:-100px;}
-.topnav{position:sticky;top:0;z-index:100;background:rgba(10,15,30,0.88);backdrop-filter:blur(20px);border-bottom:1px solid var(--border);padding:0 24px;height:64px;display:flex;align-items:center;justify-content:space-between;}
+
+/* ── NAV ── */
+.topnav{position:sticky;top:0;z-index:100;background:rgba(10,15,30,0.9);backdrop-filter:blur(20px);border-bottom:1px solid var(--border);padding:0 24px;height:64px;display:flex;align-items:center;justify-content:space-between;}
 .nav-brand{display:flex;align-items:center;gap:10px;font-family:'DM Serif Display',serif;font-size:20px;color:white;}
 .nav-logo{width:36px;height:36px;background:linear-gradient(135deg,var(--accent),var(--accent2));border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:18px;}
 .dot{color:var(--accent);}
-.nav-right{display:flex;align-items:center;gap:12px;}
+.nav-right{display:flex;align-items:center;gap:10px;}
 .badge-stu{background:rgba(67,233,123,0.12);border:1px solid rgba(67,233,123,0.25);color:var(--success);border-radius:20px;padding:5px 14px;font-size:12px;font-weight:600;}
 .user-chip{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:6px 12px;font-size:12px;color:var(--muted);}
 .user-chip strong{color:var(--text);}
-.btn-logout{background:rgba(255,107,157,0.1);border:1px solid rgba(255,107,157,0.25);color:#ff6b9d;border-radius:10px;padding:8px 16px;font-family:'Space Grotesk',sans-serif;font-size:13px;font-weight:600;cursor:pointer;}
+.btn-logout{background:rgba(255,107,157,0.1);border:1px solid rgba(255,107,157,0.25);color:#ff6b9d;border-radius:10px;padding:8px 16px;font-family:'Space Grotesk',sans-serif;font-size:13px;font-weight:600;cursor:pointer;transition:all 0.2s;}
+.btn-logout:hover{background:rgba(255,107,157,0.2);}
+
+/* ── PAGE ── */
 .page{max-width:1200px;margin:0 auto;padding:24px 20px;position:relative;z-index:1;}
-.layout{display:grid;grid-template-columns:290px 1fr;gap:18px;align-items:start;}
-@media(max-width:900px){.layout{grid-template-columns:1fr;}}
+
+/* ── HERO / WELCOME ── */
+.hero{background:linear-gradient(135deg,rgba(79,142,247,0.1),rgba(124,92,252,0.08));border:1px solid rgba(79,142,247,0.2);border-radius:22px;padding:26px 28px;margin-bottom:22px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:16px;}
+.hero-left h1{font-size:22px;font-weight:700;color:white;margin-bottom:5px;}
+.hero-left p{color:var(--muted);font-size:13px;}
+.hero-chips{display:flex;flex-wrap:wrap;gap:8px;margin-top:12px;}
+.hero-chip{display:flex;align-items:center;gap:5px;background:rgba(255,255,255,0.06);border:1px solid var(--border);border-radius:8px;padding:5px 11px;font-size:11px;font-weight:600;}
+.hero-chip .lbl{color:var(--muted);}
+.hero-chip .val{color:white;}
+.hero-right{display:flex;flex-direction:column;gap:9px;align-items:flex-end;}
+
+/* ── MY TIMETABLE BUTTON (shown after save) ── */
+.btn-my-tt{display:none;align-items:center;gap:8px;background:linear-gradient(135deg,var(--success),#38f9d7);color:#0a1a10;border:none;border-radius:13px;padding:12px 20px;font-family:'Space Grotesk',sans-serif;font-size:13px;font-weight:700;cursor:pointer;transition:all 0.25s;animation:pop 0.4s ease;}
+.btn-my-tt:hover{transform:translateY(-2px);box-shadow:0 12px 30px rgba(67,233,123,0.4);}
+.btn-my-tt.show{display:flex;}
+@keyframes pop{from{opacity:0;transform:scale(0.9)}to{opacity:1;transform:scale(1)}}
+
+/* ── STAT CARDS ── */
+.stat-row{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:12px;margin-bottom:22px;}
+.stat-card{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:16px 18px;transition:all 0.2s;}
+.stat-card:hover{border-color:rgba(79,142,247,0.25);transform:translateY(-2px);}
+.stat-icon{font-size:24px;margin-bottom:8px;}
+.stat-val{font-size:22px;font-weight:700;color:white;line-height:1;}
+.stat-lbl{font-size:10px;color:var(--muted);margin-top:4px;text-transform:uppercase;letter-spacing:0.5px;}
+
+/* ── LAYOUT ── */
+.layout{display:grid;grid-template-columns:300px 1fr;gap:18px;align-items:start;}
+@media(max-width:960px){.layout{grid-template-columns:1fr;}}
 .sidebar{display:flex;flex-direction:column;gap:14px;}
+
+/* ── CARDS ── */
 .card{background:var(--card);border:1px solid var(--border);border-radius:20px;padding:20px;backdrop-filter:blur(20px);}
 .card-head{display:flex;align-items:center;gap:9px;margin-bottom:16px;padding-bottom:12px;border-bottom:1px solid var(--border);}
 .ci{width:34px;height:34px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:15px;}
-.ci-f{background:rgba(79,142,247,0.15);}.ci-s{background:rgba(67,233,123,0.15);}.ci-fac{background:rgba(255,179,71,0.15);}.ci-c{background:rgba(124,92,252,0.15);}
+.ci-f{background:rgba(79,142,247,0.15);}
+.ci-s{background:rgba(67,233,123,0.15);}
+.ci-fac{background:rgba(255,179,71,0.15);}
+.ci-c{background:rgba(124,92,252,0.15);}
 .card-title{font-size:14px;font-weight:700;color:white;}
 .card-sub{font-size:11px;color:var(--muted);margin-top:1px;}
+
+/* ── SELECTION OPTIONS ── */
 .opt-list{display:flex;flex-direction:column;gap:6px;}
 .opt{display:flex;align-items:center;justify-content:space-between;padding:10px 13px;border-radius:11px;border:1.5px solid var(--border);font-size:13px;font-weight:500;transition:all 0.2s;}
 .opt.mine{color:white;cursor:pointer;}
@@ -48,14 +86,44 @@ body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(
 .sem-badge{font-size:10px;font-weight:700;padding:3px 8px;border-radius:20px;}
 .sb-open{background:rgba(67,233,123,0.15);color:var(--success);}
 .sb-locked{background:rgba(255,107,157,0.12);color:var(--error);}
+
+/* ── LOAD BUTTON ── */
 .btn-load{width:100%;padding:11px;border:none;border-radius:12px;background:linear-gradient(135deg,var(--accent),var(--accent2));color:white;font-family:'Space Grotesk',sans-serif;font-size:13px;font-weight:600;cursor:pointer;transition:all 0.25s;margin-top:10px;}
 .btn-load:hover{transform:translateY(-2px);box-shadow:0 10px 24px rgba(79,142,247,0.35);}
+
+/* ── SUBJECTS LIST ── */
 .sub-list{display:flex;flex-direction:column;gap:6px;}
 .sub-pill{display:flex;align-items:center;gap:9px;padding:10px 13px;background:rgba(255,255,255,0.04);border:1.5px solid var(--border);border-radius:11px;cursor:pointer;transition:all 0.2s;font-size:13px;font-weight:500;}
 .sub-pill:hover{border-color:rgba(79,142,247,0.4);background:rgba(79,142,247,0.05);}
 .sub-pill.active-sub{border-color:var(--success);background:rgba(67,233,123,0.06);color:var(--success);}
 .sub-pill.done{border-color:rgba(67,233,123,0.35);}
+.sub-pill.not-done{border-color:rgba(255,107,157,0.3);}
 .sub-num{width:21px;height:21px;background:rgba(79,142,247,0.15);border-radius:6px;font-size:10px;font-weight:700;display:flex;align-items:center;justify-content:center;color:var(--accent);flex-shrink:0;}
+
+/* ── ALL SUBJECTS REQUIRED BANNER ── */
+.all-required-banner{background:rgba(255,107,157,0.07);border:1px solid rgba(255,107,157,0.25);border-radius:12px;padding:12px 15px;margin-bottom:12px;font-size:12px;color:var(--error);display:none;}
+.all-required-banner.show{display:block;}
+
+/* ── SELECTION PROGRESS ── */
+.sel-progress{margin-bottom:12px;}
+.prog-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;font-size:12px;}
+.prog-title{color:var(--text);font-weight:600;}
+.prog-count{color:var(--muted);}
+.prog-bar{background:rgba(255,255,255,0.06);border-radius:99px;height:5px;overflow:hidden;}
+.prog-fill{height:100%;background:linear-gradient(to right,var(--accent),var(--accent2));border-radius:99px;transition:width 0.4s ease;}
+
+/* ── SELECTION ITEMS ── */
+.sel-item{display:flex;align-items:center;justify-content:space-between;padding:9px 11px;background:rgba(67,233,123,0.06);border:1px solid rgba(67,233,123,0.15);border-radius:10px;margin-bottom:7px;animation:fi 0.2s ease;}
+.si-sub{font-size:12px;font-weight:600;color:var(--text);}
+.si-fac{font-size:11px;color:var(--success);margin-top:2px;}
+.btn-rm{background:rgba(255,107,157,0.1);border:1px solid rgba(255,107,157,0.2);color:var(--error);border-radius:7px;padding:4px 9px;font-size:10px;font-weight:600;cursor:pointer;font-family:'Space Grotesk',sans-serif;}
+
+/* ── SUBMIT BUTTON ── */
+.btn-cont{width:100%;padding:12px;border:none;border-radius:12px;background:linear-gradient(135deg,#43e97b,#38f9d7);color:#0a1a10;font-family:'Space Grotesk',sans-serif;font-size:13px;font-weight:700;cursor:pointer;transition:all 0.25s;margin-top:10px;}
+.btn-cont:hover:not(:disabled){transform:translateY(-2px);box-shadow:0 10px 24px rgba(67,233,123,0.35);}
+.btn-cont:disabled{opacity:0.45;cursor:not-allowed;transform:none;filter:grayscale(0.3);}
+
+/* ── FACULTY CARDS ── */
 .fac-grid{display:flex;flex-direction:column;gap:13px;}
 .fac-card{background:var(--card2);border:1.5px solid var(--border);border-radius:16px;padding:17px;transition:all 0.25s;position:relative;overflow:hidden;animation:fi 0.3s ease both;}
 .fac-card:hover{border-color:rgba(79,142,247,0.4);transform:translateY(-2px);box-shadow:0 12px 30px rgba(0,0,0,0.3);}
@@ -81,27 +149,51 @@ body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(
 .btn-sel{width:100%;padding:10px;margin-top:11px;border:none;border-radius:10px;background:linear-gradient(135deg,var(--accent),var(--accent2));color:white;font-family:'Space Grotesk',sans-serif;font-size:12px;font-weight:600;cursor:pointer;transition:all 0.2s;}
 .fac-card.sel-card .btn-sel{background:linear-gradient(135deg,var(--success),#00e676);color:#0a1a10;}
 .fac-card.full-card .btn-sel{background:rgba(255,107,157,0.1);border:1px solid rgba(255,107,157,0.25);color:var(--error);cursor:not-allowed;}
-.sel-item{display:flex;align-items:center;justify-content:space-between;padding:9px 11px;background:rgba(67,233,123,0.06);border:1px solid rgba(67,233,123,0.15);border-radius:10px;margin-bottom:7px;animation:fi 0.2s ease;}
-.si-sub{font-size:12px;font-weight:600;color:var(--text);}
-.si-fac{font-size:11px;color:var(--success);margin-top:2px;}
-.btn-rm{background:rgba(255,107,157,0.1);border:1px solid rgba(255,107,157,0.2);color:var(--error);border-radius:7px;padding:4px 9px;font-size:10px;font-weight:600;cursor:pointer;font-family:'Space Grotesk',sans-serif;}
-.prog-bar{margin:10px 0;background:rgba(255,255,255,0.06);border-radius:99px;height:5px;overflow:hidden;}
-.prog-fill{height:100%;background:linear-gradient(to right,var(--accent),var(--accent2));border-radius:99px;transition:width 0.4s ease;}
-.prog-lbl{font-size:10px;color:var(--muted);margin-bottom:4px;display:flex;justify-content:space-between;}
-.btn-cont{width:100%;padding:12px;border:none;border-radius:12px;background:linear-gradient(135deg,#43e97b,#38f9d7);color:#0a1a10;font-family:'Space Grotesk',sans-serif;font-size:13px;font-weight:700;cursor:pointer;transition:all 0.25s;}
-.btn-cont:hover{transform:translateY(-2px);box-shadow:0 10px 24px rgba(67,233,123,0.35);}
-.empty{text-align:center;padding:26px 12px;color:var(--muted);}
-.empty-icon{font-size:30px;margin-bottom:7px;opacity:0.4;}
+
+/* ── ALERTS ── */
 .alert{border-radius:12px;padding:13px 15px;font-size:12px;margin-bottom:14px;display:none;}
 .alert.show{display:block;}
 .alert.warn{background:rgba(255,179,71,0.08);border:1px solid rgba(255,179,71,0.25);color:var(--warn);}
 .alert.error{background:rgba(255,107,157,0.08);border:1px solid rgba(255,107,157,0.25);color:var(--error);}
+.alert.success{background:rgba(67,233,123,0.08);border:1px solid rgba(67,233,123,0.25);color:var(--success);}
+
+/* ── TOAST ── */
+.toast-container{position:fixed;bottom:22px;right:22px;z-index:999;display:flex;flex-direction:column;gap:8px;}
+.toast{padding:13px 18px;border-radius:13px;font-size:13px;font-weight:600;animation:slideUp 0.3s ease;display:flex;align-items:center;gap:7px;max-width:340px;box-shadow:0 10px 30px rgba(0,0,0,0.4);}
+.toast.success{background:#0f2a1a;border:1px solid rgba(67,233,123,0.3);color:var(--success);}
+.toast.error{background:#2a0f1a;border:1px solid rgba(255,107,157,0.3);color:var(--error);}
+.toast.info{background:#0f1a2a;border:1px solid rgba(79,142,247,0.3);color:var(--accent);}
+@keyframes slideUp{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
+
+/* ── EMPTY ── */
+.empty{text-align:center;padding:26px 12px;color:var(--muted);}
+.empty-icon{font-size:30px;margin-bottom:7px;opacity:0.4;}
 .slbl{font-size:10px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--muted);margin-bottom:7px;}
+
+/* ── STEP INDICATORS ── */
+.steps{display:flex;gap:8px;margin-bottom:20px;flex-wrap:wrap;}
+.step{display:flex;align-items:center;gap:6px;padding:7px 13px;border-radius:20px;font-size:12px;font-weight:600;border:1.5px solid var(--border);color:var(--muted);}
+.step.done{border-color:rgba(67,233,123,0.4);background:rgba(67,233,123,0.07);color:var(--success);}
+.step.active{border-color:var(--accent);background:rgba(79,142,247,0.1);color:white;}
+.step-num{width:18px;height:18px;border-radius:50%;background:rgba(255,255,255,0.1);font-size:10px;font-weight:700;display:flex;align-items:center;justify-content:center;}
+.step.done .step-num{background:var(--success);color:#0a1a10;}
+.step.active .step-num{background:var(--accent);color:white;}
+
+/* ── TIMETABLE SAVED CARD ── */
+.tt-saved-card{background:linear-gradient(135deg,rgba(67,233,123,0.08),rgba(79,142,247,0.06));border:1.5px solid rgba(67,233,123,0.3);border-radius:18px;padding:22px;margin-bottom:20px;display:none;}
+.tt-saved-card.show{display:block;}
+.tt-saved-card h3{color:white;font-size:16px;margin-bottom:6px;}
+.tt-saved-card p{color:var(--muted);font-size:13px;margin-bottom:16px;}
+.tt-saved-actions{display:flex;gap:10px;flex-wrap:wrap;}
 </style>
 </head>
 <body>
 <div class="orb orb1"></div>
 <div class="orb orb2"></div>
+
+<div class="toast-container" id="toastContainer"></div>
+
+<!-- NAV -->
 <nav class="topnav">
   <div class="nav-brand"><div class="nav-logo">🎓</div>Faculty<span class="dot">Sync</span></div>
   <div class="nav-right">
@@ -110,98 +202,239 @@ body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(
     <button class="btn-logout" onclick="logout()">Sign Out</button>
   </div>
 </nav>
+
 <div class="page">
-  <div style="margin-bottom:20px">
-    <h1 style="font-size:24px;font-weight:700;color:white;margin-bottom:3px">Faculty Selection</h1>
-    <p style="color:var(--muted);font-size:13px">Your department and year are locked to your profile. Only unlocked semesters are available.</p>
+
+  <!-- HERO WELCOME BANNER -->
+  <div class="hero">
+    <div class="hero-left">
+      <h1 id="heroGreeting">Welcome back! 👋</h1>
+      <p>Complete your faculty selection to build your timetable.</p>
+      <div class="hero-chips">
+        <div class="hero-chip"><span class="lbl">ID</span><span class="val" id="heroId">—</span></div>
+        <div class="hero-chip"><span class="lbl">Dept</span><span class="val" id="heroDept">—</span></div>
+        <div class="hero-chip"><span class="lbl">Year</span><span class="val" id="heroYear">—</span></div>
+        <div class="hero-chip"><span class="lbl">SGPA</span><span class="val" id="heroSgpa">—</span></div>
+      </div>
+    </div>
+    <div class="hero-right">
+      <!-- ✅ MY TIMETABLE BUTTON — shown after timetable is saved -->
+      <button class="btn-my-tt" id="btnMyTT" onclick="goToMyTimetable()">
+        🗓️ My Timetable
+      </button>
+    </div>
   </div>
+
+  <!-- ✅ TIMETABLE ALREADY SAVED CARD -->
+  <div class="tt-saved-card" id="ttSavedCard">
+    <h3>🔒 Your Timetable is Saved &amp; Locked</h3>
+    <p>You have already submitted your timetable. It is now locked. If you need changes, request admin from your timetable page.</p>
+    <div class="tt-saved-actions">
+      <button onclick="goToMyTimetable()" style="padding:10px 20px;border:none;border-radius:11px;background:linear-gradient(135deg,var(--success),#38f9d7);color:#0a1a10;font-family:'Space Grotesk',sans-serif;font-size:13px;font-weight:700;cursor:pointer;">🗓️ View My Timetable</button>
+      <button onclick="goToMyTimetable()" style="padding:10px 20px;border:none;border-radius:11px;background:rgba(79,142,247,0.12);border:1px solid rgba(79,142,247,0.25);color:var(--accent);font-family:'Space Grotesk',sans-serif;font-size:13px;font-weight:600;cursor:pointer;">📥 Download PDF</button>
+    </div>
+  </div>
+
+  <!-- STATS ROW -->
+  <div class="stat-row" id="statRow">
+    <div class="stat-card">
+      <div class="stat-icon">📚</div>
+      <div class="stat-val" id="statTotalSubj">—</div>
+      <div class="stat-lbl">Total Subjects</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-icon">✅</div>
+      <div class="stat-val" id="statSelSubj">0</div>
+      <div class="stat-lbl">Selected</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-icon">⏳</div>
+      <div class="stat-val" id="statRemSubj">—</div>
+      <div class="stat-lbl">Remaining</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-icon">🎯</div>
+      <div class="stat-val" id="statPct">0%</div>
+      <div class="stat-lbl">Progress</div>
+    </div>
+  </div>
+
+  <!-- STEP INDICATORS -->
+  <div class="steps" id="stepsBar">
+    <div class="step active" id="step1"><div class="step-num">1</div> Select Semester</div>
+    <div class="step" id="step2"><div class="step-num">2</div> Choose Faculty</div>
+    <div class="step" id="step3"><div class="step-num">3</div> Review All Subjects</div>
+    <div class="step" id="step4"><div class="step-num">4</div> Submit</div>
+  </div>
+
+  <!-- ALERTS -->
   <div class="alert warn" id="sgpaAlert"></div>
+
+  <!-- ✅ ALL SUBJECTS REQUIRED WARNING -->
+  <div class="alert error" id="allSubjAlert" style="display:none">
+    ⚠️ <strong>You must select faculty for ALL subjects before submitting.</strong>
+    <div id="missingSubjList" style="margin-top:6px;opacity:0.85"></div>
+  </div>
+
+  <!-- MAIN LAYOUT -->
   <div class="layout">
+    <!-- SIDEBAR -->
     <div class="sidebar">
+
+      <!-- DEPARTMENT -->
       <div class="card">
         <div class="card-head"><div class="ci ci-f">🏛️</div><div><div class="card-title">Department</div><div class="card-sub">Locked to your profile</div></div></div>
-        <div class="slbl">Select Department</div>
+        <div class="slbl">Your Department</div>
         <div class="opt-list" id="deptOpts"></div>
       </div>
+
+      <!-- YEAR -->
       <div class="card">
         <div class="card-head"><div class="ci ci-f">📅</div><div><div class="card-title">Year of Study</div><div class="card-sub">Detected from reg number</div></div></div>
-        <div class="slbl">Select Year</div>
+        <div class="slbl">Your Year</div>
         <div class="opt-list" id="yearOpts"></div>
       </div>
+
+      <!-- SEMESTER -->
       <div class="card">
-        <div class="card-head"><div class="ci ci-f">🔒</div><div><div class="card-title">Semester</div><div class="card-sub">Only unlocked semesters</div></div></div>
+        <div class="card-head"><div class="ci ci-f">🔒</div><div><div class="card-title">Semester</div><div class="card-sub">Only unlocked semesters available</div></div></div>
         <div class="slbl">Select Semester</div>
         <div class="opt-list" id="semOpts">
           <div style="font-size:12px;color:var(--muted);padding:8px">Loading lock status...</div>
         </div>
         <button class="btn-load" onclick="loadSubjects()">Load Subjects →</button>
       </div>
+
+      <!-- SUBJECTS -->
       <div class="card" id="subjectCard" style="display:none">
-        <div class="card-head"><div class="ci ci-s">📚</div><div><div class="card-title">Subjects</div><div class="card-sub">Click to view faculty</div></div></div>
+        <div class="card-head"><div class="ci ci-s">📚</div><div><div class="card-title">Subjects</div><div class="card-sub" id="subjCardSub">Click to view faculty</div></div></div>
+
+        <!-- All subjects required banner -->
+        <div class="all-required-banner" id="allReqBanner">
+          ⚠️ You must select faculty for <strong>all</strong> subjects listed below.
+        </div>
+
         <div class="sub-list" id="subjects"></div>
       </div>
+
+      <!-- MY SELECTIONS -->
       <div class="card">
         <div class="card-head"><div class="ci ci-c">🛒</div><div><div class="card-title">My Selection</div><div class="card-sub" id="selCount">0 selected</div></div></div>
-        <div id="progWrap" style="display:none">
-          <div class="prog-lbl"><span>Progress</span><span id="progText">0/0</span></div>
+
+        <!-- Progress -->
+        <div class="sel-progress" id="progWrap" style="display:none">
+          <div class="prog-header">
+            <span class="prog-title">Progress</span>
+            <span class="prog-count" id="progText">0/0</span>
+          </div>
           <div class="prog-bar"><div class="prog-fill" id="progFill" style="width:0%"></div></div>
         </div>
+
         <div id="selList"><div class="empty"><div class="empty-icon">🗂️</div>No selections yet</div></div>
-        <button class="btn-cont" onclick="submitSelection()" style="margin-top:10px">Review &amp; Submit →</button>
+
+        <button class="btn-cont" id="btnSubmit" onclick="submitSelection()" disabled>
+          Review &amp; Submit →
+        </button>
       </div>
-    </div>
+
+    </div><!-- end sidebar -->
+
+    <!-- MAIN CONTENT: FACULTY LIST -->
     <div>
       <div class="card">
         <div class="card-head">
           <div class="ci ci-fac">👨‍🏫</div>
           <div>
             <div class="card-title" id="facCardTitle">Faculty List</div>
-            <div class="card-sub">Select a subject from the left to view faculty</div>
+            <div class="card-sub" id="facCardSub">Select a subject from the left to view available faculty</div>
           </div>
         </div>
         <div id="facList">
-          <div class="empty"><div class="empty-icon">👈</div>Load subjects first, then click a subject</div>
+          <div class="empty">
+            <div class="empty-icon">👈</div>
+            <div>Load subjects first, then click a subject to see faculty</div>
+          </div>
         </div>
       </div>
     </div>
-  </div>
-</div>
+
+  </div><!-- end layout -->
+</div><!-- end page -->
 
 <script>
-// ── AUTH ──
-const token = localStorage.getItem("token");
-const role = localStorage.getItem("role");
-const userId = localStorage.getItem("userId");
-const myDept = (localStorage.getItem("department") || "").toUpperCase();
-const myYear = parseInt(localStorage.getItem("year")) || 0;
+// ════════════════════════════════════════════════════
+// AUTH
+// ════════════════════════════════════════════════════
+const token   = localStorage.getItem("token");
+const role    = localStorage.getItem("role");
+const userId  = localStorage.getItem("userId");
+const myDept  = (localStorage.getItem("department") || "").toUpperCase();
+const myYear  = parseInt(localStorage.getItem("year")) || 0;
 const sgpaRaw = localStorage.getItem("sgpa");
-const mySgpa = (sgpaRaw !== "" && sgpaRaw !== null && sgpaRaw !== "null")
-  ? parseFloat(sgpaRaw)
-  : null;
+const mySgpa  = (sgpaRaw !== "" && sgpaRaw !== null && sgpaRaw !== "null") ? parseFloat(sgpaRaw) : null;
 
 if (!token || role !== "student") window.location.href = "login.html";
 
-document.getElementById("uChip").innerHTML =
-  `<strong>${userId}</strong>${myDept ? " · " + myDept : ""}${myYear ? " Y" + myYear : ""}${mySgpa !== null ? " · SGPA:" + mySgpa : ""}`;
+// ════════════════════════════════════════════════════
+// HERO — fill in student info
+// ════════════════════════════════════════════════════
+document.getElementById("uChip").innerHTML = `<strong>${userId}</strong>${myDept ? " · " + myDept : ""}${myYear ? " Y" + myYear : ""}`;
+document.getElementById("heroGreeting").textContent = `Welcome back, ${userId}! 👋`;
+document.getElementById("heroId").textContent   = userId || "—";
+document.getElementById("heroDept").textContent  = myDept || "—";
+document.getElementById("heroYear").textContent  = myYear ? `Year ${myYear}` : "—";
+document.getElementById("heroSgpa").textContent  = mySgpa !== null ? mySgpa : "—";
 
-// ── STATE ──
-let selected = {};
+// ════════════════════════════════════════════════════
+// ✅ CHECK IF TIMETABLE ALREADY SAVED — show button
+// ════════════════════════════════════════════════════
+async function checkTimetableSaved() {
+  // Check localStorage first (fast)
+  const savedFlag = localStorage.getItem("timetableSaved");
+  if (savedFlag === "true") {
+    showTTButton();
+  }
+  // Also verify from backend
+  try {
+    const { ok, data } = await api("GET", `/student-timetable/${userId}`);
+    if (ok && data && data.locked) {
+      localStorage.setItem("timetableSaved", "true");
+      showTTButton();
+    }
+  } catch(e) {}
+}
+
+function showTTButton() {
+  document.getElementById("btnMyTT").classList.add("show");
+  document.getElementById("ttSavedCard").classList.add("show");
+  document.getElementById("stepsBar").style.display = "none";
+  document.getElementById("statRow").style.display  = "none";
+}
+
+function goToMyTimetable() {
+  window.location.href = "student-timetable.html";
+}
+
+// ════════════════════════════════════════════════════
+// STATE
+// ════════════════════════════════════════════════════
+let selected       = {};
 let currentSubject = "";
-let totalSubjects = 0;
-let currentDept = myDept;
-let currentYear = String(myYear);
-let currentSem = "";
-let semStatuses = [];
-let allFacData = [];
+let totalSubjects  = 0;
+let currentDept    = myDept;
+let currentYear    = String(myYear);
+let currentSem     = "";
+let semStatuses    = [];
+let allFacData     = [];
+let allSubjectList = []; // ALL subjects that exist for this semester
 
-// FIX: Bearer token format
+// ════════════════════════════════════════════════════
+// API HELPER
+// ════════════════════════════════════════════════════
 async function api(m, p, b = null) {
   const o = {
     method: m,
-    headers: {
-      "Content-Type": "application/json",
-      "Authorization": "Bearer " + token
-    }
+    headers: { "Content-Type": "application/json", "Authorization": "Bearer " + token }
   };
   if (b) o.body = JSON.stringify(b);
   const r = await fetch("/api" + p, o);
@@ -210,16 +443,38 @@ async function api(m, p, b = null) {
 }
 
 function logout() { localStorage.clear(); window.location.href = "login.html"; }
-
 function safeId(str) { return str.replace(/[^a-zA-Z0-9]/g, "_"); }
 
-// ── RENDER DEPTS ──
+function toast(msg, type = "success") {
+  const el = document.createElement("div");
+  el.className = "toast " + type;
+  el.innerHTML = (type === "success" ? "✅" : type === "error" ? "❌" : "ℹ️") + " " + msg;
+  document.getElementById("toastContainer").appendChild(el);
+  setTimeout(() => el.remove(), 3800);
+}
+
+// ════════════════════════════════════════════════════
+// UPDATE STEP INDICATORS
+// ════════════════════════════════════════════════════
+function setStep(n) {
+  for (let i = 1; i <= 4; i++) {
+    const el = document.getElementById(`step${i}`);
+    if (!el) continue;
+    el.classList.remove("active", "done");
+    if (i < n)  el.classList.add("done");
+    if (i === n) el.classList.add("active");
+  }
+}
+
+// ════════════════════════════════════════════════════
+// RENDER DEPARTMENTS
+// ════════════════════════════════════════════════════
 function renderDepts() {
-  const DEPTS = ["CSE","ECE","MBA"];
-  const labels = { "CSE":"💻 CSE","ECE":"⚡ ECE","MBA":"💼 MBA" };
+  const DEPTS  = ["CSE","ECE","MBA"];
+  const labels = { CSE:"💻 CSE", ECE:"⚡ ECE", MBA:"💼 MBA" };
   document.getElementById("deptOpts").innerHTML = DEPTS.map(d => {
     const isMine = d === myDept;
-    const isSel = currentDept === d;
+    const isSel  = currentDept === d;
     return `<div class="opt ${isMine ? "mine dept-mine" : "locked-opt"} ${isSel ? "sel" : ""}"
       onclick="${isMine ? `chooseDept('${d}')` : `showLock('Department')`}">
       <span>${labels[d] || d}</span>
@@ -233,12 +488,14 @@ function chooseDept(d) {
   currentDept = d; renderDepts();
 }
 
-// ── RENDER YEARS ──
+// ════════════════════════════════════════════════════
+// RENDER YEARS
+// ════════════════════════════════════════════════════
 function renderYears() {
   const YLABELS = ["","1st Year","2nd Year","3rd Year","4th Year"];
   document.getElementById("yearOpts").innerHTML = [1,2,3,4].map(y => {
     const isMine = y === myYear;
-    const isSel = parseInt(currentYear) === y;
+    const isSel  = parseInt(currentYear) === y;
     return `<div class="opt ${isMine ? "mine" : "locked-opt"} ${isSel ? "sel" : ""}"
       onclick="${isMine ? `chooseYear(${y})` : `showLock('Year')`}">
       <span>Year ${y} — ${YLABELS[y]}</span>
@@ -252,7 +509,9 @@ function chooseYear(y) {
   currentYear = String(y); renderYears();
 }
 
-// ── RENDER SEMESTERS (live lock status) ──
+// ════════════════════════════════════════════════════
+// RENDER SEMESTERS
+// ════════════════════════════════════════════════════
 async function renderSems() {
   const el = document.getElementById("semOpts");
   if (!currentDept || !currentYear) {
@@ -263,13 +522,12 @@ async function renderSems() {
   semStatuses = ok ? data : [];
 
   el.innerHTML = [1, 2].map(s => {
-    // FIX: compare as Number since schema stores Number
-    const st = semStatuses.find(x => Number(x.semester) === s);
+    const st     = semStatuses.find(x => Number(x.semester) === s);
     const isOpen = !!(st && !st.isLocked);
-    const minS = st?.minSgpa || 0;
+    const minS   = st?.minSgpa || 0;
     const sgFail = minS > 0 && mySgpa !== null && mySgpa < minS;
     const canUse = isOpen && !sgFail;
-    const isSel = currentSem === String(s);
+    const isSel  = currentSem === String(s);
 
     return `<div class="sem-opt ${canUse ? "sem-open" : "sem-locked"} ${isSel && canUse ? "sel" : ""}"
       onclick="${canUse ? `chooseSem(${s}, this)` : `showSemLock(${s},${isOpen},${sgFail},${minS})`}">
@@ -286,30 +544,25 @@ function chooseSem(s, el) {
   currentSem = String(s);
   document.querySelectorAll(".sem-opt").forEach(e => e.classList.remove("sel"));
   el.classList.add("sel");
+  setStep(2);
 }
 
-function showLock(field) {
-  alert(`🔒 ${field} is locked to your profile.`);
-}
-
+function showLock(field) { alert(`🔒 ${field} is locked to your profile.`); }
 function showSemLock(s, isOpen, sgFail, minS) {
-  if (sgFail)
-    alert(`⚠️ Your SGPA (${mySgpa ?? "not set"}) is below the minimum requirement (${minS}) for Semester ${s}.`);
-  else
-    alert(`🔒 Semester ${s} is locked by admin. Please wait for it to be unlocked.`);
+  if (sgFail) alert(`⚠️ Your SGPA (${mySgpa ?? "not set"}) is below the minimum requirement (${minS}) for Semester ${s}.`);
+  else        alert(`🔒 Semester ${s} is locked by admin. Please wait for it to be unlocked.`);
 }
 
-// ── LOAD SUBJECTS ──
+// ════════════════════════════════════════════════════
+// LOAD SUBJECTS
+// ════════════════════════════════════════════════════
 async function loadSubjects() {
   if (!currentDept || !currentYear || !currentSem) {
     alert("Select department, year and semester first."); return;
   }
 
-  // FIX: verify semester status
-  const { ok, data } = await api(
-    "GET",
-    `/semester/check?department=${currentDept}&year=${currentYear}&semester=${currentSem}`
-  );
+  const { ok, data } = await api("GET",
+    `/semester/check?department=${currentDept}&year=${currentYear}&semester=${currentSem}`);
   if (!ok || data.isLocked) {
     alert("This semester is locked. Please wait for admin to unlock it."); return;
   }
@@ -320,77 +573,91 @@ async function loadSubjects() {
   }
   document.getElementById("sgpaAlert").classList.remove("show");
 
-  const { ok: fok, data: fdata } = await api(
-    "GET",
-    `/faculty?department=${currentDept}&year=${currentYear}&semester=${currentSem}`
-  );
+  const { ok: fok, data: fdata } = await api("GET",
+    `/faculty?department=${currentDept}&year=${currentYear}&semester=${currentSem}`);
   allFacData = fdata || [];
   if (!fok || !allFacData.length) {
     alert("No subjects available for this selection."); return;
   }
 
-  const subs = [...new Set(allFacData.map(f => f.subject))];
-  totalSubjects = subs.length;
+  // ✅ Build FULL subject list
+  allSubjectList = [...new Set(allFacData.map(f => f.subject))];
+  totalSubjects  = allSubjectList.length;
 
-  document.getElementById("subjects").innerHTML = subs.map((s, i) => {
+  // Update stats
+  document.getElementById("statTotalSubj").textContent = totalSubjects;
+  document.getElementById("statRemSubj").textContent   = totalSubjects;
+  document.getElementById("allReqBanner").classList.add("show");
+  document.getElementById("subjCardSub").textContent = `Select faculty for ALL ${totalSubjects} subjects`;
+
+  // Render subjects
+  document.getElementById("subjects").innerHTML = allSubjectList.map((s, i) => {
     const done = !!selected[s];
-    const sid = safeId(s);
-    return `<div class="sub-pill ${done ? "done" : ""}" id="sp_${sid}" onclick="showFac(this);" data-subject="${s}">
-      <div class="sub-num">${i + 1}</div><span style="flex:1">${s}</span>${done ? `<span class="dc">✅</span>` : ""}
+    const sid  = safeId(s);
+    return `<div class="sub-pill ${done ? "done" : "not-done"}" id="sp_${sid}"
+      onclick="showFac(this);" data-subject="${s}">
+      <div class="sub-num">${i + 1}</div>
+      <span style="flex:1">${s}</span>
+      <span>${done ? "✅" : "⭕"}</span>
     </div>`;
   }).join("");
 
   document.getElementById("subjectCard").style.display = "block";
+  setStep(2);
   updateProg();
+  updateStats();
 }
 
-// ── SHOW FACULTY ──
+// ════════════════════════════════════════════════════
+// SHOW FACULTY
+// ════════════════════════════════════════════════════
 function showFac(pillEl) {
-  const subject = pillEl ? pillEl.dataset.subject : currentSubject;
-  currentSubject = subject;
+  const subject    = pillEl ? pillEl.dataset.subject : currentSubject;
+  currentSubject   = subject;
   document.querySelectorAll(".sub-pill").forEach(p => p.classList.remove("active-sub"));
   const pill = document.querySelector(`.sub-pill[data-subject="${subject}"]`);
   if (pill) pill.classList.add("active-sub");
 
   document.getElementById("facCardTitle").textContent = `Faculty for: ${subject}`;
+  document.getElementById("facCardSub").textContent   = "Choose your preferred faculty below";
+  setStep(2);
+
   const list = document.getElementById("facList");
   const facs = allFacData.filter(f => f.subject === subject);
   if (!facs.length) {
-    list.innerHTML = `<div class="empty"><div class="empty-icon">📭</div>No faculty found</div>`;
+    list.innerHTML = `<div class="empty"><div class="empty-icon">📭</div>No faculty found for this subject</div>`;
     return;
   }
 
   list.innerHTML = `<div class="fac-grid">` + facs.map(f => {
-    const isSel = selected[subject]?.name === f.name;
+    const isSel  = selected[subject]?.name === f.name;
     const isFull = (f.enrolledCount || 0) >= (f.studentLimit || 60);
-    const rpct = f.rating ? (f.rating / 5) * 100 : 0;
-    const epct = Math.min(100, (f.enrolledCount || 0) / (f.studentLimit || 60) * 100);
-    const fc = isFull ? "#ff6b9d" : epct > 80 ? "#ffb347" : "#43e97b";
-    const init = f.name.split(" ").map(w => w[0]).join("").substring(0, 2).toUpperCase();
+    const rpct   = f.rating ? (f.rating / 5) * 100 : 0;
+    const epct   = Math.min(100, (f.enrolledCount || 0) / (f.studentLimit || 60) * 100);
+    const fc     = isFull ? "#ff6b9d" : epct > 80 ? "#ffb347" : "#43e97b";
+    const init   = f.name.split(" ").map(w => w[0]).join("").substring(0, 2).toUpperCase();
 
     return `<div class="fac-card ${isSel ? "sel-card" : ""} ${isFull && !isSel ? "full-card" : ""}">
-      ${isSel ? `<div class="sel-badge">✓ Selected</div>` : isFull ? `<div class="full-badge">Access Full</div>` : ""}
+      ${isSel ? `<div class="sel-badge">✓ Selected</div>` : isFull ? `<div class="full-badge">Full</div>` : ""}
       <div class="fc-top">
         <div class="fc-av">${init}</div>
         <div><div class="fc-name">${f.name}</div><div class="fc-subj">${f.subject}</div></div>
       </div>
       <div class="fc-meta">
         ${f.experience ? `<div class="mc">🏆 ${f.experience}</div>` : ""}
-        ${f.email ? `<div class="mc">📧 ${f.email}</div>` : ""}
+        ${f.email      ? `<div class="mc">📧 ${f.email}</div>` : ""}
         <div class="mc">📅 ${f.periodsPerWeek || 4} periods/wk</div>
       </div>
       ${f.rating ? `<div class="rt-bar"><div class="rt-fill"><div class="rt-inner" style="width:${rpct}%"></div></div><div class="rt-val">⭐ ${f.rating}</div></div>` : ""}
       <div class="en-wrap">
         <div class="en-bar"><div class="en-fill" style="width:${epct}%;background:${fc}"></div></div>
-        <div class="en-lbl"><span style="color:${fc}">${f.enrolledCount || 0}/${f.studentLimit || 60} enrolled</span><span style="color:var(--muted)">${isFull ? "FULL" : Math.round(epct) + "%"}</span></div>
+        <div class="en-lbl"><span style="color:${fc}">${f.enrolledCount || 0}/${f.studentLimit || 60} enrolled</span><span style="color:var(--muted)">${isFull ? "FULL" : Math.round(epct)+"%"}</span></div>
       </div>
       <button class="btn-sel"
-        data-subject="${subject}"
-        data-name="${f.name}"
-        data-id="${f._id}"
+        data-subject="${subject}" data-name="${f.name}" data-id="${f._id}"
         data-full="${isFull && !isSel ? "1" : "0"}"
         onclick="chooseFacFromBtn(this)">
-        ${isSel ? "✓ Selected" : isFull ? "🔴 Access Full" : "Select Faculty"}
+        ${isSel ? "✓ Selected" : isFull ? "🔴 Full" : "Select Faculty"}
       </button>
     </div>`;
   }).join("") + `</div>`;
@@ -403,63 +670,121 @@ function chooseFacFromBtn(btn) {
 
 function chooseFac(subject, name, id) {
   selected[subject] = { name, id };
-  saveLS(); updateSelPanel(); updateProg();
+  saveLS(); updateSelPanel(); updateProg(); updateStats();
   showFac(null);
+  // Update subject pill
   const pill = document.querySelector(`.sub-pill[data-subject="${subject}"]`);
   if (pill) {
+    pill.classList.remove("not-done");
     pill.classList.add("done");
-    if (!pill.querySelector(".dc")) pill.innerHTML += `<span class="dc">✅</span>`;
+    pill.querySelector("span:last-child").textContent = "✅";
   }
+  toast(`Faculty selected for ${subject}`, "success");
 }
 
+// ════════════════════════════════════════════════════
+// UPDATE STATS
+// ════════════════════════════════════════════════════
+function updateStats() {
+  const selCount = Object.keys(selected).length;
+  const rem      = Math.max(0, totalSubjects - selCount);
+  const pct      = totalSubjects > 0 ? Math.round((selCount / totalSubjects) * 100) : 0;
+  document.getElementById("statSelSubj").textContent = selCount;
+  document.getElementById("statRemSubj").textContent = rem;
+  document.getElementById("statPct").textContent     = pct + "%";
+}
+
+// ════════════════════════════════════════════════════
+// UPDATE SELECTION PANEL
+// ════════════════════════════════════════════════════
 function updateSelPanel() {
-  const panel = document.getElementById("selList");
-  const cnt = Object.keys(selected).length;
-  document.getElementById("selCount").textContent = `${cnt} subject${cnt !== 1 ? "s" : ""} selected`;
+  const panel   = document.getElementById("selList");
+  const cnt     = Object.keys(selected).length;
+  document.getElementById("selCount").textContent = `${cnt} of ${totalSubjects || "?"} subjects selected`;
+
   if (!cnt) {
     panel.innerHTML = `<div class="empty"><div class="empty-icon">🗂️</div>No selections yet</div>`;
+    document.getElementById("btnSubmit").disabled = true;
     return;
   }
+
   panel.innerHTML = Object.entries(selected).map(([s, f]) => `
     <div class="sel-item">
       <div><div class="si-sub">${s}</div><div class="si-fac">👨‍🏫 ${f.name}</div></div>
       <button class="btn-rm" data-subject="${s}" onclick="rmSelFromBtn(this)">✕</button>
     </div>`).join("");
+
+  // ✅ Enable submit ONLY when all subjects are selected
+  const allSelected = totalSubjects > 0 && cnt >= totalSubjects &&
+    allSubjectList.every(s => selected[s]);
+  document.getElementById("btnSubmit").disabled = !allSelected;
+
+  if (allSelected) {
+    setStep(4);
+    document.getElementById("allSubjAlert").style.display = "none";
+  } else if (cnt > 0) {
+    setStep(3);
+  }
 }
 
 function rmSelFromBtn(btn) { rmSel(btn.dataset.subject); }
-
 function rmSel(s) {
   delete selected[s];
-  saveLS(); updateSelPanel(); updateProg();
+  saveLS(); updateSelPanel(); updateProg(); updateStats();
   if (currentSubject === s) showFac(null);
   const p = document.querySelector(`.sub-pill[data-subject="${s}"]`);
-  if (p) { p.querySelector(".dc")?.remove(); p.classList.remove("done"); }
+  if (p) {
+    p.classList.remove("done");
+    p.classList.add("not-done");
+    p.querySelector("span:last-child").textContent = "⭕";
+  }
 }
 
+// ════════════════════════════════════════════════════
+// PROGRESS BAR
+// ════════════════════════════════════════════════════
 function updateProg() {
   const cnt = Object.keys(selected).length;
   if (totalSubjects > 0) {
     document.getElementById("progWrap").style.display = "block";
     const pct = Math.min(100, (cnt / totalSubjects) * 100);
-    document.getElementById("progFill").style.width = pct + "%";
-    document.getElementById("progText").textContent = `${cnt}/${totalSubjects}`;
+    document.getElementById("progFill").style.width   = pct + "%";
+    document.getElementById("progText").textContent   = `${cnt}/${totalSubjects}`;
   }
 }
 
+// ════════════════════════════════════════════════════
+// SAVE TO LOCALSTORAGE
+// ════════════════════════════════════════════════════
 function saveLS() {
   localStorage.setItem("studentSelection", JSON.stringify({
     selections: Object.entries(selected).map(([s, f]) => ({
       subject: s, facultyName: f.name, facultyId: f.id
     })),
     department: currentDept,
-    year: currentYear,
-    semester: currentSem,
+    year:       currentYear,
+    semester:   currentSem,
   }));
 }
 
+// ════════════════════════════════════════════════════
+// ✅ SUBMIT — validates ALL subjects selected
+// ════════════════════════════════════════════════════
 async function submitSelection() {
-  if (!Object.keys(selected).length) { alert("Select at least one faculty."); return; }
+  const selCount = Object.keys(selected).length;
+
+  // ✅ HARD BLOCK: all subjects must be selected
+  if (totalSubjects > 0 && selCount < totalSubjects) {
+    const missing = allSubjectList.filter(s => !selected[s]);
+    const alertEl = document.getElementById("allSubjAlert");
+    const listEl  = document.getElementById("missingSubjList");
+    listEl.innerHTML = `Missing: ${missing.map(s => `<strong>${s}</strong>`).join(", ")}`;
+    alertEl.style.display = "block";
+    alertEl.scrollIntoView({ behavior: "smooth", block: "center" });
+    toast(`You need to select faculty for ${missing.length} more subject(s)!`, "error");
+    return;
+  }
+
   if (!currentSem) { alert("Select a semester first."); return; }
 
   const selections = Object.entries(selected).map(([subject, f]) => ({
@@ -467,23 +792,27 @@ async function submitSelection() {
   }));
 
   const { ok, data } = await api("POST", "/selection", {
-    studentId: userId,
+    studentId:  userId,
     department: currentDept,
-    year: currentYear,
-    semester: currentSem,
+    year:       currentYear,
+    semester:   currentSem,
     selections,
   });
 
-  if (!ok) { alert("Error: " + data.message); return; }
+  if (!ok) { toast("Error: " + data.message, "error"); return; }
   saveLS();
-  window.location.href = "summary.html";
+  toast("Selections saved! Redirecting...", "success");
+  setTimeout(() => { window.location.href = "summary.html"; }, 800);
 }
 
-// ── INIT ──
+// ════════════════════════════════════════════════════
+// INIT
+// ════════════════════════════════════════════════════
 renderDepts();
 renderYears();
 renderSems();
 updateSelPanel();
+checkTimetableSaved(); // ✅ Check if timetable already saved
 </script>
 </body>
 </html>

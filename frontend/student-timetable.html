@@ -660,6 +660,7 @@ async function confirmSave() {
   if (!ok) { toast(data.message || "Save failed. Try again.", "error"); return; }
 
   hasUnsaved = false; isLocked = true;
+  localStorage.setItem("timetableSaved", "true"); // ✅ flag for student dashboard
   toast("✅ Timetable saved successfully!");
   openModal("successModal");
   renderLockedView();
