@@ -138,12 +138,10 @@ body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(
 .warn-tip{background:rgba(255,179,71,0.06);border:1px solid rgba(255,179,71,0.2);border-radius:10px;padding:10px 13px;font-size:12px;color:var(--warn);margin-bottom:11px;}
 .spin{display:inline-block;width:12px;height:12px;border:2px solid rgba(255,255,255,0.3);border-top-color:white;border-radius:50%;animation:spn 0.7s linear infinite;}
 @keyframes spn{to{transform:rotate(360deg)}}
-/* Request cards */
 .req-status-badge{display:inline-flex;align-items:center;gap:4px;padding:3px 9px;border-radius:20px;font-size:10px;font-weight:700;}
 .rsb-pending{background:rgba(255,179,71,0.12);border:1px solid rgba(255,179,71,0.25);color:var(--warn);}
 .rsb-approved{background:rgba(67,233,123,0.12);border:1px solid rgba(67,233,123,0.25);color:var(--success);}
 .rsb-rejected{background:rgba(255,107,157,0.12);border:1px solid rgba(255,107,157,0.25);color:var(--error);}
-/* Audit log */
 .audit-action{display:inline-block;padding:2px 8px;border-radius:6px;font-size:10px;font-weight:700;}
 .aa-edit{background:rgba(255,179,71,0.1);color:var(--warn);}
 .aa-approved{background:rgba(67,233,123,0.1);color:var(--success);}
@@ -168,7 +166,6 @@ body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(
   <button class="tab-btn" onclick="tab('rooms',this)">🏫 Rooms &amp; Allocation</button>
   <button class="tab-btn" onclick="tab('students',this)">👥 Students</button>
   <button class="tab-btn" onclick="tab('timetable',this)">🗓️ Timetable</button>
-  <!-- ✅ NEW TABS -->
   <button class="tab-btn" onclick="tab('stutt',this)">📝 Student TT</button>
   <button class="tab-btn" onclick="tab('auditlog',this)">🔍 Audit Log</button>
 </div>
@@ -308,18 +305,16 @@ body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(
       <div class="card" style="margin-bottom:14px">
         <div class="card-header"><div class="card-icon is">🌱</div><div><div class="card-title">Seed Student Dataset</div></div></div>
         <div class="form-row">
-          <div class="field"><label>Year Prefix</label>
+          <div class="field">
+            <label>Year Prefix</label>
+            <!-- ✅ Empty select — populated dynamically by buildSeedYearOptions() on page load -->
             <select id="sdYear" onchange="updateSeedPreview()">
-              <option value="26">26 — 1st Year (2026 batch)</option>
-              <option value="25">25 — 2nd Year (2025 batch)</option>
-              <option value="24">24 — 3rd Year (2024 batch)</option>
-              <option value="23">23 — 4th Year (2023 batch)</option>
             </select>
           </div>
           <div class="field"><label>Department</label><select id="sdDept" onchange="updateSeedPreview()"><option value="">Select</option><option>CSE</option><option>ECE</option><option>MBA</option></select></div>
         </div>
         <div class="field"><label>Count (max 300)</label><input id="sdCount" type="number" min="1" max="300" placeholder="300"></div>
-        <div class="warn-tip">⚠️ Creates accounts like <strong id="seedExample">261FA04001 – 261FA04300</strong>. Default password = last 3 digits.</div>
+        <div class="warn-tip">⚠️ Creates accounts like <strong id="seedExample">—</strong>. Default password = last 3 digits.</div>
         <button class="btn btn-warn" id="seedBtn" onclick="seedStudents()">🌱 Seed Students</button>
       </div>
       <div class="card">
@@ -364,12 +359,10 @@ body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(
   <div id="ttDisplay"></div>
 </div>
 
-<!-- ══ STUDENT TIMETABLE TAB (NEW) ══ -->
+<!-- ══ STUDENT TIMETABLE TAB ══ -->
 <div class="tab-pane" id="tab-stutt">
   <div class="sec-title">Student Timetable Management</div>
   <div class="sec-sub">Search by registration number, view/edit student timetable, manage change requests.</div>
-
-  <!-- Search -->
   <div class="card" style="margin-bottom:18px">
     <div class="card-header"><div class="card-icon is">🔍</div><div><div class="card-title">Search Student Timetable</div><div class="card-sub">Enter registration number</div></div></div>
     <div style="display:flex;gap:10px;align-items:flex-end">
@@ -380,8 +373,6 @@ body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(
       <button class="btn btn-ok btn-sm" style="padding:10px 18px" onclick="searchStudentTT()">🔍 Search</button>
     </div>
   </div>
-
-  <!-- Student TT Result -->
   <div id="stuTTResult" style="display:none">
     <div class="grid-2" style="margin-bottom:18px">
       <div class="card">
@@ -395,7 +386,6 @@ body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(
         <div id="stuTTStatus" style="margin-bottom:12px"></div>
         <div id="stuTTGrid" style="overflow-x:auto"></div>
         <div style="margin-top:12px;display:flex;gap:8px;flex-wrap:wrap" id="stuTTActions"></div>
-        <!-- Edit reason field (shown in edit mode) -->
         <div id="adminEditReasonWrap" style="display:none;margin-top:12px">
           <div class="field" style="margin:0">
             <label>Reason for Edit *</label>
@@ -409,8 +399,6 @@ body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(
       </div>
     </div>
   </div>
-
-  <!-- All Pending Requests -->
   <div class="card">
     <div class="card-header"><div class="card-icon ik">⏳</div><div><div class="card-title">All Change Requests</div><div class="card-sub">From all students</div></div></div>
     <div style="display:flex;gap:8px;margin-bottom:12px;flex-wrap:wrap">
@@ -423,7 +411,7 @@ body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(
   </div>
 </div>
 
-<!-- ══ AUDIT LOG TAB (NEW) ══ -->
+<!-- ══ AUDIT LOG TAB ══ -->
 <div class="tab-pane" id="tab-auditlog">
   <div class="sec-title">Audit Log</div>
   <div class="sec-sub">Every admin action on student timetables is recorded here.</div>
@@ -477,7 +465,6 @@ body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(
   </div>
 </div>
 
-<!-- Handle Request Modal -->
 <div class="modal-overlay" id="handleReqModal">
   <div class="modal">
     <div class="modal-icon">📋</div>
@@ -537,6 +524,19 @@ function tab(name, btn){
   if(name==="rooms")    loadRooms();
   if(name==="stutt")    loadAllRequests("pending");
 }
+
+// ════════════════════════════════════════════════════
+// ✅ DYNAMIC SEED YEAR DROPDOWN — auto-updates every year
+// ════════════════════════════════════════════════════
+function buildSeedYearOptions() {
+  const cur = new Date().getFullYear() % 100;
+  const labels = ["1st Year", "2nd Year", "3rd Year", "4th Year"];
+  return labels.map((lbl, i) => {
+    const yr = cur - i;
+    return `<option value="${yr}">${yr} — ${lbl} (${2000 + yr} batch)</option>`;
+  }).join("");
+}
+document.getElementById("sdYear").innerHTML = buildSeedYearOptions();
 
 // ════════════════════════════════════════════════════
 // FACULTY
@@ -824,7 +824,7 @@ async function viewTT(){
 }
 
 // ════════════════════════════════════════════════════
-// ✅ STUDENT TIMETABLE ADMIN MANAGEMENT
+// STUDENT TIMETABLE ADMIN MANAGEMENT
 // ════════════════════════════════════════════════════
 let adminCurrentTT        = null;
 let adminEditSlots        = {};
@@ -860,12 +860,10 @@ function renderAdminGrid(editMode){
   const colorMap = {};
   subs.forEach((s,i)=>{ colorMap[s]=ADM_CC[i%5]; });
 
-  // Status badge
   document.getElementById("stuTTStatus").innerHTML = tt.locked
     ? `<div style="display:inline-flex;align-items:center;gap:6px;background:rgba(255,107,157,0.1);border:1px solid rgba(255,107,157,0.25);color:var(--error);border-radius:8px;padding:5px 12px;font-size:11px;font-weight:700">🔒 Locked</div>`
     : `<div style="display:inline-flex;align-items:center;gap:6px;background:rgba(67,233,123,0.1);border:1px solid rgba(67,233,123,0.25);color:var(--success);border-radius:8px;padding:5px 12px;font-size:11px;font-weight:700">🔓 Unlocked — Editable</div>`;
 
-  // Build slot map
   const slotMap = {};
   tt.slots.forEach(s=>{ slotMap[`${s.day}-${s.period}`]=s.subject; });
   if(editMode) adminEditSlots = {...slotMap};
@@ -895,10 +893,8 @@ function renderAdminGrid(editMode){
   html+=`</tbody></table>`;
   document.getElementById("stuTTGrid").innerHTML = html;
 
-  // Edit reason field
   document.getElementById("adminEditReasonWrap").style.display = editMode?"block":"none";
 
-  // Action buttons
   const actEl = document.getElementById("stuTTActions");
   if(!editMode){
     actEl.innerHTML=`<button class="btn btn-sm btn-edit" onclick="startAdminEdit()">✏️ Edit Timetable</button>`;
@@ -1012,7 +1008,7 @@ async function handleRequest(status){
 }
 
 // ════════════════════════════════════════════════════
-// ✅ AUDIT LOGS
+// AUDIT LOGS
 // ════════════════════════════════════════════════════
 async function loadAuditLogs(){
   const sId = document.getElementById("auStudentId").value.trim();
