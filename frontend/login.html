@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>FacultySync — Login</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=DM+Serif+Display&display=swap" rel="stylesheet">
+<style>
+:root{--navy:#0a0f1e;--card:rgba(255,255,255,0.04);--border:rgba(255,255,255,0.08);--accent:#4f8ef7;--accent2:#7c5cfc;--text:#e8eaf6;--muted:#8892b0;--error:#ff6b9d;--success:#43e97b;}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:'Space Grotesk',sans-serif;min-height:100vh;background:var(--navy);display:flex;align-items:center;justify-content:center;overflow:hidden;}
+body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(rgba(79,142,247,0.04) 1px,transparent 1px),linear-gradient(90deg,rgba(79,142,247,0.04) 1px,transparent 1px);background-size:50px 50px;pointer-events:none;}
+.orb{position:fixed;border-radius:50%;filter:blur(120px);opacity:0.15;pointer-events:none;}
+.orb1{width:500px;height:500px;background:var(--accent2);top:-100px;left:-100px;animation:d1 12s ease-in-out infinite;}
+.orb2{width:400px;height:400px;background:var(--accent);bottom:-100px;right:-50px;animation:d2 15s ease-in-out infinite;}
+@keyframes d1{0%,100%{transform:translate(0,0)}50%{transform:translate(60px,40px)}}
+@keyframes d2{0%,100%{transform:translate(0,0)}50%{transform:translate(-40px,-60px)}}
+.wrap{width:100%;max-width:440px;padding:20px;position:relative;z-index:10;animation:up 0.6s ease both;}
+@keyframes up{from{opacity:0;transform:translateY(24px)}to{opacity:1;transform:translateY(0)}}
+.logo-area{text-align:center;margin-bottom:28px;}
+.logo-badge{display:inline-flex;align-items:center;gap:10px;background:rgba(79,142,247,0.1);border:1px solid rgba(79,142,247,0.25);border-radius:50px;padding:10px 20px;margin-bottom:14px;}
+.logo-icon{width:32px;height:32px;background:linear-gradient(135deg,var(--accent),var(--accent2));border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:16px;}
+.logo-text{font-family:'DM Serif Display',serif;font-size:20px;color:white;}
+.logo-text span{color:var(--accent);}
+.tagline{color:var(--muted);font-size:13px;}
+.card{background:var(--card);border:1px solid var(--border);border-radius:24px;padding:32px;backdrop-filter:blur(30px);box-shadow:0 40px 80px rgba(0,0,0,0.4);}
+.title{font-size:21px;font-weight:700;color:var(--text);margin-bottom:4px;}
+.sub{color:var(--muted);font-size:13px;margin-bottom:24px;}
+.rlabel{font-size:11px;font-weight:600;letter-spacing:1.5px;color:var(--muted);text-transform:uppercase;margin-bottom:8px;}
+.rtabs{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:22px;}
+.rtab{padding:13px;border-radius:14px;border:1.5px solid var(--border);background:transparent;color:var(--muted);cursor:pointer;font-family:'Space Grotesk',sans-serif;font-size:13px;font-weight:500;transition:all 0.25s;display:flex;align-items:center;justify-content:center;gap:8px;}
+.rtab:hover{border-color:rgba(79,142,247,0.4);color:var(--text);}
+.rtab.active{border-color:var(--accent);background:rgba(79,142,247,0.1);color:white;}
+.field{margin-bottom:16px;}
+.field label{display:block;font-size:11px;font-weight:600;letter-spacing:0.8px;text-transform:uppercase;color:var(--muted);margin-bottom:7px;}
+.iw{position:relative;}
+.iw .ic{position:absolute;left:14px;top:50%;transform:translateY(-50%);font-size:15px;opacity:0.5;pointer-events:none;}
+.field input{width:100%;padding:12px 14px 12px 42px;background:rgba(255,255,255,0.05);border:1.5px solid var(--border);border-radius:12px;color:var(--text);font-family:'Space Grotesk',sans-serif;font-size:14px;transition:all 0.25s;outline:none;}
+.field input::placeholder{color:rgba(136,146,176,0.5);}
+.field input:focus{border-color:var(--accent);background:rgba(79,142,247,0.05);box-shadow:0 0 0 3px rgba(79,142,247,0.1);}
+.hint{font-size:11px;color:var(--muted);margin-top:5px;line-height:1.5;}
+.hint strong{color:var(--accent);}
+.btn{width:100%;padding:14px;border:none;border-radius:14px;background:linear-gradient(135deg,var(--accent),var(--accent2));color:white;font-family:'Space Grotesk',sans-serif;font-size:14px;font-weight:600;cursor:pointer;transition:all 0.3s;margin-top:4px;}
+.btn:hover{transform:translateY(-2px);box-shadow:0 12px 30px rgba(79,142,247,0.4);}
+.btn:disabled{opacity:0.6;cursor:not-allowed;transform:none;}
+.err{display:flex;align-items:center;gap:8px;background:rgba(255,107,157,0.1);border:1px solid rgba(255,107,157,0.3);border-radius:10px;padding:11px 14px;color:var(--error);font-size:13px;margin-top:14px;opacity:0;transform:translateY(-4px);transition:all 0.3s;}
+.err.show{opacity:1;transform:translateY(0);}
+.info-box{background:rgba(79,142,247,0.05);border:1px solid rgba(79,142,247,0.15);border-radius:10px;padding:12px 14px;color:var(--muted);font-size:12px;margin-top:18px;line-height:1.7;display:none;}
+.yr-grid{display:none;grid-template-columns:repeat(4,1fr);gap:6px;margin-top:14px;}
+.yr-card{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:8px;text-align:center;}
+.yr-pref{font-size:16px;font-weight:700;color:var(--accent);}
+.yr-lbl{font-size:10px;color:var(--muted);margin-top:2px;}
+.footer{text-align:center;margin-top:20px;color:var(--muted);font-size:12px;}
+.footer span{color:var(--accent);font-weight:500;}
+</style>
+</head>
+<body>
+<div class="orb orb1"></div>
+<div class="orb orb2"></div>
+<div class="wrap">
+  <div class="logo-area">
+    <div class="logo-badge">
+      <div class="logo-icon">🎓</div>
+      <div class="logo-text">Faculty<span>Sync</span></div>
+    </div>
+    <p class="tagline">Faculty Registration &amp; Timetable System</p>
+  </div>
+  <div class="card">
+    <div class="title">Welcome back</div>
+    <div class="sub">Sign in to continue to your portal</div>
+    <div class="rlabel">Select Role</div>
+    <div class="rtabs">
+      <button class="rtab" id="adminTab" onclick="selectRole('admin')">🛡️ Admin</button>
+      <button class="rtab" id="studentTab" onclick="selectRole('student')">🎒 Student</button>
+    </div>
+    <div class="field">
+      <label>User ID</label>
+      <div class="iw">
+        <span class="ic">🪪</span>
+        <input type="text" id="userId" placeholder="e.g. 231FA04812" autocomplete="off"
+          oninput="onId(this)" style="text-transform:uppercase">
+      </div>
+      <div class="hint" id="idHint" style="display:none"></div>
+    </div>
+    <div class="field">
+      <label>Password</label>
+      <div class="iw">
+        <span class="ic">🔑</span>
+        <input type="password" id="pass" placeholder="Enter password">
+      </div>
+      <div class="hint" id="passHint" style="display:none"></div>
+    </div>
+    <button class="btn" id="loginBtn" onclick="login()">Sign In →</button>
+    <div class="err" id="err"><span>⚠️</span><span id="errText">Invalid credentials.</span></div>
+    <div class="info-box" id="studentInfo">
+      ℹ️ <strong style="color:var(--text)">Student Login</strong><br>
+      User ID: Your registration number &nbsp;|&nbsp; Password: Last 3 digits of your reg number
+    </div>
+    <div class="yr-grid" id="yrGrid">
+      <div class="yr-card"><div class="yr-pref">26xx</div><div class="yr-lbl">1st Year</div></div>
+      <div class="yr-card"><div class="yr-pref">25xx</div><div class="yr-lbl">2nd Year</div></div>
+      <div class="yr-card"><div class="yr-pref">24xx</div><div class="yr-lbl">3rd Year</div></div>
+      <div class="yr-card"><div class="yr-pref">23xx</div><div class="yr-lbl">4th Year</div></div>
+    </div>
+  </div>
+  <div class="footer">Academic Year 2025–26 &nbsp;|&nbsp; <span>FacultySync v2.0</span></div>
+</div>
+<script>
+let role = "";
+
+function selectRole(r) {
+  role = r;
+  document.getElementById("adminTab").classList.toggle("active", r === "admin");
+  document.getElementById("studentTab").classList.toggle("active", r === "student");
+  document.getElementById("studentInfo").style.display = r === "student" ? "block" : "none";
+  document.getElementById("yrGrid").style.display = r === "student" ? "grid" : "none";
+  document.getElementById("userId").placeholder =
+    r === "admin" ? "Enter Admin ID" : "e.g. 231FA04812";
+  hideErr();
+}
+
+function onId(el) {
+  el.value = el.value.toUpperCase();
+  if (role !== "student" || el.value.length < 2) {
+    document.getElementById("idHint").style.display = "none";
+    return;
+  }
+  const prefix = parseInt(el.value.substring(0, 2));
+  const cur = new Date().getFullYear() % 100;
+  const yr = Math.max(1, Math.min(4, cur - prefix + 1));
+  const labels = ["", "1st Year", "2nd Year", "3rd Year", "4th Year"];
+  const hint = document.getElementById("idHint");
+  hint.style.display = "block";
+  hint.innerHTML = `Detected: <strong>${labels[yr]}</strong>`;
+  if (el.value.length >= 10) {
+    const last3 = el.value.slice(-3);
+    document.getElementById("pass").value = last3;
+    const ph = document.getElementById("passHint");
+    ph.style.display = "block";
+    ph.innerHTML = `Default password auto-filled: <strong>${last3}</strong>`;
+  }
+}
+
+function showErr(m) {
+  document.getElementById("errText").innerText = m;
+  document.getElementById("err").classList.add("show");
+}
+function hideErr() {
+  document.getElementById("err").classList.remove("show");
+}
+
+async function login() {
+  const userId = document.getElementById("userId").value.trim().toUpperCase();
+  const password = document.getElementById("pass").value.trim();
+  const btn = document.getElementById("loginBtn");
+  if (!role) { showErr("Please select a role first."); return; }
+  if (!userId) { showErr("Please enter your User ID."); return; }
+  if (!password) { showErr("Please enter your password."); return; }
+
+  btn.disabled = true;
+  btn.textContent = "Signing in...";
+  try {
+    const res = await fetch("/api/auth/login", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ userId, password, role }),
+    });
+    const data = await res.json();
+    if (!res.ok) {
+      showErr(data.message || "Invalid credentials.");
+      btn.disabled = false;
+      btn.textContent = "Sign In →";
+      return;
+    }
+    localStorage.setItem("token", data.token);
+    localStorage.setItem("role", data.role);
+    localStorage.setItem("userId", data.userId);
+    localStorage.setItem("department", data.department || "");
+    localStorage.setItem("year", data.year != null ? String(data.year) : "");
+    localStorage.setItem("sgpa", data.sgpa != null ? String(data.sgpa) : "");
+    window.location.href = data.role === "admin" ? "admin.html" : "index.html";
+  } catch {
+    showErr("Cannot reach server. Make sure backend is running on port 3000.");
+    btn.disabled = false;
+    btn.textContent = "Sign In →";
+  }
+}
+
+document.addEventListener("keydown", (e) => {
+  if (e.key === "Enter") login();
+});
+</script>
+</body>
+</html>
