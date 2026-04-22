@@ -178,7 +178,7 @@ async function login() {
     localStorage.setItem("department", data.department || "");
     localStorage.setItem("year", data.year != null ? String(data.year) : "");
     localStorage.setItem("sgpa", data.sgpa != null ? String(data.sgpa) : "");
-    window.location.href = data.role === "admin" ? "admin.html" : "student.html";
+    window.location.href = data.role === "admin" ? "admin.html" : "index.html";
   } catch {
     showErr("Cannot reach server. Make sure backend is running on port 3000.");
     btn.disabled = false;
