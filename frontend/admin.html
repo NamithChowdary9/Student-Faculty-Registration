@@ -500,7 +500,7 @@ document.getElementById("uid").textContent = userId || "";
 async function api(m, p, b = null) {
   const o = { method:m, headers:{"Content-Type":"application/json","Authorization":"Bearer "+token} };
   if (b) o.body = JSON.stringify(b);
-  const r = await fetch("/api" + p, o);
+  const r = await fetch("https://student-faculty-registration-production.up.railway.app/api" + p, o);
   const d = await r.json();
   return { ok: r.ok, data: d };
 }

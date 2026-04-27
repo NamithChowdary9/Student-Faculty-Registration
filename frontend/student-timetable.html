@@ -381,7 +381,7 @@ async function api(method, path, body = null) {
     headers:{"Content-Type":"application/json","Authorization":"Bearer "+token}
   };
   if (body) opts.body = JSON.stringify(body);
-  const r = await fetch("/api" + path, opts);
+  const r = await fetch("https://student-faculty-registration-production.up.railway.app/api" + path, opts);
   const d = await r.json();
   return { ok: r.ok, data: d };
 }
